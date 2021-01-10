@@ -1,0 +1,57 @@
+{
+    "tm": {
+        "settings": {
+            "button": {
+                "name": "Ajustes Globales de Marcador de Turno",
+                "label": "Marcador de Turno (Turn Marker)"
+            },
+            "formTitles": {
+                "settings": "Marcador de Turno - Ajustes Globales"
+            },
+            "formHeaders": {
+                "imageOptions": "Opciones de Imagen del Marcador",
+                "turnAnnounce": "Anuncio del Turno",
+                "startMarker": "Marcador de Inicio",
+                "save": "Guardar Ajustes"
+            },
+            "turnMarkerEnabled": {
+                "name": "Activar Marcador de Turno"
+            },
+            "ratio": {
+                "name": "Escala de la Imagen",
+                "hint": "En relación al tamaño del icono."
+            },
+            "animate": {
+                "name": "¿Marcador Animado?",
+                "hint": "Aplicar animación de rotación al marcador. Los cambios no serán visibles hasta que se inicie un nuevo combate"
+            },
+            "interval": {
+                "name": "Velocidad de la Animación",
+                "hint": "Velocidad a la que se moverá la animación en caso de activarla (se recomienda entre 10 y 200)"
+            },
+            "image": {
+                "name": "Imagen del Marcador"
+            },
+            "customImage": {
+                "name": "Ruta a la Imagen Personalizada",
+                "hint": "Utilizar una imagen personalizada (dejar en blanco si se quiere usar la imagen incluida en el módulo)"
+            },
+            "announce": {
+                "name": "Anuncio de los Turnos",
+                "hint": "Si se activa, se enviará un mensaje a cada combatiente nuevo"
+            },
+            "announceImage": {
+                "name": "Incluir Imagen del Icono",
+                "hint": "Si se activa, se incluirá la imagen del icono al anunciar su turno"
+            },
+            "startEnabled": {
+                "name": "Activar Marcador de Inicio",
+                "hint": "Si se activa, se colocará un marcador en la localización en la que el icono comenzó su turno"
+            },
+            "startImage": {
+                "name": "Ruta a la Imagen Personalizada",
+                "hint": "Utilizar una imagen personalizada para el marcador de inicio (dejar en blanco si se quiere usar la imagen incluida en el módulo)"
+            }
+        }
+    }
+}

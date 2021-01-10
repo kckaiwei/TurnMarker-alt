@@ -1,0 +1,54 @@
+{
+	"tm": {
+		"settings": {
+			"button": {
+				"name": "Turn Marker Globale Einstellungen",
+				"label": "Turn Marker"
+			},
+			"formTitles": {
+				"settings": "Turn Marker - Globale Einstellungen"
+			},
+			"formHeaders": {
+				"imageOptions": "Bildoptionen Markierung",
+				"turnAnnounce": "Zugankündigungen",
+				"startMarker": "Markierung Zugbeginn",
+				"save": "Einstellungen sichern"
+			},
+			"ratio": {
+				"name": "Bildverhältnis",
+				"hint": "Im Vergleich zur Tokengröße."
+			},
+			"animate": {
+				"name": "Animierte Markierung?",
+				"hint": "Verwende eine rotierende Animation für die Markierung. (Veränderungen sind eventuell erst beim Start eines neuen Kampfes sichtbar)"
+			},
+			"interval": {
+				"name": "Animationsgeschwindigkeit",
+				"hint": "Wie schnell soll die Animation rotieren, falls die Animation eingeschaltet ist (Empfohlen wird zwischen 10 und 200)"
+			},
+			"image": {
+				"name": "Bild für die Markierung"
+			},
+			"customImage": {
+				"name": "Benutzerdefiniertes Bild",
+				"hint": "Verwende ein eigenes Bild für die Markierung (Leer lassen, um eins der ausgelieferten Bilder zu verwenden)"
+			},
+			"announce": {
+				"name": "Zugankündigung",
+				"hint": "Wenn dies eingeschaltet ist bekommt der aktuelle Kämpfer eine Nachricht im Chat"
+			},
+			"announceImage": {
+				"name": "Mit Tokenbild",
+				"hint": "Wenn dies eingeschaltet ist, enthält die Rundenankündigung das Tokenbild"
+			},
+			"startEnabled": {
+				"name": "Aktiviere Markierung Zugbeginn",
+				"hint": "Wenn dies eingeschaltet ist, wird eine Markierung an die Stelle gesetzt, an der das Token seinen Zug begonnen hat"
+			},
+			"startImage": {
+				"name": "Benutzerdefiniertes Bild",
+				"hint": "Verwende ein eigenes Bild für die Zugbeginn-Markierung (Leer lassen, um eins der ausgelieferten Bilder zu verwenden)"
+			}
+		}
+	}
+}

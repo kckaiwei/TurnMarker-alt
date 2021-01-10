@@ -1,0 +1,117 @@
+<form autocomplete="off" onsubmit="event.preventDefault()">
+    <img src="./modules/turnmarker/assets/card.png" />
+    <!--Marker Image Options-->
+    <h2>{{localize 'tm.settings.formHeaders.imageOptions'}}</h2>
+    <div class="form-group">
+        <label>{{localize 'tm.settings.turnMarkerEnabled.name'}}</label>
+        <div class="form-fields">
+            <input id="turnMarkerEnabled" name="turnMarkerEnabled" type="checkbox"
+                {{#if turnMarkerEnabled}}checked="checked" {{/if}} />
+        </div>
+        <p class="notes"></p>
+    </div>
+    <div class="form-group">
+        <label>{{localize 'tm.settings.image.name'}}:</label>
+        <div class="form-fields">
+            <select id="image" name="image">
+                {{#select image}}
+                {{#each image}}
+                <option value="{{@index}}" {{#if this.selected}}selected="selected" {{/if}}>{{this.value}}</option>
+                {{/each}}
+                {{/select}}
+            </select>
+        </div>
+        <p class="notes"></p>
+    </div>
+    <div class="form-group">
+        <label>{{localize 'tm.settings.customImage.name'}}:</label>
+        <div class="form-fields">
+            <button id="customImageButton" type="button" class="file-picker" data-type="imagevideo"
+                data-target="customImage" title="Browse Files" tabindex="-1">
+                <i class="fas fa-file-import fa-fw"></i>
+            </button>
+            <input id="customImage" name="customImage" type="text" value="{{customImage}}" />
+        </div>
+        <p class="notes">{{localize 'tm.settings.customImage.hint'}}</p>
+    </div>
+    <div class="form-group">
+        <label>{{localize 'tm.settings.ratio.name'}}</label>
+        <div class="form-fields">
+            <input id="ratio" name="ratio" type="text" value="{{ratio}}" />
+        </div>
+        <p class="notes">{{localize 'tm.settings.ratio.hint'}}</p>
+    </div>
+    <div class="form-group">
+        <label>Marker Preview</label>
+        <div class="form-fields">
+            <img class="hidden" width="286" id="markerImgPreview" src="{{previewPath}}" />
+            <video class="hidden" width="286" id="markerVideoPreview" src="{{previewPath}}" autoplay loop
+                controls></video>
+        </div>
+    </div>
+    <hr />
+    <!--Turn Announcements-->
+    <h2>{{localize 'tm.settings.formHeaders.turnAnnounce'}}</h2>
+    <div class="form-group">
+        <label>{{localize 'tm.settings.announce.name'}}</label>
+        <div class="form-fields">
+            <input name="announce" type="checkbox" {{#if announce}}checked="checked" {{/if}} />
+        </div>
+        <p class="notes">{{localize 'tm.settings.announce.hint'}}</p>
+    </div>
+    <div class="form-group">
+        <label>{{localize 'tm.settings.announceImage.name'}}</label>
+        <div class="form-fields">
+            <input name="announceImage" type="checkbox" {{#if announceImage}}checked="checked" {{/if}} />
+        </div>
+        <p class="notes">{{localize 'tm.settings.announceImage.hint'}}</p>
+    </div>
+   <div class="form-group">
+        <!-- Announcement Actor selection-->
+        <label>{{localize 'tm.settings.announcedActors.name'}}:</label>
+        <div class="form-fields">
+            <select id="announceActors" name="announceActors">
+                {{#select announceActors}}
+                {{#each announceActors}}
+                <option value="{{@index}}" {{#if this.selected}}selected="selected" {{/if}}>{{this.value}}</option>
+                {{/each}}
+                {{/select}}
+            </select>
+        </div>
+   <p class="notes">{{localize 'tm.settings.announcedActors.hint'}}</p>
+   <div class="form-group">
+        <label>{{localize 'tm.settings.announceTokenName.name'}}</label>
+        <div class="form-fields">
+            <input name="announceTokenName" type="checkbox" {{#if announceTokenName}}checked="checked" {{/if}} />
+        </div>
+        <p class="notes">{{localize 'tm.settings.announceTokenName.hint'}}</p>
+   </div>
+   </div>
+    <hr />
+    <!--Start Marker-->
+    <h2>{{localize 'tm.settings.formHeaders.startMarker'}}</h2>
+    <div class="form-group">
+        <label>{{localize 'tm.settings.startEnabled.name'}}</label>
+        <div class="form-fields">
+            <input name="startMarkerEnabled" type="checkbox" {{#if startMarkerEnabled}}checked="checked" {{/if}} />
+        </div>
+        <p class="notes">{{localize 'tm.settings.startEnabled.hint'}}</p>
+    </div>
+    <div class="form-group">
+        <label>{{localize 'tm.settings.startImage.name'}}:</label>
+        <div class="form-fields">
+            <button type="button" class="file-picker" data-type="imagevideo" data-target="startMarkerPath"
+                title="Browse Files" tabindex="-1">
+                <i class="fas fa-file-import fa-fw"></i>
+            </button>
+            <input name="startMarkerPath" type="text" value="{{startMarkerPath}}" />
+        </div>
+        <p class="notes">{{localize 'tm.settings.startImage.hint'}}</p>
+    </div>
+    <hr />
+    <!--Link and save button-->
+    <p>More information at <a href="https://brunhine.com/fvtt/turnmarker" target="_blank">Brunhine.com</a></p>
+    <button type="submit" name="submit">
+        <i class="far fa-save"></i> {{localize 'tm.settings.formHeaders.save'}}
+    </button>
+</form>

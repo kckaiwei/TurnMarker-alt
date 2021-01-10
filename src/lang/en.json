@@ -1,0 +1,65 @@
+{
+    "tm": {
+        "settings": {
+            "button": {
+                "name": "Turn Marker Global Settings",
+                "label": "Turn Marker"
+            },
+            "formTitles": {
+                "settings": "Turn Marker - Global Settings"
+            },
+            "formHeaders": {
+                "imageOptions": "Marker Image Options",
+                "turnAnnounce": "Turn Announcements",
+                "startMarker": "Start Marker",
+                "save": "Save Settings"
+            },
+            "turnMarkerEnabled": {
+                "name": "Enable Turn Marker"
+            },
+            "ratio": {
+                "name": "Image Ratio",
+                "hint": "As compared to the token size."
+            },
+            "animate": {
+                "name": "Animate Marker?",
+                "hint": "Use rotation animation on marker. (changes may not be visible until a new combat is started)"
+            },
+            "interval": {
+                "name": "Animation Speed",
+                "hint": "How fast to animate the rotation if enabled (recommended between 10 and 200)"
+            },
+            "image": {
+                "name": "Marker Image"
+            },
+            "announcedActors": {
+                "name": "Announced Actors",
+                "hint": "Who to announce in chat"
+            },
+            "announceTokenName": {
+                "name": "Use Token Name to announce",
+                "hint": "If enabled, will use Token name instead of Actor name"
+            },
+            "customImage": {
+                "name": "Custom Image Path",
+                "hint": "Use a custom image instead (leave blank to use a built in image)"
+            },
+            "announce": {
+                "name": "Announce Turns",
+                "hint": "If enabled, will send a chat message for the new combatant"
+            },
+            "announceImage": {
+                "name": "Include Token Image",
+                "hint": "If enabled, will include the token image in the turn announcements"
+            },
+            "startEnabled": {
+                "name": "Enable Start Marker",
+                "hint": "If enabled, will place a marker at the location a token started its turn"
+            },
+            "startImage": {
+                "name": "Custom Image Path",
+                "hint": "Use a custom image for the start marker (leave blank to use the built in image)"
+            }
+        }
+    }
+}

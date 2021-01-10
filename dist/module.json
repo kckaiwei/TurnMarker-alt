@@ -1,0 +1,44 @@
+{
+	"name": "turnmarker",
+	"title": "Turn Marker",
+	"description": "Displays a (optionally animated) marker on the token who's active turn it is. Originally by Brunhine",
+	"author": "kckaiwei",
+	"version": "2.6.9",
+	"minimumCoreVersion": "0.5.6",
+	"compatibleCoreVersion": "0.6.6",
+	"esmodules": [
+		"scripts/turnmarker.js"
+	],
+	"socket": true,
+	"styles": ["css/turnmarker.css"],
+	"languages": [
+		{
+			"lang": "en",
+			"name": "English",
+			"path": "lang/en.json"
+		},
+		{
+			"lang": "de",
+			"name": "German",
+			"path": "lang/de.json"
+		},
+		{
+			"lang": "ko",
+			"name": "Korean",
+			"path": "lang/ko.json"
+		},
+		{
+			"lang": "ja",
+			"name": " 日本語",
+			"path": "lang/ja.json"
+		},
+		{
+			"lang": "es",
+			"name": "Spanish",
+			"path": "lang/es.json"
+		}
+	],
+	"url": "https://github.com/kckaiwei/TurnMarker",
+	"manifest": "https://raw.githubusercontent.com/kckaiwei/TurnMarker/master/dist/module.json",
+	"download": "https://github.com/kckaiwei/TurnMarker/releases/download/v2.7.0/turnmarker.zip"
+}
