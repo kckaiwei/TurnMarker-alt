@@ -60,7 +60,7 @@ I've been developing on it on version 0.7.9, but haven't used it enough to deem 
 ## Feedback
 All feedback and suggestions are welcome. Please contact me on Discord (Brunhine#2182).
 
-Any issues, bugs, or feature requests are always welcome to be reported directly to the [Issue Tracker](https://github.com/kckaiwei/TurnMarker/issues "Issue Tracker")
+Any issues, bugs, or feature requests are always welcome to be reported directly to the [Issue Tracker](https://github.com/kckaiwei/TurnMarker-alt/issues "Issue Tracker")
 
 ## Support Development
 Want to help improve the module? Send a pull request.
