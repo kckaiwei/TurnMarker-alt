@@ -4,8 +4,8 @@
 	"description": "Displays a (optionally animated) marker on the token who's active turn it is. Originally by Brunhine",
 	"author": "kckaiwei",
 	"version": "2.7.0",
-	"minimumCoreVersion": "0.5.6",
-	"compatibleCoreVersion": "0.6.6",
+	"minimumCoreVersion": "0.7.5",
+	"compatibleCoreVersion": "0.7.9",
 	"esmodules": [
 		"scripts/turnmarker.js"
 	],
