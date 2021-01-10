@@ -1,6 +1,10 @@
 {
-    "tm": {
-        "settings": {
+    "tm-alt": {
+        "I18N": {
+            "LANGUAGE": "Español",
+            "MAINTAINERS": "@Viriato139ac#0342"
+        },
+		"settings": {
             "button": {
                 "name": "Ajustes Globales de Marcador de Turno",
                 "label": "Marcador de Turno (Turn Marker)"
@@ -31,6 +35,14 @@
             },
             "image": {
                 "name": "Imagen del Marcador"
+            },
+            "announcedActors": {
+                "name": "Actores que se Anuncian",
+                "hint": "A quien se debe anunciar en el chat"
+            },
+            "announceTokenName": {
+                "name": "Usar el Nombre del Icono al Anunciar",
+                "hint": "Si es habilita, se usará el nombre del Icono en lugar del nombre del Actor"
             },
             "customImage": {
                 "name": "Ruta a la Imagen Personalizada",
