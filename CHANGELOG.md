@@ -1,3 +1,15 @@
+# 2.7.0
+- - Added Turn announcement filtering
+  - Turns announced for everyone
+  - Turns announced for players (and player owned tokens) only
+  - Turns announced for GM only (any not player owned tokens
+  - Turns announced for players (and player owned tokens), with GM owned tokens showing Image announcement only (with ??? name)
+- Added Option for switching between showing Token Name or Actor Name
+
+- Updated Spanish translations
+
+- Fixed a bug with console error messages.
+
 # 2.6.9
 - Fix console error when moving token outside of combat
 
