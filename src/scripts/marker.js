@@ -52,22 +52,23 @@ export class Marker {
      * Deletes any tiles flagged as a 'Start Marker' from the canvas
      */
     static async deleteStartMarker() {
-        for (let tile of canvas.scene.getEmbeddedCollection('Tile')) {
-            if (tile.flags.startMarker) {
-                await canvas.scene.deleteEmbeddedEntity('Tile', tile._id);
-            }
-        }
+        const to_delete = canvas.scene.getEmbeddedCollection('Tile')
+          .filter(tile => tile.flags.startMarker)
+          .map(tile => tile._id);
+        await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
     }
 
     /**
      * If enabled in settings, place a "start" marker under the token where their turn started.
      * @param {String} tokenId - The ID of the token to place the start marker under
+     * @param {int} xCoord - The X coordinate of where the token was last update to make adjustments
+     * @param {int} yCoord - The Y coordinate of where the token was last update to make adjustments
      */
-    static async placeStartMarker(tokenId) {
+    static async placeStartMarker(tokenId, xCoord, yCoord) {
         if (Settings.getStartMarkerEnabled()) {
             let token = findTokenById(tokenId);
             let dims = this.getImageDimensions(token);
-            let center = this.getImageLocation(token);
+            let center = this.getImageLocation(token, false, xCoord, yCoord);
             let newTile = new Tile({
                 img: Settings.getStartMarker(),
                 width: dims.w,
@@ -120,7 +121,7 @@ export class Marker {
     static async clearAllMarkers() {
         let tiles = canvas.scene.getEmbeddedCollection('Tile');
 
-        for (var tile of tiles) {
+        for (let tile of tiles) {
             if (tile.flags.turnMarker || tile.flags.startMarker) {
                 await canvas.scene.deleteEmbeddedEntity('Tile', tile._id);
             }
@@ -179,24 +180,32 @@ export class Marker {
     /**
      * Gets the proper location of the marker tile taking into account the current grid layout
      * @param {object} token - The token that the tile should be placed under
+     * @param {int} overrideX - The X coordinate of where the token was last update to make adjustments
+     * @param {int} overrideY - The Y coordinate of where the token was last update to make adjustments
      */
-    static getImageLocation(token, ignoreRatio = false) {
+    static getImageLocation(token, ignoreRatio = false, overrideX= null, overrideY= null) {
         let ratio = ignoreRatio ? 1 : Settings.getRatio();
         let newX = 0;
         let newY = 0;
+        let centerX = token.center.x;
+        let centerY = token.center.y;
+        if (overrideX && overrideY) {
+            centerX = Math.abs(token.center.x - token.x) + overrideX;
+            centerY = Math.abs(token.center.y - token.y) + overrideY;
+        }
 
         switch (canvas.grid.type) {
             case 2: case 3: // Hex Rows
-                newX = token.center.x - ((token.h * ratio) / 2);
-                newY = token.center.y - ((token.h * ratio) / 2);
+                newX = centerX - ((token.h * ratio) / 2);
+                newY = centerY - ((token.h * ratio) / 2);
                 break;
             case 4: case 5: // Hex Columns
-                newX = token.center.x - ((token.w * ratio) / 2);
-                newY = token.center.y - ((token.w * ratio) / 2);
+                newX = centerX - ((token.w * ratio) / 2);
+                newY = centerY - ((token.w * ratio) / 2);
                 break;
             default: // Gridless and Square
-                newX = token.center.x - ((token.w * ratio) / 2);
-                newY = token.center.y - ((token.h * ratio) / 2);
+                newX = centerX - ((token.w * ratio) / 2);
+                newY = centerY - ((token.h * ratio) / 2);
         }
 
         return { x: newX, y: newY };

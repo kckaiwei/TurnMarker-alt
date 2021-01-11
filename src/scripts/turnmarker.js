@@ -9,6 +9,9 @@ let animator;
 let markerId;
 let lastTurn = '';
 
+let activeToken = '';
+let lastCoords = {};
+
 Hooks.on('ready', async () => {
     Settings.registerSettings();
     let marker = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
@@ -51,19 +54,11 @@ Hooks.on('createTile', (scene, tile) => {
     }
 });
 
-Hooks.on('preUpdateToken', async (scene, token) => {
-    if (game.combat != null && game.combat.turn != -1) {
-        if (token._id == game.combat.combatant.token._id && !canvas.scene.getFlag(FlagScope, Flags.startMarkerPlaced)) {
-            await Marker.placeStartMarker(game.combat.combatant.token._id);
-        }
-    }
-});
-
 Hooks.on('updateCombat', async (combat, update) => {
     // Clear out any leftovers, there seems to be a buggy instance where updateCombat is fired, when combat isn't
     // started nor, is a turn changed
     if (!combat.started) {
-        Marker.deleteStartMarker();
+        await Marker.deleteStartMarker();
     }
     if (combat.combatant) {
         if (update && lastTurn != combat.combatant._id && game.user.isGM && game.userId == firstGM()) {
@@ -76,11 +71,11 @@ Hooks.on('updateCombat', async (combat, update) => {
                     animator = result.animator;
                 }
                 if (Settings.getTurnMarkerEnabled()) {
-                    Marker.deleteStartMarker();
+                    await Marker.deleteStartMarker();
                     canvas.scene.unsetFlag(FlagScope, Flags.startMarkerPlaced);
                 }
                 if (Settings.shouldAnnounceTurns() && !combat.combatant.hidden) {
-                    switch (Settings.getAnnounceActors()){
+                    switch (Settings.getAnnounceActors()) {
                         case 0:
                             Chatter.sendTurnMessage(combat.combatant);
                             break;
@@ -105,22 +100,34 @@ Hooks.on('updateCombat', async (combat, update) => {
 
 Hooks.on('deleteCombat', async () => {
     if (game.user.isGM) {
-        Marker.clearAllMarkers();
+        await Marker.clearAllMarkers();
     }
     MarkerAnimation.stopAnimation(animator);
 });
 
-Hooks.on('updateToken', (scene, updateToken, updateData) => {
+Hooks.on('updateToken', async (scene, updateToken, updateData) => {
+    activeToken = updateToken._id;
+    /*
+    Moving preUpdateToken logic here, since pre hooks induce race conditions
+     */
+    if (game.combat != null && game.combat.turn != -1) {
+        if (updateToken._id == game.combat.combatant.token._id && !canvas.scene.getFlag(FlagScope, Flags.startMarkerPlaced)) {
+            await Marker.placeStartMarker(game.combat.combatant.token._id, lastCoords['x'], lastCoords['y']);
+        }
+    }
+
     let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
     if (tile) {
         if ((updateData.x || updateData.y || updateData.width || updateData.height || updateData.hidden) &&
             (game && game.combat && game.combat.combatant && game.combat.combatant.tokenId == updateToken._id) &&
             game.user.isGM && game.combat) {
-            Marker.moveMarkerToToken(updateToken._id, tile.id);
+            await Marker.moveMarkerToToken(updateToken._id, tile.id);
             tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
             tile.parent.sortChildren();
         }
     }
+    lastCoords['x'] = updateToken.x;
+    lastCoords['y'] = updateToken.y;
 });
 
 Hooks.on('updateTile', () => {
