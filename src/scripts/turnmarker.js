@@ -60,10 +60,15 @@ Hooks.on('preUpdateToken', async (scene, token) => {
 });
 
 Hooks.on('updateCombat', async (combat, update) => {
+    // Clear out any leftovers, there seems to be a buggy instance where updateCombat is fired, when combat isn't
+    // started nor, is a turn changed
+    if (!combat.started) {
+        Marker.deleteStartMarker();
+    }
     if (combat.combatant) {
         if (update && lastTurn != combat.combatant._id && game.user.isGM && game.userId == firstGM()) {
             lastTurn = combat.combatant._id;
-            if (combat && combat.combatant) {
+            if (combat && combat.combatant && combat.started) {
                 let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
                 let result = await Marker.placeTurnMarker(combat.combatant.token._id, (tile && tile.id) || undefined);
                 if (result) {
