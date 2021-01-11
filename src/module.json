@@ -1,6 +1,6 @@
 {
-	"name": "turnmarker-alt",
-	"title": "Turn Marker Alt",
+	"name": "turnmarker",
+	"title": "Turn Marker",
 	"description": "Displays a (optionally animated) marker on the token who's active turn it is. Originally by Brunhine",
 	"author": "kckaiwei",
 	"version": "2.7.0",
