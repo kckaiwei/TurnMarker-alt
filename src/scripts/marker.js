@@ -85,11 +85,6 @@ export class Marker {
             if (game.user.isGM) {
                 canvas.scene.createEmbeddedEntity('Tile', newTile.data);
                 canvas.scene.setFlag(FlagScope, Flags.startMarkerPlaced, true);
-            } else {
-                game.socket.emit(socketName, {
-                    mode: socketAction.placeStartMarker,
-                    tileData: newTile.data
-                });
             }
         }
     }
