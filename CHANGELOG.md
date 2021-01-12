@@ -1,3 +1,7 @@
+# 2.7.1
+- Fixed issue with start markers being left over
+- Fixed issue with turn marker showing when combat has not started
+
 # 2.7.0
 - - Added Turn announcement filtering
   - Turns announced for everyone
