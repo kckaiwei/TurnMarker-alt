@@ -52,11 +52,10 @@ export class Marker {
      * Deletes any tiles flagged as a 'Start Marker' from the canvas
      */
     static async deleteStartMarker() {
-        for (let tile of canvas.scene.getEmbeddedCollection('Tile')) {
-            if (tile.flags.startMarker) {
-                await canvas.scene.deleteEmbeddedEntity('Tile', tile._id);
-            }
-        }
+        const to_delete = canvas.scene.getEmbeddedCollection('Tile')
+          .filter(tile => tile.flags.startMarker)
+          .map(tile => tile._id);
+        await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
     }
 
     /**
@@ -84,11 +83,6 @@ export class Marker {
             if (game.user.isGM) {
                 canvas.scene.createEmbeddedEntity('Tile', newTile.data);
                 canvas.scene.setFlag(FlagScope, Flags.startMarkerPlaced, true);
-            } else {
-                game.socket.emit(socketName, {
-                    mode: socketAction.placeStartMarker,
-                    tileData: newTile.data
-                });
             }
         }
     }
@@ -120,7 +114,7 @@ export class Marker {
     static async clearAllMarkers() {
         let tiles = canvas.scene.getEmbeddedCollection('Tile');
 
-        for (var tile of tiles) {
+        for (let tile of tiles) {
             if (tile.flags.turnMarker || tile.flags.startMarker) {
                 await canvas.scene.deleteEmbeddedEntity('Tile', tile._id);
             }
