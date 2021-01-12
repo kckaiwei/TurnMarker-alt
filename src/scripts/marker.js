@@ -61,14 +61,12 @@ export class Marker {
     /**
      * If enabled in settings, place a "start" marker under the token where their turn started.
      * @param {String} tokenId - The ID of the token to place the start marker under
-     * @param {int} xCoord - The X coordinate of where the token was last update to make adjustments
-     * @param {int} yCoord - The Y coordinate of where the token was last update to make adjustments
      */
-    static async placeStartMarker(tokenId, xCoord, yCoord) {
+    static async placeStartMarker(tokenId) {
         if (Settings.getStartMarkerEnabled()) {
             let token = findTokenById(tokenId);
             let dims = this.getImageDimensions(token);
-            let center = this.getImageLocation(token, false, xCoord, yCoord);
+            let center = this.getImageLocation(token);
             let newTile = new Tile({
                 img: Settings.getStartMarker(),
                 width: dims.w,
@@ -175,32 +173,24 @@ export class Marker {
     /**
      * Gets the proper location of the marker tile taking into account the current grid layout
      * @param {object} token - The token that the tile should be placed under
-     * @param {int} overrideX - The X coordinate of where the token was last update to make adjustments
-     * @param {int} overrideY - The Y coordinate of where the token was last update to make adjustments
      */
-    static getImageLocation(token, ignoreRatio = false, overrideX= null, overrideY= null) {
+    static getImageLocation(token, ignoreRatio = false) {
         let ratio = ignoreRatio ? 1 : Settings.getRatio();
         let newX = 0;
         let newY = 0;
-        let centerX = token.center.x;
-        let centerY = token.center.y;
-        if (overrideX && overrideY) {
-            centerX = Math.abs(token.center.x - token.x) + overrideX;
-            centerY = Math.abs(token.center.y - token.y) + overrideY;
-        }
 
         switch (canvas.grid.type) {
             case 2: case 3: // Hex Rows
-                newX = centerX - ((token.h * ratio) / 2);
-                newY = centerY - ((token.h * ratio) / 2);
+                newX = token.center.x - ((token.h * ratio) / 2);
+                newY = token.center.y - ((token.h * ratio) / 2);
                 break;
             case 4: case 5: // Hex Columns
-                newX = centerX - ((token.w * ratio) / 2);
-                newY = centerY - ((token.w * ratio) / 2);
+                newX = token.center.x - ((token.w * ratio) / 2);
+                newY = token.center.y - ((token.w * ratio) / 2);
                 break;
             default: // Gridless and Square
-                newX = centerX - ((token.w * ratio) / 2);
-                newY = centerY - ((token.h * ratio) / 2);
+                newX = token.center.x - ((token.w * ratio) / 2);
+                newY = token.center.y - ((token.h * ratio) / 2);
         }
 
         return { x: newX, y: newY };
