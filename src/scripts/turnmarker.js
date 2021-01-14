@@ -43,7 +43,7 @@ Hooks.on('createTile', (scene, data) => {
                 animator = MarkerAnimation.startAnimation(animator, markerId);
             }
         }
-        tile.visible = isVisible(tile);
+        tile.renderable = isVisible(tile);
     }
 });
 
@@ -151,7 +151,7 @@ Hooks.on('updateTile', (entity, data, options, userId) => {
     if (data.flags.turnMarker || data.flags.startMarker) {
         const tile = canvas.tiles.placeables.find(t => t.id === data._id);
         if (tile) {
-            tile.visible = isVisible(tile);
+            tile.renderable = isVisible(tile);
         }
     }
 });
@@ -159,7 +159,7 @@ Hooks.on('updateTile', (entity, data, options, userId) => {
 Hooks.on('sightRefresh', () => {
     for (const tile of canvas.tiles.placeables) {
         if (tile.data.flags.turnMarker || tile.data.flags.startMarker) {
-            tile.visible = isVisible(tile);
+            tile.renderable = isVisible(tile);
         }
     }
 });
