@@ -9,9 +9,11 @@ let animator;
 let markerId;
 let lastTurn = '';
 
-
-Hooks.on('ready', async () => {
+Hooks.once('init', () => {
     Settings.registerSettings();
+});
+
+Hooks.once('ready', () => {
     let marker = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
     if (marker && marker.id) {
         markerId = marker.id;
