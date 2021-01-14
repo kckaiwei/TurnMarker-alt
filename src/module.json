@@ -6,6 +6,7 @@
 	"version": "2.7.1",
 	"minimumCoreVersion": "0.7.5",
 	"compatibleCoreVersion": "0.7.9",
+	"manifestPlusVersion": "1.0.0",
 	"esmodules": [
 		"scripts/turnmarker.js"
 	],
@@ -36,6 +37,17 @@
 			"lang": "es",
 			"name": "Spanish",
 			"path": "lang/es.json"
+		}
+	],
+	"media": [
+		{
+			"type": "cover",
+			"url": "https://brunhine.com/assets/img/turnmarker/card.png"
+		},
+		{
+			"type": "video",
+			"url": "https://brunhine.com/assets/img/turnmarker/example.webm",
+			"loop": true
 		}
 	],
 	"url": "https://github.com/kckaiwei/TurnMarker-alt",
