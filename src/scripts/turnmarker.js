@@ -31,15 +31,19 @@ Hooks.on('canvasReady', () => {
     }
 });
 
-Hooks.on('createTile', (scene, tile) => {
-    if (tile.flags.turnMarker == true) {
-        tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
-        tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
-        tile.parent.sortChildren();
-        if (!game.paused && Settings.getShouldAnimate()) {
-            MarkerAnimation.startAnimation();
+Hooks.on('createTile', (scene, data) => {
+    if (data.flags.turnMarker == true || data.flags.startMarker == true) {
+        const tile = canvas.tiles.placeables.find(t => t.id === data._id);
+        if (tile) {
+            if (data.flags.turnMarker == true) {
+                tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
+                tile.parent.sortChildren();
+                if (!game.paused && Settings.getShouldAnimate()) {
+                    MarkerAnimation.startAnimation();
+                }
+            }
+            tile.renderable = isVisible(tile);
         }
-        tile.renderable = isVisible(tile);
     }
 });
 
