@@ -15,7 +15,7 @@ export class Marker {
      */
     static async placeTurnMarker(tokenId, markerId) {
         if (!markerId) {
-            this.clearAllMarkers();
+            await this.clearAllMarkers();
 
             if (Settings.getTurnMarkerEnabled()) {
                 let token = findTokenById(tokenId);
@@ -43,7 +43,7 @@ export class Marker {
                 return null;
             }
         } else {
-            this.moveMarkerToToken(tokenId, markerId);
+            await this.moveMarkerToToken(tokenId, markerId);
             return markerId;
         }
     }
@@ -81,8 +81,8 @@ export class Marker {
             });
 
             if (game.user.isGM) {
-                canvas.scene.createEmbeddedEntity('Tile', newTile.data);
-                canvas.scene.setFlag(FlagScope, Flags.startMarkerPlaced, true);
+                await canvas.scene.createEmbeddedEntity('Tile', newTile.data);
+                await canvas.scene.setFlag(FlagScope, Flags.startMarkerPlaced, true);
             }
         }
     }
@@ -124,11 +124,11 @@ export class Marker {
     /**
      * Updates the tile image when the image path has changed
      */
-    static updateImagePath() {
+    static async updateImagePath() {
         if (game.user.isGM) {
             let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
             if (tile) {
-                canvas.scene.updateEmbeddedEntity('Tile', {
+                await canvas.scene.updateEmbeddedEntity('Tile', {
                     _id: tile.id,
                     img: Settings.getImagePath()
                 });
@@ -139,9 +139,9 @@ export class Marker {
     /**
      * Completely resets the turn marker - deletes all tiles and stops any animation
      */
-    static reset() {
-        MarkerAnimation.stopAnimation();
-        this.clearAllMarkers();
+    static async reset(animator) {
+        MarkerAnimation.stopAnimation(animator);
+        await this.clearAllMarkers();
     }
 
     /**
