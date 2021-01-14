@@ -75,11 +75,11 @@ Run `npm install` to install `gulp`
 When you're done making changes, run `gulp build` to recompile the `dist` folder
 
 ## Licensing
-**Turn Msrker** is a module for [Foundry VTT](https://foundryvtt.com/ "Foundry VTT") by Jeremiah Altepeter and is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
+**Turn Marker** is a module for [Foundry VTT](https://foundryvtt.com/ "Foundry VTT") by Jeremiah Altepeter (Brunhine) and is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
 
 This work is licensed under Foundry Virtual Tabletop [EULA - Limited License Agreement for module development v 0.1.6](https://foundryvtt.com/article/license/).
 
 The included images are created by [Rin](https://foundryvtt.com/community/rin) (rin#0002 on Discord)
 
 ## Credits
-Originally create by [Bruhine](https://github.com/Brunhine/TurnMarker)
+Originally created by [Bruhine](https://github.com/Brunhine/TurnMarker)

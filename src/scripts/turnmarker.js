@@ -8,7 +8,6 @@ import { firstGM, Flags, FlagScope, socketAction, socketName } from './utils.js'
 
 let lastTurn = '';
 
-
 Hooks.once('init', () => {
     Settings.registerSettings();
 });
@@ -40,6 +39,7 @@ Hooks.on('createTile', (scene, tile) => {
         if (!game.paused && Settings.getShouldAnimate()) {
             MarkerAnimation.startAnimation();
         }
+        tile.renderable = isVisible(tile);
     }
 });
 
@@ -107,14 +107,50 @@ Hooks.on('updateToken', async (scene, updateToken, updateData) => {
     }
 });
 
-Hooks.on('updateTile', async () => {
-    if (canvas.scene.data.tokenVision) {
-        let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
+function isVisible(tile) {
+    if (tile.data.hidden) {
+        return game.user.isGM;
+    }
+
+    if (!canvas.sight.tokenVision) {
+        return true;
+    }
+
+    if (tile._controlled) {
+        return true;
+    }
+
+    const combatant = canvas.tokens.placeables.find(t => t.id === game.combat.combatant.tokenId);
+
+    if (!combatant || combatant.data.hidden) {
+        return game.user.isGM;
+    }
+
+    if (combatant._controlled) {
+        return true;
+    }
+
+    const ratio = Settings.getRatio();
+    const w = tile.data.width / ratio;
+    const h = tile.data.height / ratio;
+    const tolerance = Math.min(w, h) / 4;
+
+    return canvas.sight.testVisibility(tile.center, { tolerance, object: tile });
+}
+
+Hooks.on('updateTile', (entity, data, options, userId) => {
+    if (data.flags.turnMarker || data.flags.startMarker) {
+        const tile = canvas.tiles.placeables.find(t => t.id === data._id);
         if (tile) {
-            let combatant = canvas.tokens.placeables.find(x => x.id == game.combat.combatant.tokenId);
-            if (combatant && !combatant.data.hidden) {
-                tile.visible = canvas.sight.testVisibility(combatant.center, { tolerance: canvas.dimensions.size / 4 });
-            }
+            tile.renderable = isVisible(tile);
+        }
+    }
+});
+
+Hooks.on('sightRefresh', () => {
+    for (const tile of canvas.tiles.placeables) {
+        if (tile.data.flags.turnMarker || tile.data.flags.startMarker) {
+            tile.renderable = isVisible(tile);
         }
     }
 });
