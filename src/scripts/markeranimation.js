@@ -2,23 +2,24 @@ import { Settings } from './settings.js';
 
 export class MarkerAnimation {
     /**
-     * Starts the animation loop for the specified tile
-     * @param {object} animator - The animator object
-     * @param {String} tileId - The ID of the tile currently serving as the turn marker 
+     * Starts the animation loop
      */
-    static startAnimation(animator, tileId) {
-        let tile = canvas.scene.getEmbeddedEntity('Tile', tileId);
-        animator = this.animateRotation.bind(tile);
-        canvas.app.ticker.add(animator);
-        return animator;
+    static startAnimation() {
+        if (!this.animator) {
+            this.animator = this.animateRotation.bind(this);
+            canvas.app.ticker.add(this.animator);
+        }
+        return this.animator;
     }
 
     /**
-     * Stops the animation loop for the specified tile
-     * @param {object} animator - The animator object
+     * Stops the animation loop
      */
-    static stopAnimation(animator) {
-        canvas.app.ticker.remove(animator);
+    static stopAnimation() {
+        if (this.animator) {
+            canvas.app.ticker.remove(this.animator);
+            delete this.animator;
+        }
     }
 
     /**

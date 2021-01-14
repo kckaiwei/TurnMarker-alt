@@ -5,24 +5,14 @@ import { Settings } from './settings.js';
 import { renderUpdateWindow } from './updateWindow.js';
 import { firstGM, Flags, FlagScope, socketAction, socketName } from './utils.js';
 
-let animator;
-let markerId;
+
 let lastTurn = '';
 
-
-Hooks.on('ready', async () => {
+Hooks.once('init', () => {
     Settings.registerSettings();
-    let marker = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
-    if (marker && marker.id) {
-        markerId = marker.id;
-        let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
-        tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
-        tile.parent.sortChildren();
-        if (!game.paused && Settings.getShouldAnimate()) {
-            animator = MarkerAnimation.startAnimation(animator, markerId);
-        }
-    }
+});
 
+Hooks.once('ready', () => {
     if (game.user.isGM) {
         if (isNewerVersion(game.modules.get("turnmarker").data.version, Settings.getVersion())) {
             renderUpdateWindow();
@@ -30,18 +20,28 @@ Hooks.on('ready', async () => {
     }
 });
 
-Hooks.on('createTile', (scene, tile) => {
-    if (tile.flags.turnMarker == true) {
-        markerId = tile._id;
-        tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
+Hooks.on('canvasReady', () => {
+    let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
+    if (tile) {
         tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
         tile.parent.sortChildren();
-        if (Settings.getShouldAnimate()) {
-            animator = MarkerAnimation.startAnimation(animator, markerId);
+        if (!game.paused && Settings.getShouldAnimate()) {
+            MarkerAnimation.startAnimation();
         }
     }
 });
 
+Hooks.on('createTile', (scene, tile) => {
+    if (tile.flags.turnMarker == true) {
+        tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
+        tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
+        tile.parent.sortChildren();
+        if (!game.paused && Settings.getShouldAnimate()) {
+            MarkerAnimation.startAnimation();
+        }
+        tile.renderable = isVisible(tile);
+    }
+});
 
 Hooks.on('updateCombat', async (combat, update) => {
     // Clear out any leftovers, there seems to be a buggy instance where updateCombat is fired, when combat isn't
@@ -55,11 +55,7 @@ Hooks.on('updateCombat', async (combat, update) => {
             if (combat && combat.combatant && combat.started) {
                 await Marker.placeStartMarker(game.combat.combatant.token._id)
                 let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
-                let result = await Marker.placeTurnMarker(combat.combatant.token._id, (tile && tile.id) || undefined);
-                if (result) {
-                    markerId = result.markerId;
-                    animator = result.animator;
-                }
+                await Marker.placeTurnMarker(combat.combatant.token._id, (tile && tile.id) || undefined);
                 if (Settings.getTurnMarkerEnabled()) {
                     await Marker.deleteStartMarker();
                     canvas.scene.unsetFlag(FlagScope, Flags.startMarkerPlaced);
@@ -92,7 +88,7 @@ Hooks.on('deleteCombat', async () => {
     if (game.user.isGM) {
         await Marker.clearAllMarkers();
     }
-    MarkerAnimation.stopAnimation(animator);
+    MarkerAnimation.stopAnimation();
 });
 
 Hooks.on('updateToken', async (scene, updateToken, updateData) => {
@@ -111,24 +107,58 @@ Hooks.on('updateToken', async (scene, updateToken, updateData) => {
     }
 });
 
-Hooks.on('updateTile', async () => {
-    if (canvas.scene.data.tokenVision) {
-        let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
+function isVisible(tile) {
+    if (tile.data.hidden) {
+        return game.user.isGM;
+    }
+
+    if (!canvas.sight.tokenVision) {
+        return true;
+    }
+
+    if (tile._controlled) {
+        return true;
+    }
+
+    const combatant = canvas.tokens.placeables.find(t => t.id === game.combat.combatant.tokenId);
+
+    if (!combatant || combatant.data.hidden) {
+        return game.user.isGM;
+    }
+
+    if (combatant._controlled) {
+        return true;
+    }
+
+    const ratio = Settings.getRatio();
+    const w = tile.data.width / ratio;
+    const h = tile.data.height / ratio;
+    const tolerance = Math.min(w, h) / 4;
+
+    return canvas.sight.testVisibility(tile.center, { tolerance, object: tile });
+}
+
+Hooks.on('updateTile', (entity, data, options, userId) => {
+    if (data.flags.turnMarker || data.flags.startMarker) {
+        const tile = canvas.tiles.placeables.find(t => t.id === data._id);
         if (tile) {
-            let combatant = canvas.tokens.placeables.find(x => x.id == game.combat.combatant.tokenId);
-            if (combatant && !combatant.data.hidden) {
-                tile.visible = canvas.sight.testVisibility(combatant.center, { tolerance: canvas.dimensions.size / 4 });
-            }
+            tile.renderable = isVisible(tile);
         }
     }
 });
 
-Hooks.on('pauseGame', async (isPaused) => {
-    if (markerId && Settings.getShouldAnimate()) {
-        if (isPaused) {
-            MarkerAnimation.stopAnimation(animator);
-        } else {
-            animator = MarkerAnimation.startAnimation(animator, markerId);
+Hooks.on('sightRefresh', () => {
+    for (const tile of canvas.tiles.placeables) {
+        if (tile.data.flags.turnMarker || tile.data.flags.startMarker) {
+            tile.renderable = isVisible(tile);
         }
+    }
+});
+
+Hooks.on('pauseGame', (isPaused) => {
+    if (!isPaused && Settings.getShouldAnimate() && canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true)) {
+        MarkerAnimation.startAnimation();
+    } else {
+        MarkerAnimation.stopAnimation();
     }
 });

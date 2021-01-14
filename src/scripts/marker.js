@@ -138,7 +138,6 @@ export class Marker {
 
     /**
      * Completely resets the turn marker - deletes all tiles and stops any animation
-     * @param {Object} animator - The animator object
      */
     static async reset(animator) {
         MarkerAnimation.stopAnimation(animator);
