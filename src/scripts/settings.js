@@ -1,4 +1,5 @@
 import { Marker } from './marker.js';
+import { MarkerAnimation } from './markeranimation.js';
 import { SettingsForm } from './settingsForm.js';
 import { modName } from './utils.js';
 
@@ -243,6 +244,13 @@ export class Settings {
             config: true,
             type: Boolean,
             default: true,
+            onChange: shouldAnimate => {
+                if (!game.paused && shouldAnimate && canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true)) {
+                    MarkerAnimation.startAnimation();
+                } else {
+                    MarkerAnimation.stopAnimation();
+                }
+            }
         });
 
         game.settings.register(modName, interval, {

@@ -5,24 +5,15 @@ import { Settings } from './settings.js';
 import { renderUpdateWindow } from './updateWindow.js';
 import { firstGM, Flags, FlagScope, socketAction, socketName } from './utils.js';
 
-let animator;
-let markerId;
+
 let lastTurn = '';
 
 
-Hooks.on('ready', async () => {
+Hooks.once('init', () => {
     Settings.registerSettings();
-    let marker = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
-    if (marker && marker.id) {
-        markerId = marker.id;
-        let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
-        tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
-        tile.parent.sortChildren();
-        if (!game.paused && Settings.getShouldAnimate()) {
-            animator = MarkerAnimation.startAnimation(animator, markerId);
-        }
-    }
+});
 
+Hooks.once('ready', () => {
     if (game.user.isGM) {
         if (isNewerVersion(game.modules.get("turnmarker").data.version, Settings.getVersion())) {
             renderUpdateWindow();
@@ -30,18 +21,27 @@ Hooks.on('ready', async () => {
     }
 });
 
-Hooks.on('createTile', (scene, tile) => {
-    if (tile.flags.turnMarker == true) {
-        markerId = tile._id;
-        tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
+Hooks.on('canvasReady', () => {
+    let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
+    if (tile) {
         tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
         tile.parent.sortChildren();
-        if (Settings.getShouldAnimate()) {
-            animator = MarkerAnimation.startAnimation(animator, markerId);
+        if (!game.paused && Settings.getShouldAnimate()) {
+            MarkerAnimation.startAnimation();
         }
     }
 });
 
+Hooks.on('createTile', (scene, tile) => {
+    if (tile.flags.turnMarker == true) {
+        tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
+        tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
+        tile.parent.sortChildren();
+        if (!game.paused && Settings.getShouldAnimate()) {
+            MarkerAnimation.startAnimation();
+        }
+    }
+});
 
 Hooks.on('updateCombat', async (combat, update) => {
     // Clear out any leftovers, there seems to be a buggy instance where updateCombat is fired, when combat isn't
@@ -55,11 +55,7 @@ Hooks.on('updateCombat', async (combat, update) => {
             if (combat && combat.combatant && combat.started) {
                 await Marker.placeStartMarker(game.combat.combatant.token._id)
                 let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
-                let result = await Marker.placeTurnMarker(combat.combatant.token._id, (tile && tile.id) || undefined);
-                if (result) {
-                    markerId = result.markerId;
-                    animator = result.animator;
-                }
+                await Marker.placeTurnMarker(combat.combatant.token._id, (tile && tile.id) || undefined);
                 if (Settings.getTurnMarkerEnabled()) {
                     await Marker.deleteStartMarker();
                     canvas.scene.unsetFlag(FlagScope, Flags.startMarkerPlaced);
@@ -92,7 +88,7 @@ Hooks.on('deleteCombat', async () => {
     if (game.user.isGM) {
         await Marker.clearAllMarkers();
     }
-    MarkerAnimation.stopAnimation(animator);
+    MarkerAnimation.stopAnimation();
 });
 
 Hooks.on('updateToken', async (scene, updateToken, updateData) => {
@@ -123,12 +119,10 @@ Hooks.on('updateTile', async () => {
     }
 });
 
-Hooks.on('pauseGame', async (isPaused) => {
-    if (markerId && Settings.getShouldAnimate()) {
-        if (isPaused) {
-            MarkerAnimation.stopAnimation(animator);
-        } else {
-            animator = MarkerAnimation.startAnimation(animator, markerId);
-        }
+Hooks.on('pauseGame', (isPaused) => {
+    if (!isPaused && Settings.getShouldAnimate() && canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true)) {
+        MarkerAnimation.startAnimation();
+    } else {
+        MarkerAnimation.stopAnimation();
     }
 });
