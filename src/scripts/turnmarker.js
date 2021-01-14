@@ -32,15 +32,18 @@ Hooks.once('ready', () => {
     }
 });
 
-Hooks.on('createTile', (scene, tile) => {
-    if (tile.flags.turnMarker == true) {
-        markerId = tile._id;
-        tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
-        tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
-        tile.parent.sortChildren();
-        if (Settings.getShouldAnimate()) {
-            animator = MarkerAnimation.startAnimation(animator, markerId);
+Hooks.on('createTile', (scene, data) => {
+    if (data.flags.turnMarker || data.flags.startMarker) {
+        const tile = canvas.tiles.placeables.find(t => t.id === data._id);
+        if (data.flags.turnMarker) {
+            markerId = data._id;
+            tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
+            tile.parent.sortChildren();
+            if (Settings.getShouldAnimate()) {
+                animator = MarkerAnimation.startAnimation(animator, markerId);
+            }
         }
+        tile.renderable = isVisible(tile);
     }
 });
 
@@ -128,7 +131,7 @@ function isVisible(tile) {
 
     const combatant = canvas.tokens.placeables.find(t => t.id === game.combat.combatant.tokenId);
 
-    if (combatant?.data.hidden) {
+    if (!combatant || combatant.data.hidden) {
         return game.user.isGM;
     }
 
@@ -148,7 +151,7 @@ Hooks.on('updateTile', (entity, data, options, userId) => {
     if (data.flags.turnMarker || data.flags.startMarker) {
         const tile = canvas.tiles.placeables.find(t => t.id === data._id);
         if (tile) {
-            tile.visible = isVisible(tile);
+            tile.renderable = isVisible(tile);
         }
     }
 });
@@ -156,7 +159,7 @@ Hooks.on('updateTile', (entity, data, options, userId) => {
 Hooks.on('sightRefresh', () => {
     for (const tile of canvas.tiles.placeables) {
         if (tile.data.flags.turnMarker || tile.data.flags.startMarker) {
-            tile.visible = isVisible(tile);
+            tile.renderable = isVisible(tile);
         }
     }
 });
