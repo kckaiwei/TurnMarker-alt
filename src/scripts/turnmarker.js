@@ -131,7 +131,7 @@ function isVisible(tile) {
 
     const combatant = canvas.tokens.placeables.find(t => t.id === game.combat.combatant.tokenId);
 
-    if (combatant?.data.hidden) {
+    if (!combatant || combatant.data.hidden) {
         return game.user.isGM;
     }
 
