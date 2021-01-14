@@ -32,15 +32,18 @@ Hooks.once('ready', () => {
     }
 });
 
-Hooks.on('createTile', (scene, tile) => {
-    if (tile.flags.turnMarker == true) {
-        markerId = tile._id;
-        tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
-        tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
-        tile.parent.sortChildren();
-        if (Settings.getShouldAnimate()) {
-            animator = MarkerAnimation.startAnimation(animator, markerId);
+Hooks.on('createTile', (scene, data) => {
+    if (data.flags.turnMarker || data.flags.startMarker) {
+        const tile = canvas.tiles.placeables.find(t => t.id === data._id);
+        if (data.flags.turnMarker) {
+            markerId = data._id;
+            tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
+            tile.parent.sortChildren();
+            if (Settings.getShouldAnimate()) {
+                animator = MarkerAnimation.startAnimation(animator, markerId);
+            }
         }
+        tile.visible = isVisible(tile);
     }
 });
 
