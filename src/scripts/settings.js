@@ -339,7 +339,14 @@ export class Settings {
             config: false,
             type: Boolean,
             default: true,
-            restricted: true
+            restricted: true,
+            onChange: enabled => {
+                if (!enabled) {
+                    Marker.deleteTurnMarker();
+                } else if (game.combat && game.combat.combatant && game.combat.started) {
+                    Marker.placeTurnMarker(game.combat.combatant.token._id);
+                }
+            }
         });
 
         game.settings.register(modName, startMarkerEnabled, {
@@ -349,7 +356,14 @@ export class Settings {
             config: false,
             type: Boolean,
             default: false,
-            restricted: true
+            restricted: true,
+            onChange: enabled => {
+                if (!enabled) {
+                    Marker.deleteStartMarker();
+                } else if (game.combat && game.combat.combatant && game.combat.started) {
+                    Marker.placeStartMarker(game.combat.combatant.token._id);
+                }
+            }
         });
 
         game.settings.register(modName, startMarkerImage, {

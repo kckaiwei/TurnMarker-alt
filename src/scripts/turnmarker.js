@@ -57,13 +57,9 @@ Hooks.on('updateCombat', async (combat, update) => {
         if (update && lastTurn != combat.combatant._id && game.user.isGM && game.userId == firstGM()) {
             lastTurn = combat.combatant._id;
             if (combat && combat.combatant && combat.started) {
-                await Marker.placeStartMarker(game.combat.combatant.token._id)
+                await Marker.placeStartMarker(combat.combatant.token._id);
                 let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
                 await Marker.placeTurnMarker(combat.combatant.token._id, (tile && tile.id) || undefined);
-                if (Settings.getTurnMarkerEnabled()) {
-                    await Marker.deleteStartMarker();
-                    canvas.scene.unsetFlag(FlagScope, Flags.startMarkerPlaced);
-                }
                 if (Settings.shouldAnnounceTurns() && !combat.combatant.hidden) {
                     switch (Settings.getAnnounceActors()) {
                         case 0:
