@@ -8,6 +8,16 @@ import { findTokenById, Flags, FlagScope, socketAction, socketName } from './uti
 export class Marker {
 
     /**
+     * Deletes any tiles flagged as a 'Turn Marker' from the canvas
+     */
+    static async deleteTurnMarker() {
+        const to_delete = canvas.scene.getEmbeddedCollection('Tile')
+          .filter(tile => tile.flags.turnMarker)
+          .map(tile => tile._id);
+        await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
+    }
+
+    /**
      * Places a new turn marker under the token specified, and if required, starts the animation
      * @param {String} tokenId - The ID of the token where the marker should be placed
      * @param {Object} animator - The animator object
@@ -15,7 +25,7 @@ export class Marker {
      */
     static async placeTurnMarker(tokenId, markerId) {
         if (!markerId) {
-            await this.clearAllMarkers();
+            await this.deleteTurnMarker();
 
             if (Settings.getTurnMarkerEnabled()) {
                 let token = findTokenById(tokenId);
@@ -56,6 +66,7 @@ export class Marker {
           .filter(tile => tile.flags.startMarker)
           .map(tile => tile._id);
         await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
+        await canvas.scene.unsetFlag(FlagScope, Flags.startMarkerPlaced);
     }
 
     /**
@@ -63,6 +74,8 @@ export class Marker {
      * @param {String} tokenId - The ID of the token to place the start marker under
      */
     static async placeStartMarker(tokenId) {
+        await this.deleteStartMarker();
+
         if (Settings.getStartMarkerEnabled()) {
             let token = findTokenById(tokenId);
             let dims = this.getImageDimensions(token);
@@ -112,13 +125,8 @@ export class Marker {
      * Removes any existing turn marker and start marker tiles from the canvas
      */
     static async clearAllMarkers() {
-        let tiles = canvas.scene.getEmbeddedCollection('Tile');
-
-        for (let tile of tiles) {
-            if (tile.flags.turnMarker || tile.flags.startMarker) {
-                await canvas.scene.deleteEmbeddedEntity('Tile', tile._id);
-            }
-        }
+        await this.deleteTurnMarker();
+        await this.deleteStartMarker();
     }
 
     /**
@@ -139,8 +147,8 @@ export class Marker {
     /**
      * Completely resets the turn marker - deletes all tiles and stops any animation
      */
-    static async reset(animator) {
-        MarkerAnimation.stopAnimation(animator);
+    static async reset() {
+        MarkerAnimation.stopAnimation();
         await this.clearAllMarkers();
     }
 
