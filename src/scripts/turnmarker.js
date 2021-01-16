@@ -3,7 +3,7 @@ import {Marker} from './marker.js';
 import {MarkerAnimation} from './markeranimation.js';
 import {Settings} from './settings.js';
 import {renderUpdateWindow} from './updateWindow.js';
-import {firstGM, Flags, FlagScope, socketAction, socketName} from './utils.js';
+import {firstGM, Flags, FlagScope, socketAction, socketName, getNextTurn} from './utils.js';
 
 
 let lastTurn = '';
@@ -70,11 +70,7 @@ Hooks.on('updateCombat', async (combat, update) => {
         await Marker.deleteStartMarker();
     }
     if (combat.combatant) {
-        let currentTurn = combat.turn;
-        let nextTurn = currentTurn + 1;
-        if (nextTurn >= combat.turns.length) {
-            nextTurn = 0;
-        }
+        let nextTurn = getNextTurn(combat);
         if (update && lastTurn != combat.combatant._id && game.user.isGM && game.userId == firstGM()) {
             lastTurn = combat.combatant._id;
             if (combat && combat.combatant && combat.started) {

@@ -1,7 +1,7 @@
 import {Marker} from './marker.js';
 import {MarkerAnimation} from './markeranimation.js';
 import {SettingsForm} from './settingsForm.js';
-import {modName} from './utils.js';
+import {modName, getNextTurn} from './utils.js';
 
 const version = 'tm-version';
 const interval = 'interval';
@@ -470,7 +470,8 @@ export class Settings {
                 if (!enabled) {
                     Marker.deleteOnDeckMarker();
                 } else if (game.combat && game.combat.combatant && game.combat.started) {
-                    Marker.placeOnDeckMarker(game.combat.combatant.token._id);
+                    let nextTurn = getNextTurn(game.combat);
+                    Marker.placeOnDeckMarker(game.combat.turns[nextTurn].token._id);
                 }
             }
         });

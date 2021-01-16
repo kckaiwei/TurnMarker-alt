@@ -87,7 +87,6 @@ export class Marker {
 
             if (game.user.isGM) {
                 await canvas.scene.createEmbeddedEntity('Tile', newTile.data);
-                await canvas.scene.setFlag(FlagScope, Flags.startMarkerPlaced, true);
             }
         }
     }
@@ -102,17 +101,6 @@ export class Marker {
             .map(tile => tile._id);
         await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
         await canvas.scene.unsetFlag(FlagScope, Flags.startMarkerPlaced);
-    }
-
-    /**
-     * Deletes any tiles flagged as a 'Deck Marker' from the canvas
-     */
-    static async deleteDeckMarkerMarker() {
-        const to_delete = canvas.scene.getEmbeddedCollection('Tile')
-            .filter(tile => tile.flags.deckMarker)
-            .map(tile => tile._id);
-        await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
-        await canvas.scene.unsetFlag(FlagScope, Flags.deckMarkerPlaced);
     }
 
     /**
