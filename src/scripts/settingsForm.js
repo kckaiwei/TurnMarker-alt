@@ -26,13 +26,13 @@ export class SettingsForm extends FormApplication {
         return {
             turnMarkerEnabled: Settings.getIsEnabled("turnmarker"),
             ratio: Settings.getRatio("turnmarker"),
-            image: this.getSelectList(imageTitles, Settings.getImageIndex()),
+            image: this.getSelectList(imageTitles, Settings.getImageIndex("turnmarker")),
             customImage: Settings.getCustomImagePath(),
             previewPath: Settings.getImagePath(),
             // onDeck Marker Settings
             onDeckMarkerEnabled: Settings.getIsEnabled("deckmarker"),
             deckRatio: Settings.getRatio("deckmarker"),
-            deckImage: this.getSelectList(deckImageTitles, Settings.getDeckImageByIndex()),
+            deckImage: this.getSelectList(deckImageTitles, Settings.getImageIndex("deckmarker")),
             customDeckImage: Settings.getCustomDeckImagePath(),
             onDeckPreviewPath: Settings.getOnDeckImagePath(),
             // Announcement Settings
@@ -72,6 +72,7 @@ export class SettingsForm extends FormApplication {
         if (d.deckImage) Settings.setImage("deckmarker", d.deckImage);
         Settings.setCustomDeckImagePath(d.customDeckImage);
         Settings.setIsEnabled("deckmarker", d.onDeckMarkerEnabled);
+        console.log(d)
     }
 
     activateListeners(html) {
@@ -118,8 +119,6 @@ export class SettingsForm extends FormApplication {
     updatePreview(html) {
         this._updateTurnmarkerPreview(html);
         this._updateOnDeckmarkerPreview(html);
-
-
     }
 
     /**

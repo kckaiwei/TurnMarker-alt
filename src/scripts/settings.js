@@ -173,9 +173,15 @@ export class Settings {
 
     /**
      * Gets the index of the currently selected marker image
+     * @param {string} marker_type - Type of marker to get index for
      */
-    static getImageIndex() {
-        return game.settings.get(modName, image);
+    static getImageIndex(marker_type) {
+        switch (marker_type) {
+            case "turnmarker":
+                return game.settings.get(modName, image);
+            case "deckmarker":
+                return game.settings.get(modName, deckImage);
+        }
     }
 
     static getStartMarker() {
