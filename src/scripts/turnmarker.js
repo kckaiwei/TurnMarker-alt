@@ -79,7 +79,6 @@ Hooks.on('updateCombat', async (combat, update) => {
             lastTurn = combat.combatant._id;
             if (combat && combat.combatant && combat.started) {
                 await Marker.placeStartMarker(combat.combatant.token._id);
-                let deckTile = canvas.tiles.placeables.find(t => t.data.flags.deckMarker == true);
                 await Marker.placeOnDeckMarker(combat.turns[nextTurn].token._id);
                 let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
                 await Marker.placeTurnMarker(combat.combatant.token._id, (tile && tile.id) || undefined);

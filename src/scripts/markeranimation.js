@@ -9,6 +9,9 @@ export class MarkerAnimation {
         if (!this.animators) {
             this.animators = {};
         }
+        if (marker_type in this.animators) {
+            return this.animators[marker_type];
+        }
         this.animators[marker_type] = this.animateRotation.bind(this, marker_type);
         canvas.app.ticker.add(this.animators[marker_type]);
         return this.animators;
