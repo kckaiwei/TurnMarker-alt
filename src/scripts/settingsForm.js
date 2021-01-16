@@ -32,7 +32,7 @@ export class SettingsForm extends FormApplication {
             // onDeck Marker Settings
             onDeckMarkerEnabled: Settings.getIsEnabled("deckmarker"),
             deckRatio: Settings.getRatio("deckmarker"),
-            deckimage: this.getSelectList(deckImageTitles, Settings.getDeckImageByIndex()),
+            deckImage: this.getSelectList(deckImageTitles, Settings.getDeckImageByIndex()),
             customDeckImage: Settings.getCustomDeckImagePath(),
             onDeckPreviewPath: Settings.getOnDeckImagePath(),
             // Announcement Settings
@@ -53,7 +53,6 @@ export class SettingsForm extends FormApplication {
      */
     async _updateObject(e, d) {
         console.log('Turn Marker | Saving Settings');
-
         // Turnmarker settings
         Settings.setRatio(d.ratio);
         if (d.image) Settings.setImage("turnmarker", d.image);
@@ -70,8 +69,8 @@ export class SettingsForm extends FormApplication {
 
         // Ondeck Marker Settings
         Settings.setDeckRatio(d.deckRatio);
-        if (d.deckimage) Settings.setImage("deckmarker", d.deckimage);
-        Settings.setCustomDeckImagePath(d.deckimage);
+        if (d.deckImage) Settings.setImage("deckmarker", d.deckImage);
+        Settings.setCustomDeckImagePath(d.customDeckImage);
         Settings.setIsEnabled("deckmarker", d.onDeckMarkerEnabled);
     }
 

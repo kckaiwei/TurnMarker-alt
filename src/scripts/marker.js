@@ -70,8 +70,8 @@ export class Marker {
 
         if (Settings.getIsEnabled("deckmarker")) {
             let token = findTokenById(tokenId);
-            let dims = this.getImageDimensions(token);
-            let center = this.getImageLocation(token);
+            let dims = this.getImageDimensions(token, false, "deckmarker");
+            let center = this.getImageLocation(token, false, "deckmarker");
             let newTile = new Tile({
                 img: Settings.getOnDeckImagePath(),
                 width: dims.w,
@@ -218,8 +218,8 @@ export class Marker {
      * Gets the proper dimensions of the marker tile taking into account the current grid layout
      * @param {object} token - The token that the tile should be placed under
      */
-    static getImageDimensions(token, ignoreRatio = false) {
-        let ratio = ignoreRatio ? 1 : Settings.getRatio("turnmarker");
+    static getImageDimensions(token, ignoreRatio = false, marker_type = "turnmarker") {
+        let ratio = ignoreRatio ? 1 : Settings.getRatio(marker_type);
         let newWidth = 0;
         let newHeight = 0;
 

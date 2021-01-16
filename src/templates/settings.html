@@ -64,8 +64,8 @@
         <label>{{localize 'tm.settings.deckImage.name'}}:</label>
         <div class="form-fields">
             <select id="deckImage" name="deckImage">
-                {{#select deckimage}}
-                {{#each deckimage}}
+                {{#select deckImage}}
+                {{#each deckImage}}
                 <option value="{{@index}}" {{#if this.selected}}selected="selected" {{/if}}>{{this.value}}</option>
                 {{/each}}
                 {{/select}}

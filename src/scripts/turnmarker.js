@@ -44,11 +44,18 @@ Hooks.on('createTile', (scene, data) => {
     if (data.flags.turnMarker == true || data.flags.startMarker == true) {
         const tile = canvas.tiles.placeables.find(t => t.id === data._id);
         if (tile) {
-            if (data.flags.turnMarker == true) {
+            if (data.flags.deckMarker == true) {
+                tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
+                tile.parent.sortChildren();
+                if (!game.paused && Settings.getShouldAnimate("deckmarker")) {
+                    MarkerAnimation.startAnimation("deckmarker");
+                }
+            }
+            else if (data.flags.turnMarker == true) {
                 tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
                 tile.parent.sortChildren();
                 if (!game.paused && Settings.getShouldAnimate("turnmarker")) {
-                    MarkerAnimation.startAnimation();
+                    MarkerAnimation.startAnimation("turnmarker");
                 }
             }
             tile.renderable = isVisible(tile);
@@ -104,7 +111,7 @@ Hooks.on('deleteCombat', async () => {
     if (game.user.isGM) {
         await Marker.clearAllMarkers();
     }
-    MarkerAnimation.stopAnimation();
+    MarkerAnimation.stopAllAnimation();
 });
 
 Hooks.on('updateToken', async (scene, updateToken, updateData) => {

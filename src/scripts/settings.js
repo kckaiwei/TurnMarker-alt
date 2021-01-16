@@ -42,6 +42,8 @@ export const imageTitles = [
 ];
 
 export const deckImageTitles = [
+    'Runes of Prosperity by Rin',
+    'Runes of Incendium by Rin',
     'Runes of the Cultist by Rin',
     'Runes of Regeneration by Rin',
     'Runes of the Cosmos by Rin',
@@ -50,9 +52,7 @@ export const deckImageTitles = [
     'Runes of the Believer by Rin',
     'Runes of the Mad Mage by Rin',
     'Runes of the Blue Sky by Rin',
-    'Runes of the Universe by Rin',
-    'Runes of Prosperity by Rin',
-    'Runes of Incendium by Rin'
+    'Runes of the Universe by Rin'
 ];
 
 export const announcedActorOptions = [
@@ -312,8 +312,8 @@ export class Settings {
             case "turnmarker":
                 game.settings.set(modName, image, val);
                 break;
-            case "deck":
-                game.settings.set(modName, deck, val);
+            case "deckmarker":
+                game.settings.set(modName, deckImage, val);
                 break;
         }
 
