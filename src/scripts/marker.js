@@ -36,9 +36,8 @@ export class Marker {
 
             if (Settings.getIsEnabled("turnmarker")) {
                 let token = findTokenById(tokenId);
-                let ratio = Settings.getRatio("turnmarker");
-                let dims = this.getImageDimensions(token);
-                let center = this.getImageLocation(token);
+                let dims = this.getImageDimensions(token, false, "turnmarker");
+                let center = this.getImageLocation(token, false, "turnmarker");
 
                 let newTile = new Tile({
                     img: Settings.getImagePath(),
@@ -60,7 +59,7 @@ export class Marker {
                 return null;
             }
         } else {
-            await this.moveMarkerToToken(tokenId, markerId);
+            await this.moveMarkerToToken(tokenId, markerId, "turnmarker");
             return markerId;
         }
     }
@@ -139,11 +138,10 @@ export class Marker {
      * @param {String} tokenId - The ID of the token that the marker should be placed under
      * @param {String} markerId - The ID of the tile currently serving as the turn marker
      */
-    static async moveMarkerToToken(tokenId, markerId) {
+    static async moveMarkerToToken(tokenId, markerId, marker_type="turnmarker") {
         let token = findTokenById(tokenId);
-        let ratio = Settings.getRatio("turnmarker");
-        let dims = this.getImageDimensions(token);
-        let center = this.getImageLocation(token);
+        let dims = this.getImageDimensions(token, false, marker_type);
+        let center = this.getImageLocation(token, false, marker_type);
 
         await canvas.scene.updateEmbeddedEntity('Tile', {
             _id: markerId,

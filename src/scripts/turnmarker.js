@@ -126,7 +126,7 @@ Hooks.on('updateToken', async (scene, updateToken, updateData) => {
                 nextTurn = 0;
             }
             let nextToken = game.combat.turns[nextTurn].token
-            await Marker.moveMarkerToToken(nextToken._id, deckTile.id);
+            await Marker.moveMarkerToToken(nextToken._id, deckTile.id, "deckmarker");
             deckTile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
             deckTile.parent.sortChildren();
         }
@@ -138,7 +138,7 @@ Hooks.on('updateToken', async (scene, updateToken, updateData) => {
         if ((updateData.x || updateData.y || updateData.width || updateData.height || updateData.hidden) &&
             (game && game.combat && game.combat.combatant && game.combat.combatant.tokenId == updateToken._id) &&
             game.user.isGM && game.combat) {
-            await Marker.moveMarkerToToken(updateToken._id, tile.id);
+            await Marker.moveMarkerToToken(updateToken._id, tile.id, "turnmarker");
             tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
             tile.parent.sortChildren();
         }
