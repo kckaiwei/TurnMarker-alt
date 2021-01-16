@@ -1,6 +1,6 @@
-import { MarkerAnimation } from './markeranimation.js';
-import { Settings } from './settings.js';
-import { findTokenById, Flags, FlagScope, socketAction, socketName } from './utils.js';
+import {MarkerAnimation} from './markeranimation.js';
+import {Settings} from './settings.js';
+import {findTokenById, Flags, FlagScope, socketAction, socketName} from './utils.js';
 
 /**
  * Provides functionality for creating, moving, and animating the turn marker
@@ -12,8 +12,15 @@ export class Marker {
      */
     static async deleteTurnMarker() {
         const to_delete = canvas.scene.getEmbeddedCollection('Tile')
-          .filter(tile => tile.flags.turnMarker)
-          .map(tile => tile._id);
+            .filter(tile => tile.flags.turnMarker)
+            .map(tile => tile._id);
+        await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
+    }
+
+    static async deleteOnDeckMarker() {
+        const to_delete = canvas.scene.getEmbeddedCollection('Tile')
+            .filter(tile => tile.flags.deckMarker)
+            .map(tile => tile._id);
         await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
     }
 
@@ -27,9 +34,9 @@ export class Marker {
         if (!markerId) {
             await this.deleteTurnMarker();
 
-            if (Settings.getTurnMarkerEnabled()) {
+            if (Settings.getIsEnabled("turnmarker")) {
                 let token = findTokenById(tokenId);
-                let ratio = Settings.getRatio();
+                let ratio = Settings.getRatio("turnmarker");
                 let dims = this.getImageDimensions(token);
                 let center = this.getImageLocation(token);
 
@@ -43,7 +50,7 @@ export class Marker {
                     rotation: 0,
                     hidden: token.data.hidden,
                     locked: false,
-                    flags: { turnMarker: true }
+                    flags: {turnMarker: true}
                 });
 
                 let tile = await canvas.scene.createEmbeddedEntity('Tile', newTile.data);
@@ -58,15 +65,54 @@ export class Marker {
         }
     }
 
+    static async placeOnDeckMarker(tokenId) {
+        await this.deleteOnDeckMarker();
+
+        if (Settings.getIsEnabled("deckmarker")) {
+            let token = findTokenById(tokenId);
+            let dims = this.getImageDimensions(token);
+            let center = this.getImageLocation(token);
+            let newTile = new Tile({
+                img: Settings.getOnDeckImagePath(),
+                width: dims.w,
+                height: dims.h,
+                x: center.x,
+                y: center.y,
+                z: 900,
+                rotation: 0,
+                hidden: token.data.hidden,
+                locked: false,
+                flags: {deckMarker: true}
+            });
+
+            if (game.user.isGM) {
+                await canvas.scene.createEmbeddedEntity('Tile', newTile.data);
+                await canvas.scene.setFlag(FlagScope, Flags.startMarkerPlaced, true);
+            }
+        }
+    }
+
+
     /**
      * Deletes any tiles flagged as a 'Start Marker' from the canvas
      */
     static async deleteStartMarker() {
         const to_delete = canvas.scene.getEmbeddedCollection('Tile')
-          .filter(tile => tile.flags.startMarker)
-          .map(tile => tile._id);
+            .filter(tile => tile.flags.startMarker)
+            .map(tile => tile._id);
         await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
         await canvas.scene.unsetFlag(FlagScope, Flags.startMarkerPlaced);
+    }
+
+    /**
+     * Deletes any tiles flagged as a 'Deck Marker' from the canvas
+     */
+    static async deleteDeckMarkerMarker() {
+        const to_delete = canvas.scene.getEmbeddedCollection('Tile')
+            .filter(tile => tile.flags.deckMarker)
+            .map(tile => tile._id);
+        await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
+        await canvas.scene.unsetFlag(FlagScope, Flags.deckMarkerPlaced);
     }
 
     /**
@@ -76,7 +122,7 @@ export class Marker {
     static async placeStartMarker(tokenId) {
         await this.deleteStartMarker();
 
-        if (Settings.getStartMarkerEnabled()) {
+        if (Settings.getIsEnabled("startmarker")) {
             let token = findTokenById(tokenId);
             let dims = this.getImageDimensions(token);
             let center = this.getImageLocation(token);
@@ -90,7 +136,7 @@ export class Marker {
                 rotation: 0,
                 hidden: token.data.hidden,
                 locked: false,
-                flags: { startMarker: true }
+                flags: {startMarker: true}
             });
 
             if (game.user.isGM) {
@@ -107,7 +153,7 @@ export class Marker {
      */
     static async moveMarkerToToken(tokenId, markerId) {
         let token = findTokenById(tokenId);
-        let ratio = Settings.getRatio();
+        let ratio = Settings.getRatio("turnmarker");
         let dims = this.getImageDimensions(token);
         let center = this.getImageLocation(token);
 
@@ -127,6 +173,7 @@ export class Marker {
     static async clearAllMarkers() {
         await this.deleteTurnMarker();
         await this.deleteStartMarker();
+        await this.deleteOnDeckMarker();
     }
 
     /**
@@ -145,10 +192,25 @@ export class Marker {
     }
 
     /**
+     * Updates the tile image when the image path has changed
+     */
+    static async updateOnDeckImagePath() {
+        if (game.user.isGM) {
+            let tile = canvas.tiles.placeables.find(t => t.data.flags.deckMarker == true);
+            if (tile) {
+                await canvas.scene.updateEmbeddedEntity('Tile', {
+                    _id: tile.id,
+                    img: Settings.getOnDeckImagePath()
+                });
+            }
+        }
+    }
+
+    /**
      * Completely resets the turn marker - deletes all tiles and stops any animation
      */
     static async reset() {
-        MarkerAnimation.stopAnimation();
+        MarkerAnimation.stopAllAnimation();
         await this.clearAllMarkers();
     }
 
@@ -157,15 +219,17 @@ export class Marker {
      * @param {object} token - The token that the tile should be placed under
      */
     static getImageDimensions(token, ignoreRatio = false) {
-        let ratio = ignoreRatio ? 1 : Settings.getRatio();
+        let ratio = ignoreRatio ? 1 : Settings.getRatio("turnmarker");
         let newWidth = 0;
         let newHeight = 0;
 
         switch (canvas.grid.type) {
-            case 2: case 3: // Hex Rows
+            case 2:
+            case 3: // Hex Rows
                 newWidth = newHeight = token.h * ratio;
                 break;
-            case 4: case 5: // Hex Columns
+            case 4:
+            case 5: // Hex Columns
                 newWidth = newHeight = token.w * ratio;
                 break;
             default: // Gridless and Square
@@ -174,24 +238,26 @@ export class Marker {
                 break;
         }
 
-        return { w: newWidth, h: newHeight };
+        return {w: newWidth, h: newHeight};
     }
 
     /**
      * Gets the proper location of the marker tile taking into account the current grid layout
      * @param {object} token - The token that the tile should be placed under
      */
-    static getImageLocation(token, ignoreRatio = false) {
-        let ratio = ignoreRatio ? 1 : Settings.getRatio();
+    static getImageLocation(token, ignoreRatio = false, marker_type = "turnmarker") {
+        let ratio = ignoreRatio ? 1 : Settings.getRatio(marker_type);
         let newX = 0;
         let newY = 0;
 
         switch (canvas.grid.type) {
-            case 2: case 3: // Hex Rows
+            case 2:
+            case 3: // Hex Rows
                 newX = token.center.x - ((token.h * ratio) / 2);
                 newY = token.center.y - ((token.h * ratio) / 2);
                 break;
-            case 4: case 5: // Hex Columns
+            case 4:
+            case 5: // Hex Columns
                 newX = token.center.x - ((token.w * ratio) / 2);
                 newY = token.center.y - ((token.w * ratio) / 2);
                 break;
@@ -200,6 +266,6 @@ export class Marker {
                 newY = token.center.y - ((token.h * ratio) / 2);
         }
 
-        return { x: newX, y: newY };
+        return {x: newX, y: newY};
     }
 }

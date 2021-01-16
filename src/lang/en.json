@@ -10,6 +10,7 @@
             },
             "formHeaders": {
                 "imageOptions": "Marker Image Options",
+                "onDeckImageOptions": "On Deck Marker Image Options",
                 "turnAnnounce": "Turn Announcements",
                 "startMarker": "Start Marker",
                 "save": "Save Settings"
@@ -22,8 +23,8 @@
                 "hint": "As compared to the token size."
             },
             "animate": {
-                "name": "Animate Marker?",
-                "hint": "Use rotation animation on marker. (changes may not be visible until a new combat is started)"
+                "name": "Animate Turn Marker?",
+                "hint": "Use rotation animation on turn marker. (changes may not be visible until a new combat is started)"
             },
             "interval": {
                 "name": "Animation Speed",
@@ -31,6 +32,27 @@
             },
             "image": {
                 "name": "Marker Image"
+            },
+            "onDeckMarkerEnabled": {
+                "name": "Enable On Deck Marker"
+            },
+            "deckImage": {
+                "name": "On Deck Marker Image"
+            },
+            "customDeckImage": {
+                "name": "Custom On Deck Image Path",
+                "hint": "Use a custom image instead (leave blank to use a built in image)"
+            },
+            "customDeckImagePreview": {
+                "name": "On Deck Marker Preview"
+            },
+            "deckRatio": {
+                "name": "On Deck Image Ratio",
+                "hint": "As compared to the token size."
+            },
+            "deckAnimate": {
+                "name": "Animate Deck Marker?",
+                "hint": "Use rotation animation on Deck marker. (changes may not be visible until a new combat is started)"
             },
             "announcedActors": {
                 "name": "Announced Actors",
