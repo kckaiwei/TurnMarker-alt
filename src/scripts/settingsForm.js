@@ -72,7 +72,6 @@ export class SettingsForm extends FormApplication {
         if (d.deckImage) Settings.setImage("deckmarker", d.deckImage);
         Settings.setCustomDeckImagePath(d.customDeckImage);
         Settings.setIsEnabled("deckmarker", d.onDeckMarkerEnabled);
-        console.log(d)
     }
 
     activateListeners(html) {
