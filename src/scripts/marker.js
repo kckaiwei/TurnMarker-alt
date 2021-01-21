@@ -14,14 +14,14 @@ export class Marker {
         const to_delete = canvas.scene.getEmbeddedCollection('Tile')
             .filter(tile => tile.flags.turnMarker)
             .map(tile => tile._id);
-        await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
-    }
-
-    static async deleteOnDeckMarker() {
-        const to_delete = canvas.scene.getEmbeddedCollection('Tile')
-            .filter(tile => tile.flags.deckMarker)
-            .map(tile => tile._id);
-        await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
+        if (!game.user.isGM) {
+            game.socket.emit(socketName, {
+                mode: socketAction.deleteTurnMarker,
+                tileData: to_delete.data
+            });
+        } else {
+            await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
+        }
     }
 
     /**
@@ -98,8 +98,15 @@ export class Marker {
         const to_delete = canvas.scene.getEmbeddedCollection('Tile')
             .filter(tile => tile.flags.startMarker)
             .map(tile => tile._id);
-        await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
-        await canvas.scene.unsetFlag(FlagScope, Flags.startMarkerPlaced);
+        if (!game.user.isGM) {
+            game.socket.emit(socketName, {
+                mode: socketAction.deleteStartMarker,
+                tileData: to_delete.data
+            });
+        } else {
+            await canvas.scene.unsetFlag(FlagScope, Flags.startMarkerPlaced);
+            await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
+        }
     }
 
     /**
