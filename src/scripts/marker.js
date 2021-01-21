@@ -25,7 +25,7 @@ export class Marker {
     }
 
     /**
-     * Deletes any tiles flagged as a 'Turn Marker' from the canvas
+     * Deletes any tiles flagged as a 'Deck Marker' from the canvas
      */
     static async deleteOnDeckMarker() {
         const to_delete = canvas.scene.getEmbeddedCollection('Tile')
