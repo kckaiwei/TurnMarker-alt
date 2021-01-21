@@ -1,6 +1,6 @@
-import { MarkerAnimation } from './markeranimation.js';
-import { Settings } from './settings.js';
-import { findTokenById, Flags, FlagScope, socketAction, socketName } from './utils.js';
+import {MarkerAnimation} from './markeranimation.js';
+import {Settings} from './settings.js';
+import {findTokenById, Flags, FlagScope, socketAction, socketName} from './utils.js';
 
 /**
  * Provides functionality for creating, moving, and animating the turn marker
@@ -12,9 +12,17 @@ export class Marker {
      */
     static async deleteTurnMarker() {
         const to_delete = canvas.scene.getEmbeddedCollection('Tile')
-          .filter(tile => tile.flags.turnMarker)
-          .map(tile => tile._id);
-        await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
+            .filter(tile => tile.flags.turnMarker)
+            .map(tile => tile._id);
+        if (!game.user.isGM) {
+            game.socket.emit(socketName, {
+                mode: socketAction.deleteTurnMarker,
+                tileData: to_delete.data
+            });
+        } else {
+            await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
+        }
+
     }
 
     /**
@@ -43,7 +51,7 @@ export class Marker {
                     rotation: 0,
                     hidden: token.data.hidden,
                     locked: false,
-                    flags: { turnMarker: true }
+                    flags: {turnMarker: true}
                 });
 
                 let tile = await canvas.scene.createEmbeddedEntity('Tile', newTile.data);
@@ -63,10 +71,18 @@ export class Marker {
      */
     static async deleteStartMarker() {
         const to_delete = canvas.scene.getEmbeddedCollection('Tile')
-          .filter(tile => tile.flags.startMarker)
-          .map(tile => tile._id);
-        await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
-        await canvas.scene.unsetFlag(FlagScope, Flags.startMarkerPlaced);
+            .filter(tile => tile.flags.startMarker)
+            .map(tile => tile._id);
+        if (!game.user.isGM) {
+            game.socket.emit(socketName, {
+                mode: socketAction.deleteStartMarker,
+                tileData: to_delete.data
+            });
+        } else {
+            await canvas.scene.unsetFlag(FlagScope, Flags.startMarkerPlaced);
+            await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
+        }
+
     }
 
     /**
@@ -90,7 +106,7 @@ export class Marker {
                 rotation: 0,
                 hidden: token.data.hidden,
                 locked: false,
-                flags: { startMarker: true }
+                flags: {startMarker: true}
             });
 
             if (game.user.isGM) {
@@ -162,10 +178,12 @@ export class Marker {
         let newHeight = 0;
 
         switch (canvas.grid.type) {
-            case 2: case 3: // Hex Rows
+            case 2:
+            case 3: // Hex Rows
                 newWidth = newHeight = token.h * ratio;
                 break;
-            case 4: case 5: // Hex Columns
+            case 4:
+            case 5: // Hex Columns
                 newWidth = newHeight = token.w * ratio;
                 break;
             default: // Gridless and Square
@@ -174,7 +192,7 @@ export class Marker {
                 break;
         }
 
-        return { w: newWidth, h: newHeight };
+        return {w: newWidth, h: newHeight};
     }
 
     /**
@@ -187,11 +205,13 @@ export class Marker {
         let newY = 0;
 
         switch (canvas.grid.type) {
-            case 2: case 3: // Hex Rows
+            case 2:
+            case 3: // Hex Rows
                 newX = token.center.x - ((token.h * ratio) / 2);
                 newY = token.center.y - ((token.h * ratio) / 2);
                 break;
-            case 4: case 5: // Hex Columns
+            case 4:
+            case 5: // Hex Columns
                 newX = token.center.x - ((token.w * ratio) / 2);
                 newY = token.center.y - ((token.w * ratio) / 2);
                 break;
@@ -200,6 +220,6 @@ export class Marker {
                 newY = token.center.y - ((token.h * ratio) / 2);
         }
 
-        return { x: newX, y: newY };
+        return {x: newX, y: newY};
     }
 }

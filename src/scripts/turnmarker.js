@@ -1,9 +1,9 @@
-import { Chatter } from './chatter.js';
-import { Marker } from './marker.js';
-import { MarkerAnimation } from './markeranimation.js';
-import { Settings } from './settings.js';
-import { renderUpdateWindow } from './updateWindow.js';
-import { firstGM, Flags, FlagScope, socketAction, socketName } from './utils.js';
+import {Chatter} from './chatter.js';
+import {Marker} from './marker.js';
+import {MarkerAnimation} from './markeranimation.js';
+import {Settings} from './settings.js';
+import {renderUpdateWindow} from './updateWindow.js';
+import {firstGM, Flags, FlagScope, socketAction, socketName} from './utils.js';
 
 
 let lastTurn = '';
@@ -18,6 +18,27 @@ Hooks.once('ready', () => {
             renderUpdateWindow();
         }
     }
+
+    game.socket.on(socketName, async (data) => {
+        if (game.user.isGM) {
+            if (data) {
+                const to_delete = canvas.tiles.placeables.find(t => t.id === data[0]);
+                switch (data.mode) {
+                    case socketAction.deleteStartMarker:
+                        await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
+                        canvas.scene.setFlag(FlagScope, Flags.startMarkerPlaced, true);
+                        break;
+                    case socketAction.deleteTurnMarker:
+                        await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
+                        break;
+                    case socketAction.deleteDeckMarker:
+                        await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
+                        break;
+                }
+
+            }
+        }
+    });
 });
 
 Hooks.on('canvasReady', () => {
@@ -135,7 +156,7 @@ function isVisible(tile) {
     const h = tile.data.height / ratio;
     const tolerance = Math.min(w, h) / 4;
 
-    return canvas.sight.testVisibility(tile.center, { tolerance, object: tile });
+    return canvas.sight.testVisibility(tile.center, {tolerance, object: tile});
 }
 
 Hooks.on('updateTile', (entity, data, options, userId) => {
