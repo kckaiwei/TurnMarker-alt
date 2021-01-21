@@ -54,6 +54,10 @@
                 "name": "Animate Deck Marker?",
                 "hint": "Use rotation animation on Deck marker. (changes may not be visible until a new combat is started)"
             },
+            "deckPlayersOnly": {
+                "name": "Only use on deck marker for players?",
+                "hint": "Skips npc for on deck marker if enabled"
+            },
             "announcedActors": {
                 "name": "Announced Actors",
                 "hint": "Who to announce in chat"

@@ -24,6 +24,7 @@ const deckImage = 'deckimage';
 const customDeckImage = 'customdeckimage';
 const deckRatio = 'deckratio';
 const deckAnimation = 'deckanimation';
+const deckPlayersOnly = 'deckplayersonly';
 
 const startMarkerEnabled = 'startMarker-enabled';
 const startMarkerImage = 'startMarker-custom';
@@ -348,6 +349,21 @@ export class Settings {
         game.settings.set(modName, customDeckImage, val);
     }
 
+    /**
+     * Gets if deck markers only used for players
+     */
+    static getDeckPlayersOnly() {
+        return game.settings.get(modName, deckPlayersOnly);
+    }
+
+    /**
+     * Sets if deck markers only used for players
+     * @param val - boolean
+     */
+    static setDeckPlayersOnly(val) {
+        game.settings.set(modName, deckPlayersOnly, val);
+    }
+
 
     /**
      * Registers all game settings
@@ -480,6 +496,16 @@ export class Settings {
                     Marker.placeOnDeckMarker(game.combat.turns[nextTurn].token._id);
                 }
             }
+        });
+
+        game.settings.register(modName, deckPlayersOnly, {
+            name: 'tm.settings.deckPlayersOnly.name',
+            hint: 'tm.settings.deckPlayersOnly.hint',
+            scope: 'world',
+            config: false,
+            type: Boolean,
+            default: true,
+            restricted: true,
         });
 
         // Announcements

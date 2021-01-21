@@ -35,6 +35,7 @@ export class SettingsForm extends FormApplication {
             deckImage: this.getSelectList(deckImageTitles, Settings.getImageIndex("deckmarker")),
             customDeckImage: Settings.getCustomDeckImagePath(),
             onDeckPreviewPath: Settings.getOnDeckImagePath(),
+            onDeckPlayersOnly: Settings.getDeckPlayersOnly(),
             // Announcement Settings
             announceActors: this.getSelectList(announcedActorOptions, Settings.getAnnounceActors()),
             announce: Settings.shouldAnnounceTurns(),
@@ -72,6 +73,7 @@ export class SettingsForm extends FormApplication {
         if (d.deckImage) Settings.setImage("deckmarker", d.deckImage);
         Settings.setCustomDeckImagePath(d.customDeckImage);
         Settings.setIsEnabled("deckmarker", d.onDeckMarkerEnabled);
+        Settings.setDeckPlayersOnly(d.onDeckPlayersOnly);
     }
 
     activateListeners(html) {
