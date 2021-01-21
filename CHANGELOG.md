@@ -1,3 +1,6 @@
+# 2.7.3
+- Fixed deletion permissions in different scenes issue
+
 # 2.7.2
 - Fixed marker in wrong location after reloading
 - Fixed marker not pausing with game
