@@ -31,7 +31,7 @@ Hooks.once('ready', () => {
                     case socketAction.deleteTurnMarker:
                         await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
                         break;
-                    case socketAction.deleteDeckMarker:
+                    case socketAction.deleteOnDeckMarker:
                         await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
                         break;
                 }

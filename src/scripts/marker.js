@@ -25,6 +25,23 @@ export class Marker {
     }
 
     /**
+     * Deletes any tiles flagged as a 'Turn Marker' from the canvas
+     */
+    static async deleteOnDeckMarker() {
+        const to_delete = canvas.scene.getEmbeddedCollection('Tile')
+            .filter(tile => tile.flags.deckMarker)
+            .map(tile => tile._id);
+        if (!game.user.isGM) {
+            game.socket.emit(socketName, {
+                mode: socketAction.deleteOnDeckMarker,
+                tileData: to_delete.data
+            });
+        } else {
+            await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
+        }
+    }
+
+    /**
      * Places a new turn marker under the token specified, and if required, starts the animation
      * @param {String} tokenId - The ID of the token where the marker should be placed
      * @param {Object} animator - The animator object
