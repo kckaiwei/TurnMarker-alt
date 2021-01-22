@@ -36,3 +36,16 @@ export function firstGM() {
     }
     return undefined;
 }
+
+/**
+ * Returns the index of the nextTurn
+ * @param {Object} combat - combat object from foundry
+ */
+export function getNextTurn(combat){
+    let currentTurn = combat.turn;
+    let nextTurn = currentTurn + 1;
+    if (nextTurn >= combat.turns.length) {
+        nextTurn = 0;
+    }
+    return nextTurn;
+}

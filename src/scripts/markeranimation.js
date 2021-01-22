@@ -1,33 +1,57 @@
-import { Settings } from './settings.js';
+import {Settings} from './settings.js';
 
 export class MarkerAnimation {
     /**
      * Starts the animation loop
      */
-    static startAnimation() {
-        if (!this.animator) {
-            this.animator = this.animateRotation.bind(this);
-            canvas.app.ticker.add(this.animator);
+
+    static startAnimation(marker_type = "turnmarker") {
+        if (!this.animators) {
+            this.animators = {};
         }
-        return this.animator;
+        if (marker_type in this.animators) {
+            return this.animators[marker_type];
+        }
+        this.animators[marker_type] = this.animateRotation.bind(this, marker_type);
+        canvas.app.ticker.add(this.animators[marker_type]);
+        return this.animators;
     }
 
     /**
      * Stops the animation loop
      */
-    static stopAnimation() {
-        if (this.animator) {
-            canvas.app.ticker.remove(this.animator);
-            delete this.animator;
+    static stopAnimation(marker_type = "turnmarker") {
+        if (this.animators) {
+            canvas.app.ticker.remove(this.animators[marker_type]);
+            delete this.animators[marker_type];
         }
+    }
+
+    static stopAllAnimation() {
+        for (const [key, value] of Object.entries(this.animators)) {
+            canvas.app.ticker.remove(this.animators[key]);
+        }
+        this.animators = {};
     }
 
     /**
      * Called on every tick of the animation loop to rotate the image based on the current frame
+     * @param {string} marker_type - type of marker to animate
      * @param {number} dt - The delta time
      */
-    static animateRotation(dt) {
-        let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
+    static animateRotation(marker_type, dt) {
+        let tile;
+        switch (marker_type) {
+            case "turnmarker":
+                tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
+                break;
+            case "deckmarker":
+                tile = canvas.tiles.placeables.find(t => t.data.flags.deckMarker == true);
+                break;
+            default:
+                tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
+        }
+
         if (tile && tile.data.img) {
             let delta = Settings.getInterval() / 10000;
             try {

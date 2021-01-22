@@ -3,7 +3,7 @@ import {Marker} from './marker.js';
 import {MarkerAnimation} from './markeranimation.js';
 import {Settings} from './settings.js';
 import {renderUpdateWindow} from './updateWindow.js';
-import {firstGM, Flags, FlagScope, socketAction, socketName} from './utils.js';
+import {firstGM, Flags, FlagScope, socketAction, socketName, getNextTurn} from './utils.js';
 
 
 let lastTurn = '';
@@ -31,7 +31,7 @@ Hooks.once('ready', () => {
                     case socketAction.deleteTurnMarker:
                         await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
                         break;
-                    case socketAction.deleteDeckMarker:
+                    case socketAction.deleteOnDeckMarker:
                         await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
                         break;
                 }
@@ -42,12 +42,21 @@ Hooks.once('ready', () => {
 });
 
 Hooks.on('canvasReady', () => {
+    let deckTile = canvas.tiles.placeables.find(t => t.data.flags.deckMarker == true);
+    if (deckTile) {
+        deckTile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
+        deckTile.parent.sortChildren();
+        if (!game.paused && Settings.getShouldAnimate("deckmarker")) {
+            MarkerAnimation.startAnimation("deckmarker");
+        }
+    }
+
     let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
     if (tile) {
         tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
         tile.parent.sortChildren();
-        if (!game.paused && Settings.getShouldAnimate()) {
-            MarkerAnimation.startAnimation();
+        if (!game.paused && Settings.getShouldAnimate("turnmarker")) {
+            MarkerAnimation.startAnimation("turnmarker");
         }
     }
 });
@@ -56,11 +65,18 @@ Hooks.on('createTile', (scene, data) => {
     if (data.flags.turnMarker == true || data.flags.startMarker == true) {
         const tile = canvas.tiles.placeables.find(t => t.id === data._id);
         if (tile) {
-            if (data.flags.turnMarker == true) {
+            if (data.flags.deckMarker == true) {
                 tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
                 tile.parent.sortChildren();
-                if (!game.paused && Settings.getShouldAnimate()) {
-                    MarkerAnimation.startAnimation();
+                if (!game.paused && Settings.getShouldAnimate("deckmarker")) {
+                    MarkerAnimation.startAnimation("deckmarker");
+                }
+            }
+            else if (data.flags.turnMarker == true) {
+                tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
+                tile.parent.sortChildren();
+                if (!game.paused && Settings.getShouldAnimate("turnmarker")) {
+                    MarkerAnimation.startAnimation("turnmarker");
                 }
             }
             tile.renderable = isVisible(tile);
@@ -75,10 +91,12 @@ Hooks.on('updateCombat', async (combat, update) => {
         await Marker.deleteStartMarker();
     }
     if (combat.combatant) {
+        let nextTurn = getNextTurn(combat);
         if (update && lastTurn != combat.combatant._id && game.user.isGM && game.userId == firstGM()) {
             lastTurn = combat.combatant._id;
             if (combat && combat.combatant && combat.started) {
                 await Marker.placeStartMarker(combat.combatant.token._id);
+                await Marker.placeOnDeckMarker(combat.turns[nextTurn].token._id);
                 let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
                 await Marker.placeTurnMarker(combat.combatant.token._id, (tile && tile.id) || undefined);
                 if (Settings.shouldAnnounceTurns() && !combat.combatant.hidden) {
@@ -109,19 +127,39 @@ Hooks.on('deleteCombat', async () => {
     if (game.user.isGM) {
         await Marker.clearAllMarkers();
     }
-    MarkerAnimation.stopAnimation();
+    MarkerAnimation.stopAllAnimation();
 });
 
 Hooks.on('updateToken', async (scene, updateToken, updateData) => {
     /*
     Moving preUpdateToken logic here, since pre hooks induce race conditions
      */
+
+    // Do onDeck first, so current token will have higher Z-index
+    let deckTile = canvas.tiles.placeables.find(t => t.data.flags.deckMarker == true);
+    if (deckTile) {
+        if ((updateData.x || updateData.y || updateData.width || updateData.height || updateData.hidden) &&
+            (game && game.combat) &&
+            game.user.isGM && game.combat) {
+            let currentTurn = game.combat.turn
+            let nextTurn = currentTurn + 1;
+            if (nextTurn >= game.combat.turns.length) {
+                nextTurn = 0;
+            }
+            let nextToken = game.combat.turns[nextTurn].token
+            await Marker.moveMarkerToToken(nextToken._id, deckTile.id, "deckmarker");
+            deckTile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
+            deckTile.parent.sortChildren();
+        }
+    }
+
+
     let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
     if (tile) {
         if ((updateData.x || updateData.y || updateData.width || updateData.height || updateData.hidden) &&
             (game && game.combat && game.combat.combatant && game.combat.combatant.tokenId == updateToken._id) &&
             game.user.isGM && game.combat) {
-            await Marker.moveMarkerToToken(updateToken._id, tile.id);
+            await Marker.moveMarkerToToken(updateToken._id, tile.id, "turnmarker");
             tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
             tile.parent.sortChildren();
         }
@@ -151,7 +189,14 @@ function isVisible(tile) {
         return true;
     }
 
-    const ratio = Settings.getRatio();
+    let marker_type = "turnmarker";
+    if (tile.data.flags.startMarker) {
+        marker_type = "startmarker";
+    } else if (tile.data.flags.deckMarker) {
+        marker_type = "deckmarker";
+    }
+
+    const ratio = Settings.getRatio(marker_type);
     const w = tile.data.width / ratio;
     const h = tile.data.height / ratio;
     const tolerance = Math.min(w, h) / 4;
@@ -160,7 +205,7 @@ function isVisible(tile) {
 }
 
 Hooks.on('updateTile', (entity, data, options, userId) => {
-    if (data.flags.turnMarker || data.flags.startMarker) {
+    if (data.flags.turnMarker || data.flags.startMarker || data.flags.deckMarker) {
         const tile = canvas.tiles.placeables.find(t => t.id === data._id);
         if (tile) {
             tile.renderable = isVisible(tile);
@@ -170,16 +215,21 @@ Hooks.on('updateTile', (entity, data, options, userId) => {
 
 Hooks.on('sightRefresh', () => {
     for (const tile of canvas.tiles.placeables) {
-        if (tile.data.flags.turnMarker || tile.data.flags.startMarker) {
+        if (tile.data.flags.turnMarker || tile.data.flags.startMarker || tile.data.flags.deckMarker) {
             tile.renderable = isVisible(tile);
         }
     }
 });
 
 Hooks.on('pauseGame', (isPaused) => {
-    if (!isPaused && Settings.getShouldAnimate() && canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true)) {
-        MarkerAnimation.startAnimation();
+    if (!isPaused) {
+        if (Settings.getShouldAnimate("turnmarker") && canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true)) {
+            MarkerAnimation.startAnimation("turnmarker");
+        }
+        if (Settings.getShouldAnimate("deckmarker") && canvas.tiles.placeables.find(t => t.data.flags.deckMarker == true)) {
+            MarkerAnimation.startAnimation("deckmarker");
+        }
     } else {
-        MarkerAnimation.stopAnimation();
+        MarkerAnimation.stopAllAnimation();
     }
 });
