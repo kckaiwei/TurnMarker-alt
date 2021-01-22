@@ -51,6 +51,6 @@
 		}
 	],
 	"url": "https://github.com/kckaiwei/TurnMarker-alt",
-	"manifest": "https://raw.githubusercontent.com/kckaiwei/TurnMarker-alt/v2.7.3/src/module.json",
-	"download": "https://github.com/kckaiwei/TurnMarker-alt/releases/download/v2.7.3/turnmarker.zip"
+	"manifest": "https://raw.githubusercontent.com/kckaiwei/TurnMarker-alt/v2.7.4/src/module.json",
+	"download": "https://github.com/kckaiwei/TurnMarker-alt/releases/download/v2.7.4/turnmarker.zip"
 }
