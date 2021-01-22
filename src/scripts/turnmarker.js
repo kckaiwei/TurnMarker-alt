@@ -62,7 +62,7 @@ Hooks.on('canvasReady', () => {
 });
 
 Hooks.on('createTile', (scene, data) => {
-    if (data.flags.turnMarker == true || data.flags.startMarker == true) {
+    if (data.flags.turnMarker == true || data.flags.startMarker == true || data.flags.deckMarker == true) {
         const tile = canvas.tiles.placeables.find(t => t.id === data._id);
         if (tile) {
             if (data.flags.deckMarker == true) {
@@ -71,8 +71,7 @@ Hooks.on('createTile', (scene, data) => {
                 if (!game.paused && Settings.getShouldAnimate("deckmarker")) {
                     MarkerAnimation.startAnimation("deckmarker");
                 }
-            }
-            else if (data.flags.turnMarker == true) {
+            } else if (data.flags.turnMarker == true) {
                 tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
                 tile.parent.sortChildren();
                 if (!game.paused && Settings.getShouldAnimate("turnmarker")) {
@@ -164,13 +163,11 @@ Hooks.on('updateToken', async (scene, updateToken, updateData) => {
             tile.parent.sortChildren();
         }
     }
+
+    setMarkerVisibilityAllTiles(updateToken);
 });
 
 function isVisible(tile) {
-    if (tile.data.hidden) {
-        return game.user.isGM;
-    }
-
     if (!canvas.sight.tokenVision) {
         return true;
     }
@@ -181,27 +178,54 @@ function isVisible(tile) {
 
     const combatant = canvas.tokens.placeables.find(t => t.id === game.combat.combatant.tokenId);
 
-    if (!combatant || combatant.data.hidden) {
-        return game.user.isGM;
+    let markerType = "turnmarker";
+    if (tile.data.flags.startMarker) {
+        markerType = "startmarker";
+    } else if (tile.data.flags.deckMarker) {
+        markerType = "deckmarker";
+    }
+
+    if (combatant.data.hidden) {
+        if (markerType != "deckmarker") {
+            return game.user.isGM;
+        }
     }
 
     if (combatant._controlled) {
         return true;
     }
 
-    let marker_type = "turnmarker";
-    if (tile.data.flags.startMarker) {
-        marker_type = "startmarker";
-    } else if (tile.data.flags.deckMarker) {
-        marker_type = "deckmarker";
-    }
-
-    const ratio = Settings.getRatio(marker_type);
+    const ratio = Settings.getRatio(markerType);
     const w = tile.data.width / ratio;
     const h = tile.data.height / ratio;
     const tolerance = Math.min(w, h) / 4;
 
     return canvas.sight.testVisibility(tile.center, {tolerance, object: tile});
+}
+
+/**
+ * Sets marker visibility for all markers
+ */
+export function setMarkerVisibilityAllTiles(updateToken = null) {
+    for (const tile of canvas.tiles.placeables) {
+        if (tile.data.flags.turnMarker || tile.data.flags.startMarker || tile.data.flags.deckMarker) {
+            let visible = isVisible(tile);
+            tile.renderable = visible;
+            tile.visible = visible;
+            tile.data.hidden = !visible;
+            // Alpha had to be set since for some reason, toggling renderable/visible, wasn't affecting turnMarker
+            // when you show a token's visibility, so we check the updatedToken to determine the alpha.
+            console.log(updateToken)
+            console.log(tile)
+            if (updateToken && updateToken._Id === tile.data.flags.tokenId) {
+                if (!updateToken.hidden) {
+                    tile.tile.img.alpha = 1
+                } else {
+                    tile.tile.img.alpha = 0.5
+                }
+            }
+        }
+    }
 }
 
 Hooks.on('updateTile', (entity, data, options, userId) => {
@@ -214,11 +238,7 @@ Hooks.on('updateTile', (entity, data, options, userId) => {
 });
 
 Hooks.on('sightRefresh', () => {
-    for (const tile of canvas.tiles.placeables) {
-        if (tile.data.flags.turnMarker || tile.data.flags.startMarker || tile.data.flags.deckMarker) {
-            tile.renderable = isVisible(tile);
-        }
-    }
+    setMarkerVisibilityAllTiles();
 });
 
 Hooks.on('pauseGame', (isPaused) => {

@@ -66,7 +66,7 @@ export class Marker {
                     rotation: 0,
                     hidden: token.data.hidden,
                     locked: false,
-                    flags: {turnMarker: true}
+                    flags: {turnMarker: true, tokenId: token._id}
                 });
 
                 let tile = await canvas.scene.createEmbeddedEntity('Tile', newTile.data);
@@ -98,7 +98,7 @@ export class Marker {
                 rotation: 0,
                 hidden: token.data.hidden,
                 locked: false,
-                flags: {deckMarker: true}
+                flags: {deckMarker: true, tokenId: tokenId}
             });
 
             if (game.user.isGM) {
@@ -147,7 +147,7 @@ export class Marker {
                 rotation: 0,
                 hidden: token.data.hidden,
                 locked: false,
-                flags: {startMarker: true}
+                flags: {startMarker: true, tokenId: token._id}
             });
 
             if (game.user.isGM) {
@@ -162,7 +162,7 @@ export class Marker {
      * @param {String} tokenId - The ID of the token that the marker should be placed under
      * @param {String} markerId - The ID of the tile currently serving as the turn marker
      */
-    static async moveMarkerToToken(tokenId, markerId, marker_type="turnmarker") {
+    static async moveMarkerToToken(tokenId, markerId, marker_type = "turnmarker") {
         let token = findTokenById(tokenId);
         let dims = this.getImageDimensions(token, false, marker_type);
         let center = this.getImageLocation(token, false, marker_type);
