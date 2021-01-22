@@ -187,12 +187,22 @@ export class Marker {
                 newWidth = newHeight = token.w * ratio;
                 break;
             default: // Gridless and Square
-                newWidth = token.w * ratio;
-                newHeight = token.h * ratio;
+                newWidth = this.getSmallerDimension(token.w, token.h) * ratio;
+                newHeight = this.getSmallerDimension(token.w, token.h) * ratio;
                 break;
         }
 
         return {w: newWidth, h: newHeight};
+    }
+
+    /**
+     * Returns the smaller dimension, so we can prevent lopsided markers when we have larger tokens on square/gridless
+     * @param width
+     * @param height
+     * @returns {*}
+     */
+    static getSmallerDimension(width, height) {
+        return width < height ? width : height;
     }
 
     /**
@@ -216,8 +226,8 @@ export class Marker {
                 newY = token.center.y - ((token.w * ratio) / 2);
                 break;
             default: // Gridless and Square
-                newX = token.center.x - ((token.w * ratio) / 2);
-                newY = token.center.y - ((token.h * ratio) / 2);
+                newX = token.center.x - ((this.getSmallerDimension(token.w, token.h) * ratio) / 2);
+                newY = token.center.y - ((this.getSmallerDimension(token.w, token.h) * ratio) / 2);
         }
 
         return {x: newX, y: newY};
