@@ -1,6 +1,6 @@
 import {MarkerAnimation} from './markeranimation.js';
 import {Settings} from './settings.js';
-import {findTokenById, Flags, FlagScope, socketAction, socketName} from './utils.js';
+import {findTokenById, Flags, FlagScope, socketAction, socketName, findTokenByIdPlaced} from './utils.js';
 
 /**
  * Provides functionality for creating, moving, and animating the turn marker
@@ -293,7 +293,7 @@ export class Marker {
     * Moves the position / viewpoint on the map
     */
     static movePan(tokenId){
-        let token = findTokenById(tokenId);
+        let token = findTokenByIdPlaced(tokenId);
         let center = this.getImageLocation(token);
         return canvas.animatePan({
                 x: center.x,

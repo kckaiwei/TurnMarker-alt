@@ -24,6 +24,10 @@ export function findTokenById(tokenId) {
     return canvas.tokens.ownedTokens.find(t => t.id == tokenId);
 }
 
+export function findTokenByIdPlaced(tokenId) {
+    return canvas.tokens.placeables.find(t => t.id == tokenId);
+}
+
 /**
  * Returns the ID of the first user logged in as GM.
  * Use for actions that need to be done by a GM but by only 1 GM

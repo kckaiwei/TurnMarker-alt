@@ -90,45 +90,45 @@ Hooks.on('updateCombat', async (combat, update, data) => {
     if (!combat.started) {
         await Marker.deleteStartMarker();
     }
-    if (combat.combatant) {
+
+    let token_id = 0;
+    if (combat && combat.combatant && combat.started) {
+        token_id = combat.combatant.token._id;
         let nextTurn = getNextTurn(combat);
-        if (update && lastTurn != combat.combatant._id)
+
+        if (update && lastTurn != combat.combatant._id && game.user.isGM && game.userId == firstGM())
         {
             lastTurn = combat.combatant._id;
-            if (combat && combat.combatant && combat.started) {
-                if (game.user.isGM && game.userId == firstGM()) {
-                    await Marker.placeStartMarker(combat.combatant.token._id);
-                    await Marker.placeOnDeckMarker(combat.turns[nextTurn].token._id);
-                    let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
-                    await Marker.placeTurnMarker(combat.combatant.token._id, (tile && tile.id) || undefined);
-                    if (Settings.shouldAnnounceTurns() && !combat.combatant.hidden) {
-                        switch (Settings.getAnnounceActors()) {
-                            case 0:
-                                Chatter.sendTurnMessage(combat.combatant);
-                                break;
-                            case 1:
-                                if (combat.combatant.actor.hasPlayerOwner) {
-                                    Chatter.sendTurnMessage(combat.combatant);
-                                }
-                                break;
-                            case 2:
-                                if (!combat.combatant.actor.hasPlayerOwner) {
-                                    Chatter.sendTurnMessage(combat.combatant);
-                                }
-                                break;
-                            case 3:
-                                Chatter.sendTurnMessage(combat.combatant, true);
+            await Marker.placeStartMarker(combat.combatant.token._id);
+            await Marker.placeOnDeckMarker(combat.turns[nextTurn].token._id);
+            let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
+            await Marker.placeTurnMarker(combat.combatant.token._id, (tile && tile.id) || undefined);
+            if (Settings.shouldAnnounceTurns() && !combat.combatant.hidden) {
+                switch (Settings.getAnnounceActors()) {
+                    case 0:
+                        Chatter.sendTurnMessage(combat.combatant);
+                        break;
+                    case 1:
+                        if (combat.combatant.actor.hasPlayerOwner) {
+                            Chatter.sendTurnMessage(combat.combatant);
                         }
-                    }
-                }
-
-                //pan the canvas
-                if(Settings.getIsEnabled("panToToken") === true)
-                {
-                    await Marker.movePan(combat.combatant.token._id);
+                        break;
+                    case 2:
+                        if (!combat.combatant.actor.hasPlayerOwner) {
+                            Chatter.sendTurnMessage(combat.combatant);
+                        }
+                        break;
+                    case 3:
+                        Chatter.sendTurnMessage(combat.combatant, true);
                 }
             }
         }
+    }
+
+    //pan the canvas
+    if(Settings.getIsEnabled("panToToken") === true && token_id !== 0)
+    {
+        await Marker.movePan(token_id);
     }
 });
 
