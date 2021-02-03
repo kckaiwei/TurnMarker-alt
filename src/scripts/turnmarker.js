@@ -92,30 +92,33 @@ Hooks.on('updateCombat', async (combat, update, data) => {
     }
     if (combat.combatant) {
         let nextTurn = getNextTurn(combat);
-        if (update && lastTurn != combat.combatant._id && game.user.isGM && game.userId == firstGM()) {
+        if (update && lastTurn != combat.combatant._id)
+        {
             lastTurn = combat.combatant._id;
             if (combat && combat.combatant && combat.started) {
-                await Marker.placeStartMarker(combat.combatant.token._id);
-                await Marker.placeOnDeckMarker(combat.turns[nextTurn].token._id);
-                let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
-                await Marker.placeTurnMarker(combat.combatant.token._id, (tile && tile.id) || undefined);
-                if (Settings.shouldAnnounceTurns() && !combat.combatant.hidden) {
-                    switch (Settings.getAnnounceActors()) {
-                        case 0:
-                            Chatter.sendTurnMessage(combat.combatant);
-                            break;
-                        case 1:
-                            if (combat.combatant.actor.hasPlayerOwner) {
+                if (game.user.isGM && game.userId == firstGM()) {
+                    await Marker.placeStartMarker(combat.combatant.token._id);
+                    await Marker.placeOnDeckMarker(combat.turns[nextTurn].token._id);
+                    let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
+                    await Marker.placeTurnMarker(combat.combatant.token._id, (tile && tile.id) || undefined);
+                    if (Settings.shouldAnnounceTurns() && !combat.combatant.hidden) {
+                        switch (Settings.getAnnounceActors()) {
+                            case 0:
                                 Chatter.sendTurnMessage(combat.combatant);
-                            }
-                            break;
-                        case 2:
-                            if (!combat.combatant.actor.hasPlayerOwner) {
-                                Chatter.sendTurnMessage(combat.combatant);
-                            }
-                            break;
-                        case 3:
-                            Chatter.sendTurnMessage(combat.combatant, true);
+                                break;
+                            case 1:
+                                if (combat.combatant.actor.hasPlayerOwner) {
+                                    Chatter.sendTurnMessage(combat.combatant);
+                                }
+                                break;
+                            case 2:
+                                if (!combat.combatant.actor.hasPlayerOwner) {
+                                    Chatter.sendTurnMessage(combat.combatant);
+                                }
+                                break;
+                            case 3:
+                                Chatter.sendTurnMessage(combat.combatant, true);
+                        }
                     }
                 }
 
