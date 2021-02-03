@@ -48,6 +48,10 @@
             "startImage": {
                 "name": "カスタム画像パス",
                 "hint": "カスタム画像を指定することでそれを代わりに使用します。（空にすると既存の画像を使用します。"
+            },
+            "panToToken":{
+                "name": "pan to token",
+                "hint": "position the Canvas on the token"
             }
         }
     }

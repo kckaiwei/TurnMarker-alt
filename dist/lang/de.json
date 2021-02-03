@@ -48,7 +48,11 @@
 			"startImage": {
 				"name": "Benutzerdefiniertes Bild",
 				"hint": "Verwende ein eigenes Bild für die Zugbeginn-Markierung (Leer lassen, um eins der ausgelieferten Bilder zu verwenden)"
-			}
+			},
+            "panToToken":{
+                "name": "zum Token springen",
+				"hint": "Ansicht des Canvas auf dem Token positionieren."
+            }
 		}
 	}
 }

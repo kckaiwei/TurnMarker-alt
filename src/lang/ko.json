@@ -44,6 +44,10 @@
             "startImage": {
                 "name": "커스텀 이미지 경로",
                 "hint": "대신할 커스텀 이미지를 사용한다(모듈에 내장된 이미지를 사용하려면 비워둘 것)"
+            },
+            "panToToken":{
+                "name": "pan to token",
+                "hint": "position the Canvas on the token"
             }
         }
     }

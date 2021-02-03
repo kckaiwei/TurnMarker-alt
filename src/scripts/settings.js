@@ -28,6 +28,11 @@ const deckPlayersOnly = 'deckplayersonly';
 
 const startMarkerEnabled = 'startMarker-enabled';
 const startMarkerImage = 'startMarker-custom';
+
+//pantocanvas
+const panToTokenEnabled = 'panToToken-enabled';
+
+//images
 export const imageTitles = [
     'Runes of Incendium by Rin',
     'Runes of the Cultist by Rin',
@@ -205,6 +210,9 @@ export class Settings {
                 return game.settings.get(modName, onDeckMarkerEnabled);
             case "startmarker":
                 return game.settings.get(modName, startMarkerEnabled);
+            case "panToToken":
+                return game.settings.get(modName, panToTokenEnabled);
+                break;
         }
     }
 
@@ -223,6 +231,9 @@ export class Settings {
                 break;
             case "startmarker":
                 game.settings.set(modName, startMarkerEnabled, val);
+                break;
+            case "panToToken":
+                game.settings.set(modName, panToTokenEnabled, val);
                 break;
         }
     }
@@ -600,6 +611,16 @@ export class Settings {
                     Marker.placeStartMarker(game.combat.combatant.token._id);
                 }
             }
+        });
+
+        game.settings.register(modName, panToTokenEnabled, {
+            name: 'tm.settings.panToTokenEnabled.name',
+            hint: 'tm.settings.panToTokenEnabled.hint',
+            scope: 'world',
+            config: false,
+            type: Boolean,
+            default: false,
+            restricted: true
         });
 
         game.settings.register(modName, startMarkerImage, {

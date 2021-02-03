@@ -63,6 +63,10 @@
             "startImage": {
                 "name": "Ruta a la Imagen Personalizada",
                 "hint": "Utilizar una imagen personalizada para el marcador de inicio (dejar en blanco si se quiere usar la imagen incluida en el módulo)"
+            },
+            "panToToken":{
+                "name": "pan to token",
+                "hint": "position the Canvas on the token"
             }
         }
     }

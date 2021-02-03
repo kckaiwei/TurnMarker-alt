@@ -43,7 +43,9 @@ export class SettingsForm extends FormApplication {
             announceTokenName: Settings.getAnnounceTokenName(),
             // Start Marker Settings
             startMarkerEnabled: Settings.getIsEnabled("startmarker"),
-            startMarkerPath: Settings.getStartMarkerPath()
+            startMarkerPath: Settings.getStartMarkerPath(),
+            // Pan the Canvas
+            panToTokenEnabled: Settings.getIsEnabled("panToToken"),
         };
     }
 
@@ -74,6 +76,9 @@ export class SettingsForm extends FormApplication {
         Settings.setCustomDeckImagePath(d.customDeckImage);
         Settings.setIsEnabled("deckmarker", d.onDeckMarkerEnabled);
         Settings.setDeckPlayersOnly(d.onDeckPlayersOnly);
+
+        // Pan the Canvas
+        Settings.setIsEnabled("panToToken", d.panToTokenEnabled);
     }
 
     activateListeners(html) {

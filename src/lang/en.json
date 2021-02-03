@@ -85,6 +85,10 @@
             "startImage": {
                 "name": "Custom Image Path",
                 "hint": "Use a custom image for the start marker (leave blank to use the built in image)"
+            },
+            "panToToken":{
+                "name": "pan to token",
+                "hint": "position the Canvas on the token"
             }
         }
     }

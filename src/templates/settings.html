@@ -167,6 +167,14 @@
         <p class="notes">{{localize 'tm.settings.startImage.hint'}}</p>
     </div>
     <hr />
+    <div class="form-group">
+        <label>{{localize 'tm.settings.panToToken.name'}}</label>
+        <div class="form-fields">
+            <input name="panToTokenEnabled" type="checkbox" {{#if panToTokenEnabled}}checked="checked" {{/if}} />
+        </div>
+        <p class="notes">{{localize 'tm.settings.panToToken.hint'}}</p>
+    </div>
+    <hr />
     <!--Link and save button-->
     <p>More information at <a href="https://brunhine.com/fvtt/turnmarker" target="_blank">Brunhine.com</a></p>
     <button type="submit" name="submit">

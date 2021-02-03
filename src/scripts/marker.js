@@ -288,4 +288,16 @@ export class Marker {
 
         return {x: newX, y: newY};
     }
+
+    /**
+    * Moves the position / viewpoint on the map
+    */
+    static movePan(tokenId){
+        let token = findTokenById(tokenId);
+        let center = this.getImageLocation(token);
+        return canvas.animatePan({
+                x: center.x,
+                y: center.y
+        });
+    }
 }

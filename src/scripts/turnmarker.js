@@ -3,7 +3,7 @@ import {Marker} from './marker.js';
 import {MarkerAnimation} from './markeranimation.js';
 import {Settings} from './settings.js';
 import {renderUpdateWindow} from './updateWindow.js';
-import {firstGM, Flags, FlagScope, socketAction, socketName, getNextTurn} from './utils.js';
+import {firstGM, Flags, FlagScope, socketAction, socketName, getNextTurn, findTokenById, modName} from './utils.js';
 
 
 let lastTurn = '';
@@ -84,7 +84,7 @@ Hooks.on('createTile', (scene, data) => {
     }
 });
 
-Hooks.on('updateCombat', async (combat, update) => {
+Hooks.on('updateCombat', async (combat, update, data) => {
     // Clear out any leftovers, there seems to be a buggy instance where updateCombat is fired, when combat isn't
     // started nor, is a turn changed
     if (!combat.started) {
@@ -117,6 +117,12 @@ Hooks.on('updateCombat', async (combat, update) => {
                         case 3:
                             Chatter.sendTurnMessage(combat.combatant, true);
                     }
+                }
+
+                //pan the canvas
+                if(Settings.getIsEnabled("panToToken") === true)
+                {
+                    await Marker.movePan(combat.combatant.token._id);
                 }
             }
         }
