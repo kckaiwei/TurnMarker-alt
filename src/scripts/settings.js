@@ -10,6 +10,8 @@ const announceActors = 'announce-Actors';
 const announceAsActor = 'announce-asActor';
 const announceImage = 'announce-image';
 const announceTokenName = 'announce-token';
+const announceTurnMarkerAlias = 'announce-turn-marker-alias';
+const announcePlayerNames = 'announce-player-names';
 
 // Turn marker constants
 const image = 'image';
@@ -164,6 +166,21 @@ export class Settings {
         return game.settings.set(modName, announceTokenName, val);
     }
 
+    static getAnnounceTurnMarkerAlias() {
+        return game.settings.get(modName, announceTurnMarkerAlias);
+    }
+
+    static setAnnounceTurnMarkerAlias(val) {
+        return game.settings.set(modName, announceTurnMarkerAlias, val);
+    }
+
+    static getAnnouncePlayerNames() {
+        return game.settings.get(modName, announcePlayerNames);
+    }
+
+    static setAnnouncePlayerNames(val) {
+        return game.settings.set(modName, announcePlayerNames, val);
+    }
     static getIncludeAnnounceImage() {
         return game.settings.get(modName, announceImage);
     }
@@ -528,6 +545,26 @@ export class Settings {
             type: Boolean,
             default: false,
             restricted: true,
+        });
+
+        game.settings.register(modName, announceTurnMarkerAlias, {
+          name: 'tm.settings.announceTurnMarkerAlias.name',
+          hint: 'tm.settings.announceTurnMarkerAlias.hint',
+          scope: 'world',
+          config: false,
+          type: Boolean,
+          default: false,
+          restricted: true,
+        });
+
+        game.settings.register(modName, announcePlayerNames, {
+          name: 'tm.settings.announcePlayerNames.name',
+          hint: 'tm.settings.announcePlayerNames.hint',
+          scope: 'world',
+          config: false,
+          type: Boolean,
+          default: true,
+          restricted: true,
         });
 
         game.settings.register(modName, customimage, {
