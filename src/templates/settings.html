@@ -137,6 +137,7 @@
             </select>
         </div>
    <p class="notes">{{localize 'tm.settings.announcedActors.hint'}}</p>
+   </div>
    <div class="form-group">
         <label>{{localize 'tm.settings.announceTokenName.name'}}</label>
         <div class="form-fields">
@@ -144,6 +145,19 @@
         </div>
         <p class="notes">{{localize 'tm.settings.announceTokenName.hint'}}</p>
    </div>
+   <div class="form-group">
+        <label>{{localize 'tm.settings.announceTurnMarkerAlias.name'}}</label>
+        <div class="form-fields">
+            <input name="announceTurnMarkerAlias" type="checkbox" {{#if announceTurnMarkerAlias}}checked="checked" {{/if}} />
+        </div>
+        <p class="notes">{{localize 'tm.settings.announceTurnMarkerAlias.hint'}}</p>
+   </div>
+   <div class="form-group">
+        <label>{{localize 'tm.settings.announcePlayerNames.name'}}</label>
+        <div class="form-fields">
+            <input name="announcePlayerNames" type="checkbox" {{#if announcePlayerNames}}checked="checked" {{/if}} />
+        </div>
+        <p class="notes">{{localize 'tm.settings.announcePlayerNames.hint'}}</p>
    </div>
     <hr />
     <!--Start Marker-->

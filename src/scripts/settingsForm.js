@@ -41,6 +41,8 @@ export class SettingsForm extends FormApplication {
             announce: Settings.shouldAnnounceTurns(),
             announceImage: Settings.getIncludeAnnounceImage(),
             announceTokenName: Settings.getAnnounceTokenName(),
+            announceTurnMarkerAlias: Settings.getAnnounceTurnMarkerAlias(),
+            announcePlayerNames: Settings.getAnnouncePlayerNames(),
             // Start Marker Settings
             startMarkerEnabled: Settings.getIsEnabled("startmarker"),
             startMarkerPath: Settings.getStartMarkerPath()
@@ -65,6 +67,8 @@ export class SettingsForm extends FormApplication {
         Settings.setAnnounceActors(d.announceActors);
         Settings.setIncludeAnnounceImage(d.announceImage);
         Settings.setAnnounceTokenName(d.announceTokenName);
+        Settings.setAnnounceTurnMarkerAlias(d.announceTurnMarkerAlias);
+        Settings.setAnnouncePlayerNames(d.announcePlayerNames);
         Settings.setIsEnabled("startmarker", d.startMarkerEnabled);
         Settings.setStartMarkerPath(d.startMarkerPath);
 
