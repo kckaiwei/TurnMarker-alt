@@ -1,0 +1,100 @@
+{
+    "tm": {
+        "announceLabel": "回合標記",
+        "settings": {
+            "button": {
+                "name": "回合標記 全域設定",
+                "label": "回合標記"
+            },
+            "formTitles": {
+                "settings": "回合標記 - 全域設定"
+            },
+            "formHeaders": {
+                "imageOptions": "設定標記圖片",
+                "onDeckImageOptions": "桌面上的標記圖片選項",
+                "turnAnnounce": "回合提示(進行宣布)",
+                "startMarker": "開始 標記",
+                "save": "儲存設定"
+            },
+            "turnMarkerEnabled": {
+                "name": "啓動 回合標記"
+            },
+            "ratio": {
+                "name": "圖片比例",
+                "hint": "與棋子大小相比."
+            },
+            "animate": {
+                "name": "動畫化 回合標記?",
+                "hint": "在回合標記上使用使用旋轉動畫. （變更可能要等到新的戰鬥開始後才能看到）"
+            },
+            "interval": {
+                "name": "動畫速度",
+                "hint": "啟用時旋轉動畫的速度（建議在10到200之間）"
+            },
+            "image": {
+                "name": "標記 圖片"
+            },
+            "onDeckMarkerEnabled": {
+                "name": "啓動桌面上的標記"
+            },
+            "deckImage": {
+                "name": "在桌面上的 標記 圖片"
+            },
+            "customDeckImage": {
+                "name": "自定義桌面上的圖片路徑",
+                "hint": "改用自定義圖片（留空則使用內置圖片）"
+            },
+            "customDeckImagePreview": {
+                "name": "預覽在桌面上的標記"
+            },
+            "deckRatio": {
+                "name": "桌面上的圖像比例",
+                "hint": "與棋子大小相比."
+            },
+            "deckAnimate": {
+                "name": "使用動畫化的桌面標記?",
+                "hint": "在桌面 標記 上使用使用旋轉動畫. （變更可能要等到新的戰鬥開始後才能看到）"
+            },
+            "deckPlayersOnly": {
+                "name": "僅在玩家身上使用桌面標記?",
+                "hint": "如果啟用，則桌面標記會跳過NPC"
+            },
+            "announcedActors": {
+                "name": "宣告角色",
+                "hint": "在聊天版中會提示誰人"
+            },
+            "announceTokenName": {
+                "name": "使用 棋子名字 進行宣告",
+                "hint": "如果啟用，將使用棋子名稱而不是角色名稱"
+            },
+            "announceTurnMarkerAlias": {
+                "name": "宣告為回合標記",
+                "hint": "如果啟用，則聊天消息將來源自「回合標記」而不是「角色」"
+            },
+            "announcePlayerNames": {
+                "name": "宣告玩家姓名",
+                "hint": "如果啟用，則聊天消息將顯示控制角色的玩家姓名"
+            },
+            "customImage": {
+                "name": "自定義圖片路徑",
+                "hint": "改用自定義圖片（留空則使用內置圖片）"
+            },
+            "announce": {
+                "name": "宣告回合",
+                "hint": "如果啟用，將向新戰鬥人員發送聊天消息"
+            },
+            "announceImage": {
+                "name": "包括棋子圖片",
+                "hint": "如果啟用，則將棋子的圖片包括在回合公告中"
+            },
+            "startEnabled": {
+                "name": "啟用開始標記",
+                "hint": "如果啟用，將放置標記在棋子回合開始行動時的位置"
+            },
+            "startImage": {
+                "name": "自定義圖片路徑",
+                "hint": "改用自定義圖片（留空則使用內置圖片）"
+            }
+        }
+    }
+}
