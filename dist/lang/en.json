@@ -1,5 +1,6 @@
 {
     "tm": {
+        "announceLabel": "Turn Marker",
         "settings": {
             "button": {
                 "name": "Turn Marker Global Settings",
@@ -65,6 +66,14 @@
             "announceTokenName": {
                 "name": "Use Token Name to announce",
                 "hint": "If enabled, will use Token name instead of Actor name"
+            },
+            "announceTurnMarkerAlias": {
+                "name": "Announce as Turn Marker",
+                "hint": "If enabled, the chat message will be from Turn Marker instead of the Actor"
+            },
+            "announcePlayerNames": {
+                "name": "Announce Player Names",
+                "hint": "If enabled, the chat message will show the names of the players who control the Actor"
             },
             "customImage": {
                 "name": "Custom Image Path",
