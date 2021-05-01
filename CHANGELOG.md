@@ -1,3 +1,7 @@
+# 2.7.4
+- Fixed marker sizing for non-square tokens on grid/gridless maps
+- Added on deck marker option (off by default)
+
 # 2.7.3
 - Fixed deletion permissions in different scenes issue
 
