@@ -96,7 +96,7 @@ Hooks.on('updateCombat', async (combat, update) => {
             lastTurn = combat.combatant._id;
             if (combat && combat.combatant && combat.started) {
                 await Marker.placeStartMarker(combat.combatant.token._id);
-                await Marker.placeOnDeckMarker(combat.turns[nextTurn].token._id);
+                createCombatDeckMarker(combat, nextTurn);
                 let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
                 await Marker.placeTurnMarker(combat.combatant.token._id, (tile && tile.id) || undefined);
                 if (Settings.shouldAnnounceTurns() && !combat.combatant.hidden) {
@@ -202,6 +202,26 @@ function isVisible(tile) {
     const tolerance = Math.min(w, h) / 4;
 
     return canvas.sight.testVisibility(tile.center, {tolerance, object: tile});
+}
+
+async function createCombatDeckMarker(combat, nextTurn) {
+    if (Settings.getDeckPlayersOnly()) {
+        if (combat.turns[nextTurn].actor.hasPlayerOwner) {
+            await Marker.placeOnDeckMarker(combat.turns[nextTurn].token._id).then(function () {
+                if (Settings.getShouldAnimate("deckmarker")) {
+                    MarkerAnimation.startAnimation("deckmarker");
+                }
+            });
+        } else {
+            await Marker.deleteOnDeckMarker();
+        }
+    } else {
+        await Marker.placeOnDeckMarker(combat.turns[nextTurn].token._id).then(function () {
+                if (Settings.getShouldAnimate("deckmarker")) {
+                    MarkerAnimation.startAnimation("deckmarker");
+                }
+        });
+    }
 }
 
 Hooks.on('updateTile', (entity, data, options, userId) => {
