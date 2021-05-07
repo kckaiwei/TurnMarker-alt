@@ -1,19 +1,33 @@
-import { Marker } from './marker.js';
-import { SettingsForm } from './settingsForm.js';
-import { modName } from './utils.js';
+import {Marker} from './marker.js';
+import {MarkerAnimation} from './markeranimation.js';
+import {SettingsForm} from './settingsForm.js';
+import {modName, getNextTurn} from './utils.js';
 
 const version = 'tm-version';
-const ratio = 'ratio';
-const animation = 'animation';
 const interval = 'interval';
 const announce = 'announce-turn';
 const announceActors = 'announce-Actors';
 const announceAsActor = 'announce-asActor';
 const announceImage = 'announce-image';
 const announceTokenName = 'announce-token';
+const announceTurnMarkerAlias = 'announce-turn-marker-alias';
+const announcePlayerNames = 'announce-player-names';
+
+// Turn marker constants
 const image = 'image';
 const customimage = 'customimage';
+const ratio = 'ratio';
 const turnMarkerEnabled = 'turnmarker-enabled';
+const animation = 'animation';
+
+// Ondeck marker constants
+const onDeckMarkerEnabled = 'ondeckmarker-enabled';
+const deckImage = 'deckimage';
+const customDeckImage = 'customdeckimage';
+const deckRatio = 'deckratio';
+const deckAnimation = 'deckanimation';
+const deckPlayersOnly = 'deckplayersonly';
+
 const startMarkerEnabled = 'startMarker-enabled';
 const startMarkerImage = 'startMarker-custom';
 export const imageTitles = [
@@ -28,6 +42,20 @@ export const imageTitles = [
     'Runes of the Blue Sky by Rin',
     'Runes of the Universe by Rin',
     'Runes of Prosperity by Rin'
+];
+
+export const deckImageTitles = [
+    'Runes of Prosperity by Rin',
+    'Runes of Incendium by Rin',
+    'Runes of the Cultist by Rin',
+    'Runes of Regeneration by Rin',
+    'Runes of the Cosmos by Rin',
+    'Runes of Earthly Dust by Rin',
+    'Runes of Reality by Rin',
+    'Runes of the Believer by Rin',
+    'Runes of the Mad Mage by Rin',
+    'Runes of the Blue Sky by Rin',
+    'Runes of the Universe by Rin'
 ];
 
 export const announcedActorOptions = [
@@ -51,14 +79,19 @@ export class Settings {
     }
 
     /**
-     * Gets the image ratio
+     * Gets the image ratio given a marker_type
      */
-    static getRatio() {
-        return game.settings.get(modName, ratio);
+    static getRatio(marker_type) {
+        switch (marker_type) {
+            case "turnmarker":
+                return game.settings.get(modName, ratio);
+            case "deckmarker":
+                return game.settings.get(modName, deckRatio);
+        }
     }
 
     /**
-     * Sets the image ratio
+     * Sets the turn marker image ratio
      * @param {Number} val - The image ratio
      */
     static setRatio(val) {
@@ -66,10 +99,24 @@ export class Settings {
     }
 
     /**
+     * Sets the ondeck image ratio
+     * @param {Number} val - The image ratio
+     */
+    static setDeckRatio(val) {
+        game.settings.set(modName, deckRatio, val);
+    }
+
+    /**
      * Returns true if the marker should be animated
      */
-    static getShouldAnimate() {
-        return game.settings.get(modName, animation);
+    static getShouldAnimate(marker_type) {
+        switch (marker_type) {
+            case "turnmarker":
+                return game.settings.get(modName, animation);
+            case "deckmarker":
+                return game.settings.get(modName, deckAnimation);
+        }
+
     }
 
     /**
@@ -119,6 +166,21 @@ export class Settings {
         return game.settings.set(modName, announceTokenName, val);
     }
 
+    static getAnnounceTurnMarkerAlias() {
+        return game.settings.get(modName, announceTurnMarkerAlias);
+    }
+
+    static setAnnounceTurnMarkerAlias(val) {
+        return game.settings.set(modName, announceTurnMarkerAlias, val);
+    }
+
+    static getAnnouncePlayerNames() {
+        return game.settings.get(modName, announcePlayerNames);
+    }
+
+    static setAnnouncePlayerNames(val) {
+        return game.settings.set(modName, announcePlayerNames, val);
+    }
     static getIncludeAnnounceImage() {
         return game.settings.get(modName, announceImage);
     }
@@ -129,9 +191,15 @@ export class Settings {
 
     /**
      * Gets the index of the currently selected marker image
+     * @param {string} marker_type - Type of marker to get index for
      */
-    static getImageIndex() {
-        return game.settings.get(modName, image);
+    static getImageIndex(marker_type) {
+        switch (marker_type) {
+            case "turnmarker":
+                return game.settings.get(modName, image);
+            case "deckmarker":
+                return game.settings.get(modName, deckImage);
+        }
     }
 
     static getStartMarker() {
@@ -142,21 +210,38 @@ export class Settings {
         }
     }
 
-    static getTurnMarkerEnabled() {
-        return game.settings.get(modName, turnMarkerEnabled);
+    /**
+     * Gets the IsEnabled property of passed marker_type
+     * @param marker_type - Type of marker to check isEnabled
+     */
+    static getIsEnabled(marker_type) {
+        switch (marker_type) {
+            case "turnmarker":
+                return game.settings.get(modName, turnMarkerEnabled);
+            case "deckmarker":
+                return game.settings.get(modName, onDeckMarkerEnabled);
+            case "startmarker":
+                return game.settings.get(modName, startMarkerEnabled);
+        }
     }
 
-
-    static setTurnMarkerEnabled(val) {
-        game.settings.set(modName, turnMarkerEnabled, val);
-    }
-
-    static getStartMarkerEnabled() {
-        return game.settings.get(modName, startMarkerEnabled);
-    }
-
-    static setStartMarkerEnabled(val) {
-        game.settings.set(modName, startMarkerEnabled, val);
+    /**
+     * Sets the IsEnabled property of passed marker_type
+     * @param marker_type - Type of marker to check isEnabled
+     * @param val - boolean
+     */
+    static setIsEnabled(marker_type, val) {
+        switch (marker_type) {
+            case "turnmarker":
+                game.settings.set(modName, turnMarkerEnabled, val);
+                break;
+            case "deckmarker":
+                game.settings.set(modName, onDeckMarkerEnabled, val);
+                break;
+            case "startmarker":
+                game.settings.set(modName, startMarkerEnabled, val);
+                break;
+        }
     }
 
     static getStartMarkerPath() {
@@ -178,24 +263,84 @@ export class Settings {
         }
     }
 
-    static getImageByIndex(index) {
-        switch (index) {
-            case 0: return 'modules/turnmarker/assets/incendium.png';
-            case 1: return 'modules/turnmarker/assets/cultist.png';
-            case 2: return 'modules/turnmarker/assets/regeneration.png';
-            case 3: return 'modules/turnmarker/assets/cosmos.png';
-            case 4: return 'modules/turnmarker/assets/earthlydust.png';
-            case 5: return 'modules/turnmarker/assets/reality.png';
-            case 6: return 'modules/turnmarker/assets/believer.png';
-            case 7: return 'modules/turnmarker/assets/madmage.png';
-            case 8: return 'modules/turnmarker/assets/bluesky.png';
-            case 9: return 'modules/turnmarker/assets/universe.png';
-            case 10: return 'modules/turnmarker/assets/prosperity.png';
+    /**
+     * Gets a path to the currently selected image to be used as the onDeck marker
+     */
+    static getOnDeckImagePath() {
+        if (game.settings.get(modName, customDeckImage).trim() == '') {
+            return this.getDeckImageByIndex(game.settings.get(modName, deckImage));
+        } else {
+            return game.settings.get(modName, customDeckImage);
         }
     }
 
-    static setImage(val) {
-        game.settings.set(modName, image, val);
+    static getImageByIndex(index) {
+        switch (index) {
+            case 0:
+                return 'modules/turnmarker/assets/incendium.png';
+            case 1:
+                return 'modules/turnmarker/assets/cultist.png';
+            case 2:
+                return 'modules/turnmarker/assets/regeneration.png';
+            case 3:
+                return 'modules/turnmarker/assets/cosmos.png';
+            case 4:
+                return 'modules/turnmarker/assets/earthlydust.png';
+            case 5:
+                return 'modules/turnmarker/assets/reality.png';
+            case 6:
+                return 'modules/turnmarker/assets/believer.png';
+            case 7:
+                return 'modules/turnmarker/assets/madmage.png';
+            case 8:
+                return 'modules/turnmarker/assets/bluesky.png';
+            case 9:
+                return 'modules/turnmarker/assets/universe.png';
+            case 10:
+                return 'modules/turnmarker/assets/prosperity.png';
+        }
+    }
+
+    /**
+     * Gets on deck marker image path
+     */
+    static getDeckImageByIndex(index) {
+        switch (index) {
+            case 0:
+                return 'modules/turnmarker/assets/prosperity.png';
+            case 1:
+                return 'modules/turnmarker/assets/incendium.png';
+            case 2:
+                return 'modules/turnmarker/assets/cultist.png';
+            case 3:
+                return 'modules/turnmarker/assets/regeneration.png';
+            case 4:
+                return 'modules/turnmarker/assets/cosmos.png';
+            case 5:
+                return 'modules/turnmarker/assets/earthlydust.png';
+            case 6:
+                return 'modules/turnmarker/assets/reality.png';
+            case 7:
+                return 'modules/turnmarker/assets/believer.png';
+            case 8:
+                return 'modules/turnmarker/assets/madmage.png';
+            case 9:
+                return 'modules/turnmarker/assets/bluesky.png';
+            case 10:
+                return 'modules/turnmarker/assets/universe.png';
+        }
+    }
+
+    static setImage(image_type, val) {
+        switch (image_type) {
+            case "turnmarker":
+                game.settings.set(modName, image, val);
+                break;
+            case "deckmarker":
+                game.settings.set(modName, deckImage, val);
+                break;
+        }
+
     }
 
     static getCustomImagePath() {
@@ -205,6 +350,37 @@ export class Settings {
     static setCustomImagePath(val) {
         game.settings.set(modName, customimage, val);
     }
+
+    /**
+     * Gets on deck marker image path
+     */
+    static getCustomDeckImagePath() {
+        return game.settings.get(modName, customDeckImage);
+    }
+
+    /**
+     * Sets ondeck marker image path
+     * @param val - path to desired image.
+     */
+    static setCustomDeckImagePath(val) {
+        game.settings.set(modName, customDeckImage, val);
+    }
+
+    /**
+     * Gets if deck markers only used for players
+     */
+    static getDeckPlayersOnly() {
+        return game.settings.get(modName, deckPlayersOnly);
+    }
+
+    /**
+     * Sets if deck markers only used for players
+     * @param val - boolean
+     */
+    static setDeckPlayersOnly(val) {
+        game.settings.set(modName, deckPlayersOnly, val);
+    }
+
 
     /**
      * Registers all game settings
@@ -243,6 +419,29 @@ export class Settings {
             config: true,
             type: Boolean,
             default: true,
+            onChange: shouldAnimate => {
+                if (!game.paused && shouldAnimate && canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true)) {
+                    MarkerAnimation.startAnimation("turnmarker");
+                } else {
+                    MarkerAnimation.stopAnimation("turnmarker");
+                }
+            }
+        });
+
+        game.settings.register(modName, deckAnimation, {
+            name: 'tm.settings.deckAnimate.name',
+            hint: 'tm.settings.deckAnimate.hint',
+            scope: 'user',
+            config: true,
+            type: Boolean,
+            default: true,
+            onChange: shouldAnimate => {
+                if (!game.paused && shouldAnimate && canvas.tiles.placeables.find(t => t.data.flags.deckMarker == true)) {
+                    MarkerAnimation.startAnimation("deckmarker");
+                } else {
+                    MarkerAnimation.stopAnimation("deckmarker");
+                }
+            }
         });
 
         game.settings.register(modName, interval, {
@@ -265,6 +464,68 @@ export class Settings {
             onChange: value => Marker.updateImagePath(value)
         });
 
+        // OnDeck Marker Settings
+        game.settings.register(modName, deckRatio, {
+            name: 'tm.settings.deckRatio.name',
+            hint: 'tm.settings.deckRatio.hint',
+            scope: 'world',
+            config: false,
+            type: Number,
+            default: 1.5,
+            restricted: true
+        });
+
+        game.settings.register(modName, deckImage, {
+            name: 'tm.settings.deckImage.name',
+            scope: 'world',
+            config: false,
+            type: Number,
+            default: 0,
+            choices: deckImageTitles,
+            restricted: true,
+            onChange: value => Marker.updateOnDeckImagePath(value)
+        });
+
+        game.settings.register(modName, customDeckImage, {
+            name: 'tm.settings.customDeckImage.name',
+            hint: 'tm.settings.customDeckImage.hint',
+            scope: 'world',
+            config: false,
+            type: String,
+            default: '',
+            restricted: true,
+            onChange: value => Marker.updateOnDeckImagePath(value)
+        });
+
+        game.settings.register(modName, onDeckMarkerEnabled, {
+            name: 'tm.settings.onDeckMarkerEnabled.name',
+            hint: 'tm.settings.onDeckMarkerEnabled.hint',
+            scope: 'world',
+            config: false,
+            type: Boolean,
+            default: false,
+            restricted: true,
+            onChange: enabled => {
+                if (!enabled) {
+                    Marker.deleteOnDeckMarker();
+                } else if (game.combat && game.combat.combatant && game.combat.started) {
+                    let nextTurn = getNextTurn(game.combat);
+                    Marker.placeOnDeckMarker(game.combat.turns[nextTurn].token._id);
+                }
+            }
+        });
+
+        game.settings.register(modName, deckPlayersOnly, {
+            name: 'tm.settings.deckPlayersOnly.name',
+            hint: 'tm.settings.deckPlayersOnly.hint',
+            scope: 'world',
+            config: false,
+            type: Boolean,
+            default: true,
+            restricted: true,
+        });
+
+        // Announcements
         game.settings.register(modName, announceActors, {
             name: 'tm.settings.announcedActors.name',
             hint: 'tm.settings.announcedActors.hint',
@@ -284,6 +545,26 @@ export class Settings {
             type: Boolean,
             default: false,
             restricted: true,
+        });
+
+        game.settings.register(modName, announceTurnMarkerAlias, {
+          name: 'tm.settings.announceTurnMarkerAlias.name',
+          hint: 'tm.settings.announceTurnMarkerAlias.hint',
+          scope: 'world',
+          config: false,
+          type: Boolean,
+          default: false,
+          restricted: true,
+        });
+
+        game.settings.register(modName, announcePlayerNames, {
+          name: 'tm.settings.announcePlayerNames.name',
+          hint: 'tm.settings.announcePlayerNames.hint',
+          scope: 'world',
+          config: false,
+          type: Boolean,
+          default: true,
+          restricted: true,
         });
 
         game.settings.register(modName, customimage, {
@@ -331,7 +612,14 @@ export class Settings {
             config: false,
             type: Boolean,
             default: true,
-            restricted: true
+            restricted: true,
+            onChange: enabled => {
+                if (!enabled) {
+                    Marker.deleteTurnMarker();
+                } else if (game.combat && game.combat.combatant && game.combat.started) {
+                    Marker.placeTurnMarker(game.combat.combatant.token._id);
+                }
+            }
         });
 
         game.settings.register(modName, startMarkerEnabled, {
@@ -341,7 +629,14 @@ export class Settings {
             config: false,
             type: Boolean,
             default: false,
-            restricted: true
+            restricted: true,
+            onChange: enabled => {
+                if (!enabled) {
+                    Marker.deleteStartMarker();
+                } else if (game.combat && game.combat.combatant && game.combat.started) {
+                    Marker.placeStartMarker(game.combat.combatant.token._id);
+                }
+            }
         });
 
         game.settings.register(modName, startMarkerImage, {

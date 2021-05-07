@@ -23,24 +23,27 @@
 <h1>Important Changes</h1>
 <p>Below are just some of the changes to the module that should be called out. The full changelog is also available
     <a href="https://github.com/kckaiwei/TurnMarker-alt/blob/master/CHANGELOG.md">here</a>.</p>
-<h2>v2.7.0</h2>
+<h2>v2.7.4</h2>
 <ul>
-    <li>Test compatibility with Foundry v0.7.9</li>
-    <li>You can now select who to announce turns for: all, players, npcs, or all w/ npc names hidden</li>
-    <li>Options have been added to switch between announcing turns by Token name, or Actor name (for those subterfuge moments)</li>
-    <li>Fixed a console error when moving a token outside of combat</li>
+    <li>Fixed marker sizing issues for non-square tokens on grid/gridless maps</li>
+    <li>Adding option for on deck marker (off by default), to mark who is next to move</li>
+</ul>
+<h2>v2.7.3</h2>
+<ul>
+    <li>Fixed tile deletion issue in different scenes</li>
+</ul>
+<h2>v2.7.2</h2>
+<ul>
+    <li>Fixed marker in wrong location after reloading</li>
+    <li>Fixed marker not pausing with game</li>
+    <li>Marker visibilities are now tied to vision</li>
+</ul>
+<h2>v2.7.1</h2>
+<ul>
+    <li>Fixing ghosting issues with some start markers</li>
+    <li>Fixing turn marker showing when out of combat</li>
 </ul>
 <p style="display: flex; flex-flow: row nowrap; align-items: center; justify-content: flex-start;"><input
         type="checkbox" class='show-again' id="welcome-screen-show-again" /> <label
-        for="welcome-screen-show-again">Don't show this screen again until next update.</label></p>
-<h2>v2.6.9</h2>
-<ul>
-    <li>Fixed a console error when moving a token outside of combat</li>
-</ul>
-<h2>v2.6.8</h2>
-<ul>
-    <li>Test compatibility with Foundry v0.6.2</li>
-    <li>Start marker if enabled will no longer show up until after a token has moved for the first time on it's turn
-    </li>
-    <li>Video files (webm, ogg, & mp4) should now properly display in the marker previewer in settings</li>
-</ul>
+        for="welcome-screen-show-again">Don't show this screen again until next update.</label>
+</p>

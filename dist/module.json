@@ -3,9 +3,10 @@
 	"title": "Turn Marker",
 	"description": "Displays a (optionally animated) marker on the token who's active turn it is. Originally by Brunhine",
 	"author": "kckaiwei",
-	"version": "2.7.0",
+	"version": "2.7.4",
 	"minimumCoreVersion": "0.7.5",
 	"compatibleCoreVersion": "0.7.9",
+	"manifestPlusVersion": "1.0.0",
 	"esmodules": [
 		"scripts/turnmarker.js"
 	],
@@ -36,9 +37,25 @@
 			"lang": "es",
 			"name": "Spanish",
 			"path": "lang/es.json"
+		},
+		{
+			"lang": "zh-tw",
+			"name": "正體中文",
+			"path": "lang/zh-tw.json"
+		}
+	],
+	"media": [
+		{
+			"type": "cover",
+			"url": "https://brunhine.com/assets/img/turnmarker/card.png"
+		},
+		{
+			"type": "video",
+			"url": "https://brunhine.com/assets/img/turnmarker/example.webm",
+			"loop": true
 		}
 	],
 	"url": "https://github.com/kckaiwei/TurnMarker-alt",
-	"manifest": "https://raw.githubusercontent.com/kckaiwei/TurnMarker-alt/main/dist/module.json",
-	"download": "https://github.com/kckaiwei/TurnMarker-alt/releases/download/v2.7.0/turnmarker.zip"
+	"manifest": "https://raw.githubusercontent.com/kckaiwei/TurnMarker-alt/v2.7.4/src/module.json",
+	"download": "https://github.com/kckaiwei/TurnMarker-alt/releases/download/v2.7.4/turnmarker.zip"
 }

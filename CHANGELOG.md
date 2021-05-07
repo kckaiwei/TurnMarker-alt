@@ -1,3 +1,21 @@
+# 2.7.4
+- Fixed marker sizing for non-square tokens on grid/gridless maps
+- Added on deck marker option (off by default)
+- - Option for player owned only
+  - Animation and image options
+
+# 2.7.3
+- Fixed deletion permissions in different scenes issue
+
+# 2.7.2
+- Fixed marker in wrong location after reloading
+- Fixed marker not pausing with game
+- Marker visibilities are now tied to vision
+
+# 2.7.1
+- Fixed issue with start markers being left over
+- Fixed issue with turn marker showing when combat has not started
+
 # 2.7.0
 - - Added Turn announcement filtering
   - Turns announced for everyone

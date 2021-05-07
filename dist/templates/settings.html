@@ -50,6 +50,64 @@
         </div>
     </div>
     <hr />
+    <!--OnDeckMarker Image Options-->
+    <h2>{{localize 'tm.settings.formHeaders.onDeckImageOptions'}}</h2>
+    <div class="form-group">
+        <label>{{localize 'tm.settings.onDeckMarkerEnabled.name'}}</label>
+        <div class="form-fields">
+            <input id="onDeckMarkerEnabled" name="onDeckMarkerEnabled" type="checkbox"
+                {{#if onDeckMarkerEnabled}}checked="checked" {{/if}} />
+        </div>
+        <p class="notes"></p>
+    </div>
+    <div class="form-group">
+        <label>{{localize 'tm.settings.deckPlayersOnly.name'}}</label>
+        <div class="form-fields">
+            <input id="onDeckPlayersOnly" name="onDeckPlayersOnly" type="checkbox"
+                {{#if onDeckPlayersOnly}}checked="checked" {{/if}} />
+        </div>
+        <p class="notes"></p>
+    </div>
+    <div class="form-group">
+        <label>{{localize 'tm.settings.deckImage.name'}}:</label>
+        <div class="form-fields">
+            <select id="deckImage" name="deckImage">
+                {{#select deckImage}}
+                {{#each deckImage}}
+                <option value="{{@index}}" {{#if this.selected}}selected="selected" {{/if}}>{{this.value}}</option>
+                {{/each}}
+                {{/select}}
+            </select>
+        </div>
+        <p class="notes"></p>
+    </div>
+    <div class="form-group">
+        <label>{{localize 'tm.settings.customDeckImage.name'}}:</label>
+        <div class="form-fields">
+            <button id="customonDeckImageButton" type="button" class="file-picker" data-type="imagevideo"
+                data-target="customDeckImage" title="Browse Files" tabindex="-1">
+                <i class="fas fa-file-import fa-fw"></i>
+            </button>
+            <input id="customDeckImage" name="customDeckImage" type="text" value="{{customDeckImage}}" />
+        </div>
+        <p class="notes">{{localize 'tm.settings.customDeckImage.hint'}}</p>
+    </div>
+    <div class="form-group">
+        <label>{{localize 'tm.settings.deckRatio.name'}}</label>
+        <div class="form-fields">
+            <input id="deckRatio" name="deckRatio" type="text" value="{{deckRatio}}" />
+        </div>
+        <p class="notes">{{localize 'tm.settings.deckRatio.hint'}}</p>
+    </div>
+    <div class="form-group">
+        <label>{{localize 'tm.settings.customDeckImagePreview.name'}}</label>
+        <div class="form-fields">
+            <img class="hidden" width="286" id="onDeckMarkerImgPreview" src="{{onDeckPreviewPath}}" />
+            <video class="hidden" width="286" id="onDeckMarkerVideoPreview" src="{{onDeckPreviewPath}}" autoplay loop
+                controls></video>
+        </div>
+    </div>
+    <hr />
     <!--Turn Announcements-->
     <h2>{{localize 'tm.settings.formHeaders.turnAnnounce'}}</h2>
     <div class="form-group">
@@ -79,6 +137,7 @@
             </select>
         </div>
    <p class="notes">{{localize 'tm.settings.announcedActors.hint'}}</p>
+   </div>
    <div class="form-group">
         <label>{{localize 'tm.settings.announceTokenName.name'}}</label>
         <div class="form-fields">
@@ -86,6 +145,19 @@
         </div>
         <p class="notes">{{localize 'tm.settings.announceTokenName.hint'}}</p>
    </div>
+   <div class="form-group">
+        <label>{{localize 'tm.settings.announceTurnMarkerAlias.name'}}</label>
+        <div class="form-fields">
+            <input name="announceTurnMarkerAlias" type="checkbox" {{#if announceTurnMarkerAlias}}checked="checked" {{/if}} />
+        </div>
+        <p class="notes">{{localize 'tm.settings.announceTurnMarkerAlias.hint'}}</p>
+   </div>
+   <div class="form-group">
+        <label>{{localize 'tm.settings.announcePlayerNames.name'}}</label>
+        <div class="form-fields">
+            <input name="announcePlayerNames" type="checkbox" {{#if announcePlayerNames}}checked="checked" {{/if}} />
+        </div>
+        <p class="notes">{{localize 'tm.settings.announcePlayerNames.hint'}}</p>
    </div>
     <hr />
     <!--Start Marker-->

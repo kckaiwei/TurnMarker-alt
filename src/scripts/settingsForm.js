@@ -1,4 +1,4 @@
-import { imageTitles, announcedActorOptions, Settings } from './settings.js';
+import {imageTitles, deckImageTitles, announcedActorOptions, Settings} from './settings.js';
 
 const videos = ['mp4', 'webm', 'ogg'];
 
@@ -9,8 +9,8 @@ export class SettingsForm extends FormApplication {
     }
 
     /**
-    * Default Options for this FormApplication
-    */
+     * Default Options for this FormApplication
+     */
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
             id: 'turnmarker-settings-form',
@@ -24,37 +24,60 @@ export class SettingsForm extends FormApplication {
 
     getData() {
         return {
-            turnMarkerEnabled: Settings.getTurnMarkerEnabled(),
-            ratio: Settings.getRatio(),
-            image: this.getSelectList(imageTitles, Settings.getImageIndex()),
-            announceActors: this.getSelectList(announcedActorOptions, Settings.getAnnounceActors()),
+            turnMarkerEnabled: Settings.getIsEnabled("turnmarker"),
+            ratio: Settings.getRatio("turnmarker"),
+            image: this.getSelectList(imageTitles, Settings.getImageIndex("turnmarker")),
             customImage: Settings.getCustomImagePath(),
+            previewPath: Settings.getImagePath(),
+            // onDeck Marker Settings
+            onDeckMarkerEnabled: Settings.getIsEnabled("deckmarker"),
+            deckRatio: Settings.getRatio("deckmarker"),
+            deckImage: this.getSelectList(deckImageTitles, Settings.getImageIndex("deckmarker")),
+            customDeckImage: Settings.getCustomDeckImagePath(),
+            onDeckPreviewPath: Settings.getOnDeckImagePath(),
+            onDeckPlayersOnly: Settings.getDeckPlayersOnly(),
+            // Announcement Settings
+            announceActors: this.getSelectList(announcedActorOptions, Settings.getAnnounceActors()),
             announce: Settings.shouldAnnounceTurns(),
             announceImage: Settings.getIncludeAnnounceImage(),
-            announceTokenName :Settings.getAnnounceTokenName(),
-            startMarkerEnabled: Settings.getStartMarkerEnabled(),
-            startMarkerPath: Settings.getStartMarkerPath(),
-            previewPath: Settings.getImagePath()
+            announceTokenName: Settings.getAnnounceTokenName(),
+            announceTurnMarkerAlias: Settings.getAnnounceTurnMarkerAlias(),
+            announcePlayerNames: Settings.getAnnouncePlayerNames(),
+            // Start Marker Settings
+            startMarkerEnabled: Settings.getIsEnabled("startmarker"),
+            startMarkerPath: Settings.getStartMarkerPath()
         };
     }
 
-    /** 
+    /**
      * Executes on form submission.
      * @param {Object} e - the form submission event
      * @param {Object} d - the form data
      */
     async _updateObject(e, d) {
         console.log('Turn Marker | Saving Settings');
+        // Turnmarker settings
         Settings.setRatio(d.ratio);
-        if (d.image) Settings.setImage(d.image);
+        if (d.image) Settings.setImage("turnmarker", d.image);
         Settings.setCustomImagePath(d.customImage);
+        Settings.setIsEnabled("turnmarker", d.turnMarkerEnabled);
+
+        // Announcement Settings
         Settings.setShouldAnnounceTurns(d.announce);
         Settings.setAnnounceActors(d.announceActors);
         Settings.setIncludeAnnounceImage(d.announceImage);
         Settings.setAnnounceTokenName(d.announceTokenName);
-        Settings.setTurnMarkerEnabled(d.turnMarkerEnabled);
-        Settings.setStartMarkerEnabled(d.startMarkerEnabled);
+        Settings.setAnnounceTurnMarkerAlias(d.announceTurnMarkerAlias);
+        Settings.setAnnouncePlayerNames(d.announcePlayerNames);
+        Settings.setIsEnabled("startmarker", d.startMarkerEnabled);
         Settings.setStartMarkerPath(d.startMarkerPath);
+
+        // Ondeck Marker Settings
+        Settings.setDeckRatio(d.deckRatio);
+        if (d.deckImage) Settings.setImage("deckmarker", d.deckImage);
+        Settings.setCustomDeckImagePath(d.customDeckImage);
+        Settings.setIsEnabled("deckmarker", d.onDeckMarkerEnabled);
+        Settings.setDeckPlayersOnly(d.onDeckPlayersOnly);
     }
 
     activateListeners(html) {
@@ -62,6 +85,10 @@ export class SettingsForm extends FormApplication {
         const markerSelect = html.find('#image');
         const customImage = html.find('#customImage');
         const markerImgPreview = html.find('#markerImgPreview');
+
+        const onDeckMarkerSelect = html.find('#deckImage');
+        const customDeckImage = html.find('#customDeckImage');
+        const deckMarkerImgPreview = html.find('#onDeckMarkerImgPreview');
 
         this.updatePreview(html);
 
@@ -73,14 +100,36 @@ export class SettingsForm extends FormApplication {
             });
         }
 
+        if (onDeckMarkerSelect.length > 0) {
+            onDeckMarkerSelect.on('change', event => {
+                if (customDeckImage[0].value.trim() == '') {
+                    deckMarkerImgPreview.attr('src', Settings.getDeckImageByIndex(Number(event.target.value)));
+                }
+            });
+        }
+
         if (customImage.length > 0) {
             customImage.on('change', event => {
+                this.updatePreview(html);
+            });
+        }
+
+        if (customDeckImage.length > 0) {
+            customDeckImage.on('change', event => {
                 this.updatePreview(html);
             });
         }
     }
 
     updatePreview(html) {
+        this._updateTurnmarkerPreview(html);
+        this._updateOnDeckmarkerPreview(html);
+    }
+
+    /**
+     Updates turnmarker preview
+     **/
+    _updateTurnmarkerPreview(html) {
         const markerSelect = html.find('#image');
         const customImage = html.find('#customImage');
         const markerImgPreview = html.find('#markerImgPreview');
@@ -107,6 +156,33 @@ export class SettingsForm extends FormApplication {
         }
     }
 
+    _updateOnDeckmarkerPreview(html) {
+        const onDeckMarkerSelect = html.find('#deckImage');
+        const customDeckImage = html.find('#customDeckImage');
+        const deckMarkerImgPreview = html.find('#onDeckMarkerImgPreview');
+        const deckMarkerVideoPreview = html.find('#onDeckMarkerVideoPreview');
+
+        if (customDeckImage[0].value.trim() == '') {
+            onDeckMarkerSelect[0].disabled = false;
+            deckMarkerImgPreview.attr('src', Settings.getDeckImageByIndex(Number(onDeckMarkerSelect[0].value)));
+            deckMarkerImgPreview.removeClass('hidden');
+            deckMarkerVideoPreview.addClass('hidden');
+        } else {
+            onDeckMarkerSelect[0].disabled = true;
+            const ext = this.getExtension(customDeckImage[0].value);
+            console.warn(ext);
+            if (videos.includes(ext.toLowerCase())) {
+                deckMarkerVideoPreview.attr('src', customDeckImage[0].value);
+                deckMarkerImgPreview.addClass('hidden');
+                deckMarkerVideoPreview.removeClass('hidden');
+            } else {
+                deckMarkerImgPreview.attr('src', customDeckImage[0].value);
+                deckMarkerImgPreview.removeClass('hidden');
+                deckMarkerVideoPreview.addClass('hidden');
+            }
+        }
+    }
+
     getExtension(filePath) {
         return filePath.slice((filePath.lastIndexOf(".") - 1 >>> 0) + 2);
     }
@@ -114,7 +190,7 @@ export class SettingsForm extends FormApplication {
     getSelectList(array, selected) {
         let options = [];
         array.forEach((x, i) => {
-            options.push({ value: x, selected: i == selected });
+            options.push({value: x, selected: i == selected});
         });
         return options;
     }
