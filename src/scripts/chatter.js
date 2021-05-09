@@ -26,7 +26,7 @@ export class Chatter {
               players.push(player.name);
           });
           if (players.length == 0) players.push("GM");
-          playerNameDisplay = `<p>${players.join(' - ')}</p>`;
+          playerNameDisplay = `<p class="user">${players.join(' - ')}</p>`;
         } else {
           playerNameDisplay = "";
         }
@@ -39,12 +39,14 @@ export class Chatter {
             speaker: { actor: combatant.actor, alias: aliasName },
             //speaker: { actor: {}, alias: 'Turn Marker' },
             content:
-                `<div class="flexrow">${this.placeImage(combatant)}
-                    <div style="flex: 12;">
-                        <h2>${combatantName}'s Turn</h2>
-                        ${playerNameDisplay}
-                    </div>
-                    </div>${announceText}`
+                `<div class="turn-marker">
+                    <div class="flexrow">${this.placeImage(combatant)}
+                        <div style="flex: 12;">
+                            <h2>${combatantName}'s Turn</h2>
+                            ${playerNameDisplay}
+                        </div>
+                    </div>${announceText}
+                </div>`
         });
     }
 
