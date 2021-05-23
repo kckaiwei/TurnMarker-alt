@@ -106,6 +106,9 @@ Hooks.on('updateCombat', async (combat, update) => {
                             break;
                         case 1:
                             if (combat.combatant.actor.hasPlayerOwner) {
+                                if (Settings.shouldPlayNotification()) {
+                                    AudioHelper.play()
+                                }
                                 Chatter.sendTurnMessage(combat.combatant);
                             }
                             break;

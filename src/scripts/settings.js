@@ -20,6 +20,9 @@ const ratio = 'ratio';
 const turnMarkerEnabled = 'turnmarker-enabled';
 const animation = 'animation';
 
+const notificationsound = 'notificationsound';
+const playNotification = 'notification-enabled';
+
 // Ondeck marker constants
 const onDeckMarkerEnabled = 'ondeckmarker-enabled';
 const deckImage = 'deckimage';
@@ -133,12 +136,28 @@ export class Settings {
         return game.settings.get(modName, announce);
     }
 
+
     /**
      * Sets whether or not to announce turn changes
      * @param {Boolean} val - Whether or not to announce turn changes
      */
     static setShouldAnnounceTurns(val) {
         game.settings.set(modName, announce, val);
+    }
+
+    /**
+     * Returns true if notification sounds should be played on turn start
+     */
+    static shouldPlayNotification() {
+        return game.settings.get(modName, playNotification);
+    }
+
+    /**
+     * Sets whether or not to play notification sounds
+     * @param {Boolean} val - Whether or not to announce turn changes
+     */
+    static setShouldPlayNotification(val) {
+        return game.settings.set(modName, playNotification, val);
     }
 
 
@@ -581,6 +600,15 @@ export class Settings {
         game.settings.register(modName, announce, {
             name: 'tm.settings.announce.name',
             hint: 'tm.settings.announce.hint',
+            scope: 'world',
+            config: false,
+            type: Boolean,
+            default: true
+        });
+
+        game.settings.register(modName, playNotification, {
+            name: 'tm.settings.playNotification.name',
+            hint: 'tm.settings.playNotification.hint',
             scope: 'world',
             config: false,
             type: Boolean,

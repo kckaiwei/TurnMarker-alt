@@ -13,6 +13,7 @@
                 "imageOptions": "Marker Image Options",
                 "onDeckImageOptions": "On Deck Marker Image Options",
                 "turnAnnounce": "Turn Announcements",
+                "playNotification": "Turn Notifications",
                 "startMarker": "Start Marker",
                 "save": "Save Settings"
             },
@@ -58,6 +59,10 @@
             "deckPlayersOnly": {
                 "name": "Only use on deck marker for players?",
                 "hint": "Skips npc for on deck marker if enabled"
+            },
+            "playNotification": {
+                "name": "Play Notification",
+                "hint": "Play a notification when a player's turn is up"
             },
             "announcedActors": {
                 "name": "Announced Actors",
