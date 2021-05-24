@@ -39,6 +39,7 @@ Hooks.once('ready', () => {
             }
         }
     });
+
 });
 
 Hooks.on('canvasReady', () => {
@@ -90,36 +91,17 @@ Hooks.on('updateCombat', async (combat, update) => {
     if (!combat.started) {
         await Marker.deleteStartMarker();
     }
-    if (combat.combatant) {
-        let nextTurn = getNextTurn(combat);
-        if (update && lastTurn != combat.combatant._id && game.user.isGM && game.userId == firstGM()) {
-            lastTurn = combat.combatant._id;
-            if (combat && combat.combatant && combat.started) {
-                await Marker.placeStartMarker(combat.combatant.token._id);
-                createCombatDeckMarker(combat, nextTurn);
-                let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
-                await Marker.placeTurnMarker(combat.combatant.token._id, (tile && tile.id) || undefined);
-                if (Settings.shouldAnnounceTurns() && !combat.combatant.hidden) {
-                    switch (Settings.getAnnounceActors()) {
-                        case 0:
-                            Chatter.sendTurnMessage(combat.combatant);
-                            break;
-                        case 1:
-                            if (combat.combatant.actor.hasPlayerOwner) {
-                                Chatter.sendTurnMessage(combat.combatant);
-                            }
-                            break;
-                        case 2:
-                            if (!combat.combatant.actor.hasPlayerOwner) {
-                                Chatter.sendTurnMessage(combat.combatant);
-                            }
-                            break;
-                        case 3:
-                            Chatter.sendTurnMessage(combat.combatant, true);
-                    }
-                }
-            }
-        }
+    // SWADE has a special initiative
+    if (game.system.id != "swade") {
+        handleCombatUpdate(combat, update);
+    }
+});
+
+// For SWADE, need to reget active player after each round, but no better hook is fired after initiative shuffle
+Hooks.on("renderCombatTracker", async (combatTracker, update) => {
+    console.log(combatTracker);
+    if (game.system.id == "swade") {
+        handleCombatUpdate(combatTracker.combat, update)
     }
 });
 
@@ -141,12 +123,12 @@ Hooks.on('updateToken', async (scene, updateToken, updateData) => {
         if ((updateData.x || updateData.y || updateData.width || updateData.height || updateData.hidden) &&
             (game && game.combat) &&
             game.user.isGM && game.combat) {
-            let currentTurn = game.combat.turn
+            let currentTurn = game.combat.turn;
             let nextTurn = currentTurn + 1;
             if (nextTurn >= game.combat.turns.length) {
                 nextTurn = 0;
             }
-            let nextToken = game.combat.turns[nextTurn].token
+            let nextToken = game.combat.turns[nextTurn].token;
             await Marker.moveMarkerToToken(nextToken._id, deckTile.id, "deckmarker");
             deckTile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
             deckTile.parent.sortChildren();
@@ -221,6 +203,40 @@ async function createCombatDeckMarker(combat, nextTurn) {
                     MarkerAnimation.startAnimation("deckmarker");
                 }
         });
+    }
+}
+
+async function handleCombatUpdate(combat, update) {
+    if (combat.combatant) {
+        let nextTurn = getNextTurn(combat);
+        if (update && lastTurn != combat.combatant._id && game.user.isGM && game.userId == firstGM()) {
+            lastTurn = combat.combatant._id;
+            if (combat && combat.combatant && combat.started) {
+                await Marker.placeStartMarker(combat.combatant.token._id);
+                createCombatDeckMarker(combat, nextTurn);
+                let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
+                await Marker.placeTurnMarker(combat.combatant.token._id, (tile && tile.id) || undefined);
+                if (Settings.shouldAnnounceTurns() && !combat.combatant.hidden) {
+                    switch (Settings.getAnnounceActors()) {
+                        case 0:
+                            Chatter.sendTurnMessage(combat.combatant);
+                            break;
+                        case 1:
+                            if (combat.combatant.actor.hasPlayerOwner) {
+                                Chatter.sendTurnMessage(combat.combatant);
+                            }
+                            break;
+                        case 2:
+                            if (!combat.combatant.actor.hasPlayerOwner) {
+                                Chatter.sendTurnMessage(combat.combatant);
+                            }
+                            break;
+                        case 3:
+                            Chatter.sendTurnMessage(combat.combatant, true);
+                    }
+                }
+            }
+        }
     }
 }
 
