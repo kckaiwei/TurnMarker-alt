@@ -4,64 +4,99 @@
             "LANGUAGE": "Español",
             "MAINTAINERS": "@Viriato139ac#0342"
         },
+		"announceLabel": "Turn Marker",
 		"settings": {
             "button": {
-                "name": "Ajustes Globales de Marcador de Turno",
-                "label": "Marcador de Turno (Turn Marker)"
+                "name": "Ajustes globales de Turn Marker",
+                "label": "Marcador de turno (Turn Marker)"
             },
             "formTitles": {
-                "settings": "Marcador de Turno - Ajustes Globales"
+                "settings": "Marcador de turno - ajustes globales"
             },
             "formHeaders": {
-                "imageOptions": "Opciones de Imagen del Marcador",
-                "turnAnnounce": "Anuncio del Turno",
-                "startMarker": "Marcador de Inicio",
-                "save": "Guardar Ajustes"
+                "imageOptions": "Opciones de imagen del marcador",
+                "onDeckImageOptions": "Opciones de imagen del marcador siguiente en actuar",
+                "turnAnnounce": "Anuncio del turno",
+                "startMarker": "Marcador de inicio",
+                "save": "Guardar ajustes"
             },
             "turnMarkerEnabled": {
-                "name": "Activar Marcador de Turno"
+                "name": "Activar marcador de turno"
             },
             "ratio": {
-                "name": "Escala de la Imagen",
-                "hint": "En relación al tamaño del icono."
+                "name": "Escala de la imagen",
+                "hint": "En relación al tamaño del icono"
             },
             "animate": {
-                "name": "¿Marcador Animado?",
+                "name": "¿Marcador animado?",
                 "hint": "Aplicar animación de rotación al marcador. Los cambios no serán visibles hasta que se inicie un nuevo combate"
             },
             "interval": {
-                "name": "Velocidad de la Animación",
+                "name": "Velocidad de la animación",
                 "hint": "Velocidad a la que se moverá la animación en caso de activarla (se recomienda entre 10 y 200)"
             },
             "image": {
-                "name": "Imagen del Marcador"
+                "name": "Imagen del marcador"
+            },
+            "onDeckMarkerEnabled": {
+                "name": "Habilitar marcador siguiente en actuar"
+            },
+            "deckImage": {
+                "name": "Imagen de marcador siguiente en actuar"
+            },
+            "customDeckImage": {
+                "name": "Ruta de la imagen personalizada del siguiente en actuar",
+                "hint": "Usar imagen personalizada (en blanco para usar imágenes incluidas)"
+            },
+            "customDeckImagePreview": {
+                "name": "Previsualización de marcador siguiente en actuar"
+            },
+            "deckRatio": {
+                "name": "Escala de imagen siguiente en actuar",
+                "hint": "En comparación al tamaño del icono"
+            },
+            "deckAnimate": {
+                "name": "¿Animar marcador siguiente en actuar?",
+                "hint": "Usar animación de rotación del marcador siguiente en actuar (los cambios no serán visibles hasta que se inicie un nuevo combate)"
+            },
+            "deckPlayersOnly": {
+                "name": "¿Usar marcador siguiente en actuar solo para jugadores?",
+                "hint": "Si se habilita, ignora el marcador siguiente en actuar de los PNJs"
             },
             "announcedActors": {
-                "name": "Actores que se Anuncian",
+                "name": "Actores que se anuncian",
                 "hint": "A quien se debe anunciar en el chat"
             },
             "announceTokenName": {
-                "name": "Usar el Nombre del Icono al Anunciar",
-                "hint": "Si es habilita, se usará el nombre del Icono en lugar del nombre del Actor"
+                "name": "Usar el nombre del icono al anunciar",
+                "hint": "Si se habilita, se usará el nombre del Icono en lugar del nombre del actor"
+            },
+            "announceTurnMarkerAlias": {
+                "name": "Anunciar como Turn Marker",
+                "hint": "Si se habilita, el mensaje del chat aparecerá procedente de Turn Maker, no del jugador"
+            },
+            "announcePlayerNames": {
+                "name": "Anunciar con nombres de jugadores",
+                "hint": "Si se habilita, el mensaje del chat mostrará los nombres de los jugadores que controlan al actor"
             },
             "customImage": {
-                "name": "Ruta a la Imagen Personalizada",
+                "name": "Ruta a la imagen personalizada",
                 "hint": "Utilizar una imagen personalizada (dejar en blanco si se quiere usar la imagen incluida en el módulo)"
             },
             "announce": {
-                "name": "Anuncio de los Turnos",
+                "name": "Anuncio de los turnos",
                 "hint": "Si se activa, se enviará un mensaje a cada combatiente nuevo"
             },
             "announceImage": {
-                "name": "Incluir Imagen del Icono",
+                "name": "Incluir imagen del icono",
                 "hint": "Si se activa, se incluirá la imagen del icono al anunciar su turno"
             },
             "startEnabled": {
-                "name": "Activar Marcador de Inicio",
+                "name": "Activar marcador de inicio",
                 "hint": "Si se activa, se colocará un marcador en la localización en la que el icono comenzó su turno"
             },
             "startImage": {
-                "name": "Ruta a la Imagen Personalizada",
+                "name": "Ruta a la imagen personalizada",
                 "hint": "Utilizar una imagen personalizada para el marcador de inicio (dejar en blanco si se quiere usar la imagen incluida en el módulo)"
             }
         }
