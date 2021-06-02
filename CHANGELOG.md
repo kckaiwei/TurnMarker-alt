@@ -1,3 +1,9 @@
+# 2.8.0
+- Add compatibility with 0.8.6
+
+# 2.7.5
+- Fixed SWADE integration (via hook workaround)
+
 # 2.7.4
 - Fixed marker sizing for non-square tokens on grid/gridless maps
 - Added on deck marker option (off by default)
