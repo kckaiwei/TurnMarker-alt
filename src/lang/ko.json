@@ -1,26 +1,31 @@
 {
     "tm": {
+        "announceLabel": "Turn Marker",
         "settings": {
             "button": {
-                "name": "Turn Marker 글로벌 설정",
-                "label": "Turn Marker"
+                "name": "턴 마커 글로벌 설정",
+                "label": "턴 마커"
             },
             "formTitles": {
-                "settings": "Turn Marker - 글로벌 설정"
+                "settings": "턴 마커 - 글로벌 설정"
             },
             "formHeaders": {
-                "imageOptions": "표식 이미지 옵션",
+                "imageOptions": "마커 이미지 옵션",
+                "onDeckImageOptions": "덱 마커 이미지 옵션",
                 "turnAnnounce": "턴 알림",
-                "startMarker": "표식 시작",
+                "startMarker": "마커 시작",
                 "save": "설정 저장"
+            },
+            "turnMarkerEnabled": {
+                "name": "턴 마커 활성화"
             },
             "ratio": {
                 "name": "이미지 비율",
                 "hint": "토큰 사이즈와 비교되는 비율이다."
             },
             "animate": {
-                "name": "표식을 움직입니까?",
-                "hint": "표식에 회전 애니메이션을 적용한다. (새 전투가 시작되기 전까지는 변경점이 보이지 않을 수 있음)"
+                "name": "마커를 움직입니까?",
+                "hint": "마커에 회전 애니메이션을 적용한다. (새 전투가 시작되기 전까지는 변경점이 보이지 않을 수 있음)"
             },
             "interval": {
                 "name": "애니메이션 속도",
@@ -29,6 +34,47 @@
             "image": {
                 "name": "표식 이미지"
             },
+            "onDeckMarkerEnabled": {
+                "name": "덱 마커 활성화"
+            },
+            "deckImage": {
+                "name": "덱 마커 이미지"
+            },
+            "customDeckImage": {
+                "name": "커스텀 이미지 경로",
+                "hint": "대신할 커스텀 이미지를 사용한다(모듈에 내장된 이미지를 사용하려면 비워둘 것)"
+            },
+            "customDeckImagePreview": {
+                "name": "덱 마커 미리보기"
+            },
+            "deckRatio": {
+                "name": "덱 마커 이미지 반경",
+                "hint": "토큰 사이즈와 비교되는 비율이다."
+            },
+            "deckAnimate": {
+                "name": "표식을 움직입니까?",
+                "hint": "표식에 회전 애니메이션을 적용한다. (새 전투가 시작되기 전까지는 변경점이 보이지 않을 수 있음)"
+            },
+            "deckPlayersOnly": {
+                "name": "덱 마커를 플레이어에게만 사용합니까?",
+                "hint": "활성화 시 NPC에겐 덱 마커를 건너뛴다."
+            },
+            "announcedActors": {
+                "name": "액터 알림",
+                "hint": "채팅 메시지로 액터를 알린다"
+            },
+            "announceTokenName": {
+                "name": "토큰 이름 알림",
+                "hint": "활성화 시 액터 이름 대신 토큰 이름을 알린다."
+            },
+            "announceTurnMarkerAlias": {
+                "name": "턴 마커 알림",
+                "hint": "활성화 시 채팅 메시지는 액터 대신 턴 마커로 출력된다"
+            },
+            "announcePlayerNames": {
+                "name": "플레이어 이름 알림",
+                "hint": "활성화 시 채팅 메시지에 액터를 제어하는 플레이어의 이름이 표시된다."
+            },
             "customImage": {
                 "name": "커스텀 이미지 경로",
                 "hint": "대신할 커스텀 이미지를 사용한다(모듈에 내장된 이미지를 사용하려면 비워둘 것)"
@@ -36,6 +82,10 @@
             "announce": {
                 "name": "턴 알림",
                 "hint": "활성화 되었을 때 새 전투원을 위한 채팅 메시지를 보낸다"
+            },
+            "announceImage": {
+                "name": "토큰 이미지 포함",
+                "hint": "활성화 시 토큰 이미지를 턴 알림에 포함한다."
             },
             "startEnabled": {
                 "name": "시작 표식 활성화",
