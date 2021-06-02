@@ -19,6 +19,12 @@ Hooks.once('ready', () => {
         }
     }
 
+    // Clean up any leftover markers before start, and remake since sometimes tiles get desync'd it seems
+    Marker.clearAllMarkers();
+    if (game.combat) {
+        handleCombatUpdate(game.combat, true);
+    }
+
     game.socket.on(socketName, async (data) => {
         if (game.user.isGM) {
             if (data) {
