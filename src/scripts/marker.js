@@ -12,7 +12,8 @@ export class Marker {
      */
     static async deleteTurnMarker() {
         const to_delete = canvas.scene.getEmbeddedCollection('Tile')
-            .filter(tile => tile.flags.turnMarker)
+            .filter(tile => "flags" in tile.data)
+            .filter(tile => tile.data.flags.turnMarker)
             .map(tile => tile._id);
         if (!game.user.isGM) {
             game.socket.emit(socketName, {
@@ -29,7 +30,8 @@ export class Marker {
      */
     static async deleteOnDeckMarker() {
         const to_delete = canvas.scene.getEmbeddedCollection('Tile')
-            .filter(tile => tile.flags.deckMarker)
+            .filter(tile => "flags" in tile.data)
+            .filter(tile => tile.data.flags.deckMarker)
             .map(tile => tile._id);
         if (!game.user.isGM) {
             game.socket.emit(socketName, {
@@ -56,7 +58,7 @@ export class Marker {
                 let dims = this.getImageDimensions(token, false, "turnmarker");
                 let center = this.getImageLocation(token, false, "turnmarker");
 
-                let newTile = new Tile({
+                let newTile = await canvas.scene.createEmbeddedDocuments("Tile", [{
                     img: Settings.getImagePath(),
                     width: dims.w,
                     height: dims.h,
@@ -67,11 +69,9 @@ export class Marker {
                     hidden: token.data.hidden,
                     locked: false,
                     flags: {turnMarker: true}
-                });
+                }]);
 
-                let tile = await canvas.scene.createEmbeddedEntity('Tile', newTile.data);
-
-                return tile._id;
+                return newTile._id;
             } else {
                 return null;
             }
@@ -88,7 +88,7 @@ export class Marker {
             let token = findTokenById(tokenId);
             let dims = this.getImageDimensions(token, false, "deckmarker");
             let center = this.getImageLocation(token, false, "deckmarker");
-            let newTile = new Tile({
+            let newTile = canvas.scene.createEmbeddedDocuments("Tile", [{
                 img: Settings.getOnDeckImagePath(),
                 width: dims.w,
                 height: dims.h,
@@ -99,10 +99,10 @@ export class Marker {
                 hidden: token.data.hidden,
                 locked: false,
                 flags: {deckMarker: true}
-            });
+            }]);
 
             if (game.user.isGM) {
-                await canvas.scene.createEmbeddedEntity('Tile', newTile.data);
+                await canvas.scene.createEmbeddedDocuments('Tile', newTile.data);
             }
         }
     }
@@ -113,7 +113,8 @@ export class Marker {
      */
     static async deleteStartMarker() {
         const to_delete = canvas.scene.getEmbeddedCollection('Tile')
-            .filter(tile => tile.flags.startMarker)
+            .filter(tile => "flags" in tile.data)
+            .filter(tile => tile.data.flags.startMarker)
             .map(tile => tile._id);
         if (!game.user.isGM) {
             game.socket.emit(socketName, {
@@ -137,21 +138,20 @@ export class Marker {
             let token = findTokenById(tokenId);
             let dims = this.getImageDimensions(token);
             let center = this.getImageLocation(token);
-            let newTile = new Tile({
-                img: Settings.getStartMarker(),
-                width: dims.w,
-                height: dims.h,
-                x: center.x,
-                y: center.y,
-                z: 900,
-                rotation: 0,
-                hidden: token.data.hidden,
-                locked: false,
-                flags: {startMarker: true}
-            });
 
             if (game.user.isGM) {
-                await canvas.scene.createEmbeddedEntity('Tile', newTile.data);
+                let newTile = await canvas.scene.createEmbeddedDocuments("Tile", [{
+                    img: Settings.getStartMarker(),
+                    width: dims.w,
+                    height: dims.h,
+                    x: center.x,
+                    y: center.y,
+                    z: 900,
+                    rotation: 0,
+                    hidden: token.data.hidden,
+                    locked: false,
+                    flags: {startMarker: true}
+                }]);
                 await canvas.scene.setFlag(FlagScope, Flags.startMarkerPlaced, true);
             }
         }
@@ -167,14 +167,14 @@ export class Marker {
         let dims = this.getImageDimensions(token, false, marker_type);
         let center = this.getImageLocation(token, false, marker_type);
 
-        await canvas.scene.updateEmbeddedEntity('Tile', {
+        await canvas.scene.updateEmbeddedDocuments('Tile', [{
             _id: markerId,
             width: dims.w,
             height: dims.h,
             x: center.x,
             y: center.y,
             hidden: token.data.hidden
-        });
+        }]);
     }
 
     /**
