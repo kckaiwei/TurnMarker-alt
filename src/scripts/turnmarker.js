@@ -22,7 +22,7 @@ Hooks.once('ready', () => {
     game.socket.on(socketName, async (data) => {
         if (game.user.isGM) {
             if (data) {
-                const to_delete = canvas.tiles.placeables.find(t => t.id === data[0]);
+                const to_delete = canvas.background.tiles.find(t => t.id === data[0]);
                 switch (data.mode) {
                     case socketAction.deleteStartMarker:
                         await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
@@ -43,18 +43,18 @@ Hooks.once('ready', () => {
 });
 
 Hooks.on('canvasReady', () => {
-    let deckTile = canvas.tiles.placeables.find(t => t.data.flags.deckMarker == true);
+    let deckTile = canvas.background.tiles.find(t => t.data.flags.deckMarker == true);
     if (deckTile) {
-        deckTile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
+        deckTile.zIndex = Math.max(...canvas.background.tiles.map(o => o.zIndex)) + 1;
         deckTile.parent.sortChildren();
         if (!game.paused && Settings.getShouldAnimate("deckmarker")) {
             MarkerAnimation.startAnimation("deckmarker");
         }
     }
 
-    let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
+    let tile = canvas.background.tiles.find(t => t.data.flags.turnMarker == true);
     if (tile) {
-        tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
+        tile.zIndex = Math.max(...canvas.background.tiles.map(o => o.zIndex)) + 1;
         tile.parent.sortChildren();
         if (!game.paused && Settings.getShouldAnimate("turnmarker")) {
             MarkerAnimation.startAnimation("turnmarker");
@@ -62,19 +62,19 @@ Hooks.on('canvasReady', () => {
     }
 });
 
-Hooks.on('createTile', (scene, data) => {
-    if (data.flags.turnMarker == true || data.flags.startMarker == true) {
-        const tile = canvas.tiles.placeables.find(t => t.id === data._id);
+Hooks.on('createTile', (tileDoc) => {
+    if (tileDoc.data.flags.turnMarker == true || tileDoc.data.flags.startMarker == true) {
+        const tile = canvas.background.tiles.find(t => t.id === tileDoc.data._id);
         if (tile) {
-            if (data.flags.deckMarker == true) {
-                tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
+            if (tileDoc.data.flags.deckMarker == true) {
+                tile.zIndex = Math.max(...canvas.background.tiles.map(o => o.zIndex)) + 1;
                 tile.parent.sortChildren();
                 if (!game.paused && Settings.getShouldAnimate("deckmarker")) {
                     MarkerAnimation.startAnimation("deckmarker");
                 }
             }
-            else if (data.flags.turnMarker == true) {
-                tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
+            else if (tileDoc.data.flags.turnMarker == true) {
+                tile.zIndex = Math.max(...canvas.background.tiles.map(o => o.zIndex)) + 1;
                 tile.parent.sortChildren();
                 if (!game.paused && Settings.getShouldAnimate("turnmarker")) {
                     MarkerAnimation.startAnimation("turnmarker");
@@ -99,9 +99,8 @@ Hooks.on('updateCombat', async (combat, update) => {
 
 // For SWADE, need to reget active player after each round, but no better hook is fired after initiative shuffle
 Hooks.on("renderCombatTracker", async (combatTracker, update) => {
-    console.log(combatTracker);
     if (game.system.id == "swade") {
-        handleCombatUpdate(combatTracker.combat, update)
+        handleCombatUpdate(combatTracker.viewed, update)
     }
 });
 
@@ -112,13 +111,13 @@ Hooks.on('deleteCombat', async () => {
     MarkerAnimation.stopAllAnimation();
 });
 
-Hooks.on('updateToken', async (scene, updateToken, updateData) => {
+Hooks.on('updateToken', async (tokenDoc, updateData, diff, id) => {
     /*
     Moving preUpdateToken logic here, since pre hooks induce race conditions
      */
 
     // Do onDeck first, so current token will have higher Z-index
-    let deckTile = canvas.tiles.placeables.find(t => t.data.flags.deckMarker == true);
+    let deckTile = canvas.background.tiles.find(t => t.data.flags.deckMarker == true);
     if (deckTile) {
         if ((updateData.x || updateData.y || updateData.width || updateData.height || updateData.hidden) &&
             (game && game.combat) &&
@@ -130,19 +129,19 @@ Hooks.on('updateToken', async (scene, updateToken, updateData) => {
             }
             let nextToken = game.combat.turns[nextTurn].token;
             await Marker.moveMarkerToToken(nextToken._id, deckTile.id, "deckmarker");
-            deckTile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
+            deckTile.zIndex = Math.max(...canvas.background.tiles.map(o => o.zIndex)) + 1;
             deckTile.parent.sortChildren();
         }
     }
 
 
-    let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
+    let tile = canvas.background.tiles.find(t => t.data.flags.turnMarker == true);
     if (tile) {
         if ((updateData.x || updateData.y || updateData.width || updateData.height || updateData.hidden) &&
-            (game && game.combat && game.combat.combatant && game.combat.combatant.tokenId == updateToken._id) &&
+            (game && game.combat && game.combat.combatant && game.combat.combatant._token.data._id == updateData._id) &&
             game.user.isGM && game.combat) {
-            await Marker.moveMarkerToToken(updateToken._id, tile.id, "turnmarker");
-            tile.zIndex = Math.max(...canvas.tiles.placeables.map(o => o.zIndex)) + 1;
+            await Marker.moveMarkerToToken(updateData._id, tile.data._id, "turnmarker");
+            tile.zIndex = Math.max(...canvas.background.tiles.map(o => o.zIndex)) + 1;
             tile.parent.sortChildren();
         }
     }
@@ -214,7 +213,7 @@ async function handleCombatUpdate(combat, update) {
             if (combat && combat.combatant && combat.started) {
                 await Marker.placeStartMarker(combat.combatant.token._id);
                 createCombatDeckMarker(combat, nextTurn);
-                let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
+                let tile = canvas.background.tiles.find(t => t.data.flags.turnMarker == true);
                 await Marker.placeTurnMarker(combat.combatant.token._id, (tile && tile.id) || undefined);
                 if (Settings.shouldAnnounceTurns() && !combat.combatant.hidden) {
                     switch (Settings.getAnnounceActors()) {
@@ -240,9 +239,9 @@ async function handleCombatUpdate(combat, update) {
     }
 }
 
-Hooks.on('updateTile', (entity, data, options, userId) => {
-    if (data.flags.turnMarker || data.flags.startMarker || data.flags.deckMarker) {
-        const tile = canvas.tiles.placeables.find(t => t.id === data._id);
+Hooks.on('updateTile', (tileDoc) => {
+    if (tileDoc.data.flags.turnMarker || tileDoc.data.flags.startMarker || tileDoc.data.flags.deckMarker) {
+        const tile = canvas.background.tiles.find(t => t.id === tileDoc.data._id);
         if (tile) {
             tile.renderable = isVisible(tile);
         }
@@ -250,7 +249,7 @@ Hooks.on('updateTile', (entity, data, options, userId) => {
 });
 
 Hooks.on('sightRefresh', () => {
-    for (const tile of canvas.tiles.placeables) {
+    for (const tile of canvas.background.tiles) {
         if (tile.data.flags.turnMarker || tile.data.flags.startMarker || tile.data.flags.deckMarker) {
             tile.renderable = isVisible(tile);
         }
@@ -259,10 +258,10 @@ Hooks.on('sightRefresh', () => {
 
 Hooks.on('pauseGame', (isPaused) => {
     if (!isPaused) {
-        if (Settings.getShouldAnimate("turnmarker") && canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true)) {
+        if (Settings.getShouldAnimate("turnmarker") && canvas.background.tiles.find(t => t.data.flags.turnMarker == true)) {
             MarkerAnimation.startAnimation("turnmarker");
         }
-        if (Settings.getShouldAnimate("deckmarker") && canvas.tiles.placeables.find(t => t.data.flags.deckMarker == true)) {
+        if (Settings.getShouldAnimate("deckmarker") && canvas.background.tiles.find(t => t.data.flags.deckMarker == true)) {
             MarkerAnimation.startAnimation("deckmarker");
         }
     } else {
