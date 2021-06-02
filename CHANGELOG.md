@@ -1,3 +1,6 @@
+# 2.8.0
+- Add compatibility with 0.8.6
+
 # 2.7.5
 - Fixed SWADE integration (via hook workaround)
 
