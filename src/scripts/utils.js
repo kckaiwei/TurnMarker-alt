@@ -25,6 +25,14 @@ export function findTokenById(tokenId) {
 }
 
 /**
+ * Returns a tile object from the canvas based on the ID value; mostly for debugging
+ * @param {String} tileId - The ID of the token to look for
+ */
+export function findTileById(tileId) {
+    return canvas.background.tiles.find(t => t.id == tileId);
+}
+
+/**
  * Returns the ID of the first user logged in as GM.
  * Use for actions that need to be done by a GM but by only 1 GM
  */
