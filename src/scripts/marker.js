@@ -1,6 +1,6 @@
 import {MarkerAnimation} from './markeranimation.js';
 import {Settings} from './settings.js';
-import {findTokenById, Flags, FlagScope, socketAction, socketName} from './utils.js';
+import {findTokenById, findTileById, Flags, FlagScope, socketAction, socketName} from './utils.js';
 
 /**
  * Provides functionality for creating, moving, and animating the turn marker
@@ -18,10 +18,10 @@ export class Marker {
         if (!game.user.isGM) {
             game.socket.emit(socketName, {
                 mode: socketAction.deleteTurnMarker,
-                tileData: to_delete.data
+                tileId: to_delete
             });
         } else {
-            await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
+            await canvas.scene.deleteEmbeddedDocuments('Tile', to_delete);
         }
     }
 
@@ -36,10 +36,10 @@ export class Marker {
         if (!game.user.isGM) {
             game.socket.emit(socketName, {
                 mode: socketAction.deleteOnDeckMarker,
-                tileData: to_delete.data
+                tileId: to_delete
             });
         } else {
-            await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
+            await canvas.scene.deleteEmbeddedDocuments('Tile', to_delete);
         }
     }
 
@@ -119,11 +119,11 @@ export class Marker {
         if (!game.user.isGM) {
             game.socket.emit(socketName, {
                 mode: socketAction.deleteStartMarker,
-                tileData: to_delete.data
+                tileId: to_delete
             });
         } else {
             await canvas.scene.unsetFlag(FlagScope, Flags.startMarkerPlaced);
-            await canvas.scene.deleteEmbeddedEntity('Tile', to_delete);
+            await canvas.scene.deleteEmbeddedDocuments('Tile', to_delete);
         }
     }
 
@@ -193,10 +193,10 @@ export class Marker {
         if (game.user.isGM) {
             let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
             if (tile) {
-                await canvas.scene.updateEmbeddedEntity('Tile', {
+                await canvas.scene.updateEmbeddedEntity('Tile', [{
                     _id: tile.id,
                     img: Settings.getImagePath()
-                });
+                }]);
             }
         }
     }
@@ -208,10 +208,10 @@ export class Marker {
         if (game.user.isGM) {
             let tile = canvas.tiles.placeables.find(t => t.data.flags.deckMarker == true);
             if (tile) {
-                await canvas.scene.updateEmbeddedEntity('Tile', {
+                await canvas.scene.updateEmbeddedEntity('Tile', [{
                     _id: tile.id,
                     img: Settings.getOnDeckImagePath()
-                });
+                }]);
             }
         }
     }
