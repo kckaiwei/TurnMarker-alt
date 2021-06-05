@@ -1,3 +1,8 @@
+# 2.8.1
+- Fix tile leftover on start
+- Fixed console warning
+- Translation updated on Korean
+
 # 2.8.0
 - Add compatibility with 0.8.6
 
