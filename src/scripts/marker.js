@@ -33,7 +33,6 @@ export class Marker {
             .filter(tile => "flags" in tile.data)
             .filter(tile => tile.data.flags.deckMarker)
             .map(tile => tile._id);
-        console.log(to_delete)
         if (!game.user.isGM) {
             game.socket.emit(socketName, {
                 mode: socketAction.deleteOnDeckMarker,
