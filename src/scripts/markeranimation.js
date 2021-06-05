@@ -28,10 +28,12 @@ export class MarkerAnimation {
     }
 
     static stopAllAnimation() {
-        for (const [key, value] of Object.entries(this.animators)) {
-            canvas.app.ticker.remove(this.animators[key]);
+        if (this.animators) {
+            for (const [key, value] of Object.entries(this.animators)) {
+                canvas.app.ticker.remove(this.animators[key]);
+            }
+            this.animators = {};
         }
-        this.animators = {};
     }
 
     /**
