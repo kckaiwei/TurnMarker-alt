@@ -108,6 +108,16 @@
         </div>
     </div>
     <hr />
+    <!--Notifications-->
+    <h2>{{localize 'tm.settings.formHeaders.playNotification'}}</h2>
+    <div class="form-group">
+        <label>{{localize 'tm.settings.playNotification.name'}}</label>
+        <div class="form-fields">
+            <input name="playNotification" type="checkbox" {{#if playNotification}}checked="checked" {{/if}} />
+        </div>
+        <p class="notes">{{localize 'tm.settings.playNotification.hint'}}</p>
+    </div>
+    <hr />
     <!--Turn Announcements-->
     <h2>{{localize 'tm.settings.formHeaders.turnAnnounce'}}</h2>
     <div class="form-group">

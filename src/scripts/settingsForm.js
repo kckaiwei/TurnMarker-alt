@@ -43,6 +43,8 @@ export class SettingsForm extends FormApplication {
             announceTokenName: Settings.getAnnounceTokenName(),
             announceTurnMarkerAlias: Settings.getAnnounceTurnMarkerAlias(),
             announcePlayerNames: Settings.getAnnouncePlayerNames(),
+            // Notification Settings
+            playNotification: Settings.shouldPlayNotification(),
             // Start Marker Settings
             startMarkerEnabled: Settings.getIsEnabled("startmarker"),
             startMarkerPath: Settings.getStartMarkerPath()
@@ -71,6 +73,9 @@ export class SettingsForm extends FormApplication {
         Settings.setAnnouncePlayerNames(d.announcePlayerNames);
         Settings.setIsEnabled("startmarker", d.startMarkerEnabled);
         Settings.setStartMarkerPath(d.startMarkerPath);
+
+        // Notification Settings
+        Settings.setShouldPlayNotification(d.playNotification);
 
         // Ondeck Marker Settings
         Settings.setDeckRatio(d.deckRatio);

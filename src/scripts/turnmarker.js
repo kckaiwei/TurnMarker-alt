@@ -45,7 +45,6 @@ Hooks.once('ready', () => {
             }
         }
     });
-
 });
 
 Hooks.on('canvasReady', () => {
@@ -229,6 +228,9 @@ async function handleCombatUpdate(combat, update) {
                         case 1:
                             if (combat.combatant.actor.hasPlayerOwner) {
                                 Chatter.sendTurnMessage(combat.combatant);
+                                if (Settings.shouldPlayNotification()) {
+                                    AudioHelper.play({src: "modules/turnmarker/sound/celesta_turn.mp3"})
+                                }
                             }
                             break;
                         case 2:
