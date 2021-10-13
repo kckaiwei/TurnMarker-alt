@@ -1,65 +1,63 @@
-import {Settings} from './settings.js';
+import { Settings } from './settings.js';
 
 export class MarkerAnimation {
-    /**
-     * Starts the animation loop
-     */
-
-    static startAnimation(marker_type = "turnmarker") {
-        if (!this.animators) {
-            this.animators = {};
-        }
-        if (marker_type in this.animators) {
-            return this.animators[marker_type];
-        }
-        this.animators[marker_type] = this.animateRotation.bind(this, marker_type);
-        canvas.app.ticker.add(this.animators[marker_type]);
-        return this.animators;
+  /**
+   * Starts the animation loop
+   */
+  static startAnimation (markerType = 'turnmarker') {
+    if (!this.animators) {
+      this.animators = {};
     }
-
-    /**
-     * Stops the animation loop
-     */
-    static stopAnimation(marker_type = "turnmarker") {
-        if (this.animators) {
-            canvas.app.ticker.remove(this.animators[marker_type]);
-            delete this.animators[marker_type];
-        }
+    if (markerType in this.animators) {
+      return this.animators[markerType];
     }
+    this.animators[markerType] = this.animateRotation.bind(this, markerType);
+    canvas.app.ticker.add(this.animators[markerType]);
+    return this.animators;
+  }
 
-    static stopAllAnimation() {
-        if (this.animators) {
-            for (const [key, value] of Object.entries(this.animators)) {
-                canvas.app.ticker.remove(this.animators[key]);
-            }
-            this.animators = {};
-        }
+  /**
+   * Stops the animation loop
+   */
+  static stopAnimation (markerType = 'turnmarker') {
+    if (this.animators) {
+      canvas.app.ticker.remove(this.animators[markerType]);
+      delete this.animators[markerType];
     }
+  }
 
-    /**
-     * Called on every tick of the animation loop to rotate the image based on the current frame
-     * @param {string} marker_type - type of marker to animate
-     * @param {number} dt - The delta time
-     */
-    static animateRotation(marker_type, dt) {
-        let tile;
-        switch (marker_type) {
-            case "turnmarker":
-                tile = canvas.background.tiles.find(t => t.data.flags.turnMarker == true);
-                break;
-            case "deckmarker":
-                tile = canvas.background.tiles.find(t => t.data.flags.deckMarker == true);
-                break;
-            default:
-                tile = canvas.background.tiles.find(t => t.data.flags.turnMarker == true);
-        }
-        if (tile && tile.data.img) {
-            let delta = Settings.getInterval() / 10000;
-            try {
-                tile.tile.rotation += (delta * dt);
-            } catch (err) {
-                // skip lost frames if the tile is being updated by the server
-            }
-        }
+  static stopAllAnimation () {
+    if (this.animators) {
+      for (const [, value] of Object.entries(this.animators)) {
+        canvas.app.ticker.remove(value);
+      }
+      this.animators = {};
     }
+  }
+
+  /**
+   * Called on every tick of the animation loop to rotate the image based on the current frame
+   * @param {string} markerType - type of marker to animate
+   * @param {number} dt - The delta time
+   */
+  static animateRotation (markerType, dt) {
+    let tile;
+    switch (markerType) {
+      case 'deckmarker':
+        tile = canvas.background.tiles.find(t => t.data.flags?.deckMarker === true);
+        break;
+      case 'turnmarker':
+      default:
+        tile = canvas.background.tiles.find(t => t.data.flags?.turnMarker === true);
+        break;
+    }
+    if (tile?.data.img) {
+      const delta = Settings.getInterval() / 10000;
+      try {
+        tile.tile.rotation += (delta * dt);
+      } catch (err) {
+        // skip lost frames if the tile is being updated by the server
+      }
+    }
+  }
 }
