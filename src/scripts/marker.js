@@ -5,6 +5,7 @@ import { deleteTile, findTokenById, socketAction, socketName } from './utils.js'
  * Provides functionality for creating, moving, and animating the turn marker
  */
 export class Marker {
+
   /**
    * Deletes any tiles flagged as a 'Turn Marker' from the canvas
    */
@@ -36,11 +37,11 @@ export class Marker {
    * @param {String} tokenId - The ID of the token where the marker should be placed
    */
   static async placeTurnMarker (tokenId) {
-    if (game.user.isGM && Settings.getIsEnabled('turnmarker')) {
+    if (game.user.isGM && Settings.getIsEnabled("turnmarker")) {
       const token = findTokenById(tokenId);
       if (typeof token !== 'undefined') {
-        const dims = this.getImageDimensions(token, false, 'turnmarker');
-        const center = this.getImageLocation(token, false, 'turnmarker');
+        let dims = this.getImageDimensions(token, false, "turnmarker");
+        let center = this.getImageLocation(token, false, "turnmarker");
         const tile = canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.data.flags?.turnMarker === true);
         const updateData = {
           img: Settings.getImagePath(),
@@ -71,12 +72,12 @@ export class Marker {
   }
 
   static async placeOnDeckMarker (tokenId) {
-    if (game.user.isGM && Settings.getIsEnabled('deckmarker')) {
+    if (game.user.isGM && Settings.getIsEnabled("deckmarker")) {
       const token = findTokenById(tokenId);
       if (typeof token !== 'undefined') {
-        const dims = this.getImageDimensions(token, false, 'deckmarker');
-        const center = this.getImageLocation(token, false, 'deckmarker');
-        const tile = canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.data.flags?.deckMarker === true);
+        let dims = this.getImageDimensions(token, false, "deckmarker");
+        let center = this.getImageLocation(token, false, "deckmarker");
+        let tile = canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.data.flags?.deckMarker === true);
         const updateData = {
           img: Settings.getOnDeckImagePath(),
           width: dims.w,
@@ -123,12 +124,12 @@ export class Marker {
    * @param {String} tokenId - The ID of the token to place the start marker under
    */
   static async placeStartMarker (tokenId) {
-    if (game.user.isGM && Settings.getIsEnabled('startmarker')) {
-      const token = findTokenById(tokenId);
+    if (game.user.isGM && Settings.getIsEnabled("startmarker")) {
+      let token = findTokenById(tokenId);
       if (typeof token !== 'undefined') {
-        const dims = this.getImageDimensions(token);
-        const center = this.getImageLocation(token);
-        const tile = canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.data.flags?.startMarker === true);
+        let dims = this.getImageDimensions(token);
+        let center = this.getImageLocation(token);
+        let tile = canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.data.flags?.startMarker === true);
         const updateData = {
           img: Settings.getStartMarker(),
           width: dims.w,
@@ -161,13 +162,14 @@ export class Marker {
    * Moves the turn marker tile under the specified token
    * @param {String} tokenId - The ID of the token that the marker should be placed under
    * @param {String} markerId - The ID of the tile currently serving as the turn marker
-   * @param {String} markerType - The marker type
+   * @param {String} marker_type - The marker type
    */
-  static async moveMarkerToToken (tokenId, markerId, markerType = 'turnmarker') {
-    const token = findTokenById(tokenId);
+  static async moveMarkerToToken (tokenId, markerId, marker_type = "turnmarker") {
+    let token = findTokenById(tokenId);
     if (typeof token !== 'undefined') {
-      const dims = this.getImageDimensions(token, false, markerType);
-      const center = this.getImageLocation(token, false, markerType);
+      let dims = this.getImageDimensions(token, false, marker_type);
+      let center = this.getImageLocation(token, false, marker_type);
+
       await canvas.scene.updateEmbeddedDocuments('Tile', [{
         _id: markerId,
         width: dims.w,
@@ -193,7 +195,7 @@ export class Marker {
    */
   static async updateImagePath () {
     if (game.user.isGM) {
-      const tile = canvas.scene.tiles.find(t => t.data.flags?.turnMarker === true);
+      let tile = canvas.scene.tiles.find(t => t.data.flags?.turnMarker == true);
       if (tile) {
         await canvas.scene.updateEmbeddedEntity('Tile', [{
           _id: tile.id,
@@ -208,7 +210,7 @@ export class Marker {
    */
   static async updateOnDeckImagePath () {
     if (game.user.isGM) {
-      const tile = canvas.scene.tiles.find(t => t.data.flags?.deckMarker === true);
+      let tile = canvas.scene.tiles.find(t => t.data.flags?.deckMarker == true);
       if (tile) {
         await canvas.scene.updateEmbeddedEntity('Tile', [{
           _id: tile.id,
@@ -221,9 +223,11 @@ export class Marker {
   /**
    * Gets the proper dimensions of the marker tile taking into account the current grid layout
    * @param {object} token - The token that the tile should be placed under
+   * @param {Boolean} ignoreRatio - Ignore ratio setting
+   * @param {String} marker_type - The marker type
    */
-  static getImageDimensions (token, ignoreRatio = false, markerType = 'turnmarker') {
-    const ratio = ignoreRatio ? 1 : Settings.getRatio(markerType);
+  static getImageDimensions (token, ignoreRatio = false, marker_type = "turnmarker") {
+    let ratio = ignoreRatio ? 1 : Settings.getRatio(marker_type);
     let newWidth = 0;
     let newHeight = 0;
 
@@ -259,8 +263,8 @@ export class Marker {
    * Gets the proper location of the marker tile taking into account the current grid layout
    * @param {object} token - The token that the tile should be placed under
    */
-  static getImageLocation (token, ignoreRatio = false, markerType = 'turnmarker') {
-    const ratio = ignoreRatio ? 1 : Settings.getRatio(markerType);
+  static getImageLocation (token, ignoreRatio = false, marker_type = "turnmarker") {
+    let ratio = ignoreRatio ? 1 : Settings.getRatio(marker_type);
     let newX = 0;
     let newY = 0;
 

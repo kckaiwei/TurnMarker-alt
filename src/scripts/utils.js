@@ -1,3 +1,4 @@
+
 /**
  * The name of the module
  */
@@ -16,7 +17,7 @@ export const socketAction = {
  * @param {String} tokenId - The ID of the token to look for
  */
 export function findTokenById (tokenId) {
-  return canvas.tokens.ownedTokens.find(t => t.id === tokenId);
+  return canvas.tokens.ownedTokens.find(t => t.id == tokenId);
 }
 
 /**
@@ -32,7 +33,7 @@ export function findTileById(tileId) {
  * Use for actions that need to be done by a GM but by only 1 GM
  */
 export function firstGM () {
-  for (const user of game.users.contents) {
+  for (let user of game.users.contents) {
     if (user.data.role === CONST.USER_ROLES.GAMEMASTER && user.active) {
       return user.id;
     }

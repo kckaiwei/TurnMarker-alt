@@ -1,37 +1,36 @@
 import { Settings } from './settings.js';
 
-class UpdateWindow extends Application {
-  static get defaultOptions () {
-    return mergeObject(super.defaultOptions, {
-      template: `modules/${module.id}/templates/updateWindow.html`,
-      resizable: false,
-      width: 500,
-      height: 600,
-      classes: ['updateWindow'],
-      title: `${module.data.title} - Updated`
-    });
-  }
-
-  getData () {
-    return {
-      version: module.data.version
-    };
-  }
-
-  activateListeners (html) {
-    super.activateListeners(html);
-
-    html.find('.show-again').on('change', ev => {
-      Settings.setVersion(ev.currentTarget.checked ? module.data.version : null)
-    });
-  }
-}
-
 export function renderUpdateWindow () {
-  const module = game.modules.get('turnmarker');
+  const module = game.modules.get("turnmarker");
 
-  if (!isNewerVersion(module.data.version, Settings.getVersion())) {
+  if (!isNewerVersion(module.data.version, Settings.getVersion()))
     return;
+
+  class UpdateWindow extends Application {
+    static get defaultOptions () {
+      return mergeObject(super.defaultOptions, {
+        template: `modules/${module.id}/templates/updateWindow.html`,
+        resizable: false,
+        width: 500,
+        height: 600,
+        classes: ["updateWindow"],
+        title: `${module.data.title} - Updated`
+      });
+    }
+
+    getData () {
+      return {
+        version: module.data.version
+      };
+    }
+
+    activateListeners (html) {
+      super.activateListeners(html);
+
+      html.find('.show-again').on('change', ev => {
+        Settings.setVersion(ev.currentTarget.checked ? module.data.version : null);
+      });
+    }
   }
 
   new UpdateWindow().render(true);

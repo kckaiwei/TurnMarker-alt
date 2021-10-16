@@ -13,7 +13,7 @@ Hooks.once('init', () => {
 
 Hooks.once('ready', async () => {
   if (game.user.isGM) {
-    if (isNewerVersion(game.modules.get('turnmarker').data.version, Settings.getVersion())) {
+    if (isNewerVersion(game.modules.get("turnmarker").data.version, Settings.getVersion())) {
       renderUpdateWindow();
     }
   }
@@ -23,6 +23,12 @@ Hooks.once('ready', async () => {
       if (data.mode) {
         deleteTile({ mode: data.mode });
       }
+    } else if (data.startAnimation) {
+      MarkerAnimation.startAnimation(data.startAnimation)
+    } else if (data.stopAnimation) {
+      MarkerAnimation.stopAnimation(data.stopAnimation)
+    } else if (data.stopAllAnimation) {
+      MarkerAnimation.stopAllAnimation()
     }
   })
 
@@ -50,23 +56,22 @@ Hooks.on('updateCombat', async (combat, update) => {
   if (!combat.started) {
     await Marker.clearAllMarkers();
   }
-
   // SWADE has a special initiative
-  if (game.system.id !== 'swade') {
+  if (game.system.id != "swade") {
     handleCombatUpdate(combat, update);
   }
 });
 
 // For SWADE, need to reget active player after each round, but no better hook is fired after initiative shuffle
-Hooks.on('renderCombatTracker', async (combatTracker, update) => {
-  if (game.system.id === 'swade') {
-    handleCombatUpdate(combatTracker.viewed, update);
+Hooks.on("renderCombatTracker", async (combatTracker, update) => {
+  if (game.system.id == "swade") {
+    handleCombatUpdate(combatTracker.viewed, update)
   }
 });
 
 Hooks.on('deleteCombat', async () => {
   await Marker.clearAllMarkers();
-  MarkerAnimation.stopAllAnimation();
+  MarkerAnimation.stopAllAnimationGM();
 });
 
 Hooks.on('updateToken', async (tokenDoc, updateData, diff, id) => {
@@ -76,7 +81,7 @@ Hooks.on('updateToken', async (tokenDoc, updateData, diff, id) => {
 
   // Do onDeck first, so current token will have higher Z-index
   const tiles = canvas.scene.getEmbeddedCollection('Tile');
-  let tile = tiles?.find(t => t.data.flags?.deckMarker === true);
+  let tile = tiles?.find(t => t.data.flags?.deckMarker == true);
   if (tile) {
     if ((updateData.x || updateData.y || updateData.width || updateData.height || updateData.hidden) && game.combat && game.user.isGM && game.userId === firstGM()) {
       const nextTurn = getNextTurn(game.combat);
@@ -85,7 +90,7 @@ Hooks.on('updateToken', async (tokenDoc, updateData, diff, id) => {
     }
   }
 
-  tile = tiles?.find(t => t.data.flags?.turnMarker === true);
+  tile = tiles?.find(t => t.data.flags?.turnMarker == true);
   if (tile) {
     if ((updateData.x || updateData.y || updateData.width || updateData.height || updateData.hidden) && game.combat?.combatant?._token.id === updateData._id && game.user.isGM && game.userId === firstGM()) {
       await Marker.moveMarkerToToken(updateData._id, tile.id, 'turnmarker');
@@ -116,14 +121,14 @@ function isVisible (tile) {
     return true;
   }
 
-  let markerType = 'turnmarker';
+  let marker_type = "turnmarker";
   if (tile.data.flags.startMarker) {
-    markerType = 'startmarker';
+    marker_type = "startmarker";
   } else if (tile.data.flags.deckMarker) {
-    markerType = 'deckmarker';
+    marker_type = "deckmarker";
   }
 
-  const ratio = Settings.getRatio(markerType);
+  const ratio = Settings.getRatio(marker_type);
   const w = tile.data.width / ratio;
   const h = tile.data.height / ratio;
   const tolerance = Math.min(w, h) / 4;
@@ -136,8 +141,8 @@ async function createCombatDeckMarker (combat) {
   if (Settings.getDeckPlayersOnly()) {
     if (combat.turns[nextTurn].actor.hasPlayerOwner) {
       await Marker.placeOnDeckMarker(combat.turns[nextTurn].token.id).then(function () {
-        if (Settings.getShouldAnimate('deckmarker')) {
-          MarkerAnimation.startAnimation('deckmarker');
+        if (Settings.getShouldAnimate("deckmarker")) {
+          MarkerAnimation.startAnimationGM("deckmarker");
         }
       });
     } else {
@@ -145,8 +150,8 @@ async function createCombatDeckMarker (combat) {
     }
   } else {
     await Marker.placeOnDeckMarker(combat.turns[nextTurn].token.id).then(function () {
-      if (Settings.getShouldAnimate('deckmarker')) {
-        MarkerAnimation.startAnimation('deckmarker');
+      if (Settings.getShouldAnimate("deckmarker")) {
+        MarkerAnimation.startAnimationGM("deckmarker");
       }
     });
   }
@@ -154,14 +159,14 @@ async function createCombatDeckMarker (combat) {
 
 async function handleCombatUpdate (combat, update) {
   if (combat.combatant) {
-    if (update && lastTurn !== combat.combatant.id && game.user.isGM && game.userId === firstGM()) {
+    if (update && lastTurn !== combat.combatant.id && game.user.isGM && game.userId == firstGM()) {
       if (combat && combat.combatant && combat.started) {
         lastTurn = combat.combatant.id;
         await Marker.placeStartMarker(combat.combatant.token.id);
         await createCombatDeckMarker(combat);
         await Marker.placeTurnMarker(combat.combatant.token.id).then(function () {
-          if (Settings.getShouldAnimate('turnmarker')) {
-            MarkerAnimation.startAnimation('turnmarker');
+          if (Settings.getShouldAnimate("turnmarker")) {
+            MarkerAnimation.startAnimationGM("turnmarker");
           }
         });
         if (Settings.shouldAnnounceTurns() && !combat.combatant.hidden) {
@@ -207,11 +212,11 @@ Hooks.on('sightRefresh', () => {
 
 Hooks.on('pauseGame', (isPaused) => {
   if (!isPaused) {
-    if (Settings.getShouldAnimate('turnmarker') && canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.data.flags?.turnMarker === true)) {
-      MarkerAnimation.startAnimation('turnmarker');
+    if (Settings.getShouldAnimate("turnmarker") && canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.data.flags?.turnMarker === true)) {
+      MarkerAnimation.startAnimation("turnmarker");
     }
-    if (Settings.getShouldAnimate('deckmarker') && canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.data.flags?.deckMarker === true)) {
-      MarkerAnimation.startAnimation('deckmarker');
+    if (Settings.getShouldAnimate("deckmarker") && canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.data.flags?.deckMarker === true)) {
+      MarkerAnimation.startAnimation("deckmarker");
     }
   } else {
     MarkerAnimation.stopAllAnimation();

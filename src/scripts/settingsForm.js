@@ -3,6 +3,7 @@ import { imageTitles, deckImageTitles, announcedActorOptions, Settings } from '.
 const videos = ['mp4', 'webm', 'ogg'];
 
 export class SettingsForm extends FormApplication {
+
   constructor (object, options = {}) {
     super(object, options);
   }
@@ -23,15 +24,15 @@ export class SettingsForm extends FormApplication {
 
   getData () {
     return {
-      turnMarkerEnabled: Settings.getIsEnabled('turnmarker'),
-      ratio: Settings.getRatio('turnmarker'),
-      image: this.getSelectList(imageTitles, Settings.getImageIndex('turnmarker')),
+      turnMarkerEnabled: Settings.getIsEnabled("turnmarker"),
+      ratio: Settings.getRatio("turnmarker"),
+      image: this.getSelectList(imageTitles, Settings.getImageIndex("turnmarker")),
       customImage: Settings.getCustomImagePath(),
       previewPath: Settings.getImagePath(),
       // onDeck Marker Settings
-      onDeckMarkerEnabled: Settings.getIsEnabled('deckmarker'),
-      deckRatio: Settings.getRatio('deckmarker'),
-      deckImage: this.getSelectList(deckImageTitles, Settings.getImageIndex('deckmarker')),
+      onDeckMarkerEnabled: Settings.getIsEnabled("deckmarker"),
+      deckRatio: Settings.getRatio("deckmarker"),
+      deckImage: this.getSelectList(deckImageTitles, Settings.getImageIndex("deckmarker")),
       customDeckImage: Settings.getCustomDeckImagePath(),
       onDeckPreviewPath: Settings.getOnDeckImagePath(),
       onDeckPlayersOnly: Settings.getDeckPlayersOnly(),
@@ -43,7 +44,7 @@ export class SettingsForm extends FormApplication {
       announceTurnMarkerAlias: Settings.getAnnounceTurnMarkerAlias(),
       announcePlayerNames: Settings.getAnnouncePlayerNames(),
       // Start Marker Settings
-      startMarkerEnabled: Settings.getIsEnabled('startmarker'),
+      startMarkerEnabled: Settings.getIsEnabled("startmarker"),
       startMarkerPath: Settings.getStartMarkerPath()
     };
   }
@@ -57,11 +58,9 @@ export class SettingsForm extends FormApplication {
     console.log('Turn Marker | Saving Settings');
     // Turnmarker settings
     Settings.setRatio(d.ratio);
-    if (d.image) {
-      Settings.setImage('turnmarker', d.image);
-    }
+    if (d.image) Settings.setImage("turnmarker", d.image);
     Settings.setCustomImagePath(d.customImage);
-    Settings.setIsEnabled('turnmarker', d.turnMarkerEnabled);
+    Settings.setIsEnabled("turnmarker", d.turnMarkerEnabled);
 
     // Announcement Settings
     Settings.setShouldAnnounceTurns(d.announce);
@@ -70,16 +69,14 @@ export class SettingsForm extends FormApplication {
     Settings.setAnnounceTokenName(d.announceTokenName);
     Settings.setAnnounceTurnMarkerAlias(d.announceTurnMarkerAlias);
     Settings.setAnnouncePlayerNames(d.announcePlayerNames);
-    Settings.setIsEnabled('startmarker', d.startMarkerEnabled);
+    Settings.setIsEnabled("startmarker", d.startMarkerEnabled);
     Settings.setStartMarkerPath(d.startMarkerPath);
 
     // Ondeck Marker Settings
     Settings.setDeckRatio(d.deckRatio);
-    if (d.deckImage) {
-      Settings.setImage('deckmarker', d.deckImage);
-    }
+    if (d.deckImage) Settings.setImage("deckmarker", d.deckImage);
     Settings.setCustomDeckImagePath(d.customDeckImage);
-    Settings.setIsEnabled('deckmarker', d.onDeckMarkerEnabled);
+    Settings.setIsEnabled("deckmarker", d.onDeckMarkerEnabled);
     Settings.setDeckPlayersOnly(d.onDeckPlayersOnly);
   }
 
@@ -97,7 +94,7 @@ export class SettingsForm extends FormApplication {
 
     if (markerSelect.length > 0) {
       markerSelect.on('change', event => {
-        if (customImage[0].value.trim() === '') {
+        if (customImage[0].value.trim() == '') {
           markerImgPreview.attr('src', Settings.getImageByIndex(Number(event.target.value)));
         }
       });
@@ -105,7 +102,7 @@ export class SettingsForm extends FormApplication {
 
     if (onDeckMarkerSelect.length > 0) {
       onDeckMarkerSelect.on('change', event => {
-        if (customDeckImage[0].value.trim() === '') {
+        if (customDeckImage[0].value.trim() == '') {
           deckMarkerImgPreview.attr('src', Settings.getDeckImageByIndex(Number(event.target.value)));
         }
       });
@@ -138,7 +135,7 @@ export class SettingsForm extends FormApplication {
     const markerImgPreview = html.find('#markerImgPreview');
     const markerVideoPreview = html.find('#markerVideoPreview');
 
-    if (customImage[0].value.trim() === '') {
+    if (customImage[0].value.trim() == '') {
       markerSelect[0].disabled = false;
       markerImgPreview.attr('src', Settings.getImageByIndex(Number(markerSelect[0].value)));
       markerImgPreview.removeClass('hidden');
@@ -164,7 +161,7 @@ export class SettingsForm extends FormApplication {
     const deckMarkerImgPreview = html.find('#onDeckMarkerImgPreview');
     const deckMarkerVideoPreview = html.find('#onDeckMarkerVideoPreview');
 
-    if (customDeckImage[0].value.trim() === '') {
+    if (customDeckImage[0].value.trim() == '') {
       onDeckMarkerSelect[0].disabled = false;
       deckMarkerImgPreview.attr('src', Settings.getDeckImageByIndex(Number(onDeckMarkerSelect[0].value)));
       deckMarkerImgPreview.removeClass('hidden');
@@ -185,13 +182,13 @@ export class SettingsForm extends FormApplication {
   }
 
   getExtension (filePath) {
-    return filePath.slice((filePath.lastIndexOf('.') - 1 >>> 0) + 2);
+    return filePath.slice((filePath.lastIndexOf(".") - 1 >>> 0) + 2);
   }
 
   getSelectList (array, selected) {
-    const options = [];
+    let options = [];
     array.forEach((x, i) => {
-      options.push({ value: x, selected: i === selected });
+      options.push({ value: x, selected: i == selected });
     });
     return options;
   }

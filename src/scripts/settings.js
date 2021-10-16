@@ -68,6 +68,7 @@ export const announcedActorOptions = [
  * Provides functionality for reading and writing module settings
  */
 export class Settings {
+
   static getVersion () {
     return game.settings.get(modName, version);
   }
@@ -77,13 +78,13 @@ export class Settings {
   }
 
   /**
-   * Gets the image ratio given a markerType
+   * Gets the image ratio given a marker_type
    */
-  static getRatio (markerType) {
-    switch (markerType) {
-      case 'turnmarker':
+  static getRatio (marker_type) {
+    switch (marker_type) {
+      case "turnmarker":
         return game.settings.get(modName, ratio);
-      case 'deckmarker':
+      case "deckmarker":
         return game.settings.get(modName, deckRatio);
     }
   }
@@ -107,13 +108,14 @@ export class Settings {
   /**
    * Returns true if the marker should be animated
    */
-  static getShouldAnimate (markerType) {
-    switch (markerType) {
-      case 'turnmarker':
+  static getShouldAnimate (marker_type) {
+    switch (marker_type) {
+      case "turnmarker":
         return game.settings.get(modName, animation);
-      case 'deckmarker':
+      case "deckmarker":
         return game.settings.get(modName, deckAnimation);
     }
+
   }
 
   /**
@@ -137,6 +139,7 @@ export class Settings {
   static setShouldAnnounceTurns (val) {
     game.settings.set(modName, announce, val);
   }
+
 
   /**
    * Gets index of setting
@@ -177,7 +180,6 @@ export class Settings {
   static setAnnouncePlayerNames (val) {
     return game.settings.set(modName, announcePlayerNames, val);
   }
-
   static getIncludeAnnounceImage () {
     return game.settings.get(modName, announceImage);
   }
@@ -188,19 +190,19 @@ export class Settings {
 
   /**
    * Gets the index of the currently selected marker image
-   * @param {string} markerType - Type of marker to get index for
+   * @param {string} marker_type - Type of marker to get index for
    */
-  static getImageIndex (markerType) {
-    switch (markerType) {
-      case 'turnmarker':
+  static getImageIndex (marker_type) {
+    switch (marker_type) {
+      case "turnmarker":
         return game.settings.get(modName, image);
-      case 'deckmarker':
+      case "deckmarker":
         return game.settings.get(modName, deckImage);
     }
   }
 
   static getStartMarker () {
-    if (game.settings.get(modName, startMarkerImage).trim() === '') {
+    if (game.settings.get(modName, startMarkerImage).trim() == '') {
       return 'modules/turnmarker/assets/start.png';
     } else {
       return game.settings.get(modName, startMarkerImage);
@@ -208,34 +210,34 @@ export class Settings {
   }
 
   /**
-   * Gets the IsEnabled property of passed markerType
-   * @param markerType - Type of marker to check isEnabled
+   * Gets the IsEnabled property of passed marker_type
+   * @param marker_type - Type of marker to check isEnabled
    */
-  static getIsEnabled (markerType) {
-    switch (markerType) {
-      case 'turnmarker':
+  static getIsEnabled (marker_type) {
+    switch (marker_type) {
+      case "turnmarker":
         return game.settings.get(modName, turnMarkerEnabled);
-      case 'deckmarker':
+      case "deckmarker":
         return game.settings.get(modName, onDeckMarkerEnabled);
-      case 'startmarker':
+      case "startmarker":
         return game.settings.get(modName, startMarkerEnabled);
     }
   }
 
   /**
-   * Sets the IsEnabled property of passed markerType
-   * @param markerType - Type of marker to check isEnabled
+   * Sets the IsEnabled property of passed marker_type
+   * @param marker_type - Type of marker to check isEnabled
    * @param val - boolean
    */
-  static setIsEnabled (markerType, val) {
-    switch (markerType) {
-      case 'turnmarker':
+  static setIsEnabled (marker_type, val) {
+    switch (marker_type) {
+      case "turnmarker":
         game.settings.set(modName, turnMarkerEnabled, val);
         break;
-      case 'deckmarker':
+      case "deckmarker":
         game.settings.set(modName, onDeckMarkerEnabled, val);
         break;
-      case 'startmarker':
+      case "startmarker":
         game.settings.set(modName, startMarkerEnabled, val);
         break;
     }
@@ -253,7 +255,7 @@ export class Settings {
    * Gets a path to the currently selected image to be used as the marker
    */
   static getImagePath () {
-    if (game.settings.get(modName, customimage).trim() === '') {
+    if (game.settings.get(modName, customimage).trim() == '') {
       return this.getImageByIndex(game.settings.get(modName, image));
     } else {
       return game.settings.get(modName, customimage);
@@ -264,7 +266,7 @@ export class Settings {
    * Gets a path to the currently selected image to be used as the onDeck marker
    */
   static getOnDeckImagePath () {
-    if (game.settings.get(modName, customDeckImage).trim() === '') {
+    if (game.settings.get(modName, customDeckImage).trim() == '') {
       return this.getDeckImageByIndex(game.settings.get(modName, deckImage));
     } else {
       return game.settings.get(modName, customDeckImage);
@@ -328,15 +330,16 @@ export class Settings {
     }
   }
 
-  static setImage (imageType, val) {
-    switch (imageType) {
-      case 'turnmarker':
+  static setImage (image_type, val) {
+    switch (image_type) {
+      case "turnmarker":
         game.settings.set(modName, image, val);
         break;
-      case 'deckmarker':
+      case "deckmarker":
         game.settings.set(modName, deckImage, val);
         break;
     }
+
   }
 
   static getCustomImagePath () {
@@ -377,10 +380,12 @@ export class Settings {
     game.settings.set(modName, deckPlayersOnly, val);
   }
 
+
   /**
    * Registers all game settings
    */
   static registerSettings () {
+
     game.settings.registerMenu(modName, 'tm.settingsMenu', {
       name: 'tm.settings.button.name',
       label: 'tm.settings.button.label',
@@ -415,9 +420,9 @@ export class Settings {
       default: true,
       onChange: shouldAnimate => {
         if (!game.paused && shouldAnimate && canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.data.flags.turnMarker === true)) {
-          MarkerAnimation.startAnimation('turnmarker');
+          MarkerAnimation.startAnimationGM("turnmarker");
         } else {
-          MarkerAnimation.stopAnimation('turnmarker');
+          MarkerAnimation.stopAnimationGM("turnmarker");
         }
       }
     });
@@ -431,9 +436,9 @@ export class Settings {
       default: true,
       onChange: shouldAnimate => {
         if (!game.paused && shouldAnimate && canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.data.flags.deckMarker === true)) {
-          MarkerAnimation.startAnimation('deckmarker');
+          MarkerAnimation.startAnimationGM("deckmarker");
         } else {
-          MarkerAnimation.stopAnimation('deckmarker');
+          MarkerAnimation.stopAnimationGM("deckmarker");
         }
       }
     });
@@ -503,7 +508,7 @@ export class Settings {
         if (!enabled) {
           Marker.deleteOnDeckMarker();
         } else if (game.combat && game.combat.combatant && game.combat.started) {
-          const nextTurn = getNextTurn(game.combat);
+          let nextTurn = getNextTurn(game.combat);
           Marker.placeOnDeckMarker(game.combat.turns[nextTurn].token.id);
         }
       }

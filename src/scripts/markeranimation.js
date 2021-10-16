@@ -1,29 +1,51 @@
 import { Settings } from './settings.js';
+import { socketName } from './utils.js';
 
 export class MarkerAnimation {
   /**
    * Starts the animation loop
    */
-  static startAnimation (markerType = 'turnmarker') {
+  static startAnimationGM (marker_type = "turnmarker") {
+    MarkerAnimation.startAnimation(marker_type)
+    game.socket.emit(socketName, {
+      startAnimation: marker_type
+    });
+  }
+
+  static startAnimation (marker_type = "turnmarker") {
     if (!this.animators) {
       this.animators = {};
     }
-    if (markerType in this.animators) {
-      return this.animators[markerType];
+    if (marker_type in this.animators) {
+      return this.animators[marker_type];
     }
-    this.animators[markerType] = this.animateRotation.bind(this, markerType);
-    canvas.app.ticker.add(this.animators[markerType]);
+    this.animators[marker_type] = this.animateRotation.bind(this, marker_type);
+    canvas.app.ticker.add(this.animators[marker_type]);
     return this.animators;
   }
 
   /**
    * Stops the animation loop
    */
-  static stopAnimation (markerType = 'turnmarker') {
+  static stopAnimationGM (marker_type = "turnmarker") {
+    MarkerAnimation.startAnimation(marker_type)
+    game.socket.emit(socketName, {
+      stopAnimation: marker_type
+    });
+  }
+
+  static stopAnimation (marker_type = "turnmarker") {
     if (this.animators) {
-      canvas.app.ticker.remove(this.animators[markerType]);
-      delete this.animators[markerType];
+      canvas.app.ticker.remove(this.animators[marker_type]);
+      delete this.animators[marker_type];
     }
+  }
+
+  static stopAllAnimationGM () {
+    MarkerAnimation.stopAllAnimation()
+    game.socket.emit(socketName, {
+      stopAllAnimation: marker_type
+    });
   }
 
   static stopAllAnimation () {
@@ -37,22 +59,22 @@ export class MarkerAnimation {
 
   /**
    * Called on every tick of the animation loop to rotate the image based on the current frame
-   * @param {string} markerType - type of marker to animate
+   * @param {string} marker_type - type of marker to animate
    * @param {number} dt - The delta time
    */
-  static animateRotation (markerType, dt) {
+  static animateRotation (marker_type, dt) {
     let tile;
-    switch (markerType) {
-      case 'deckmarker':
-        tile = canvas.background.tiles.find(t => t.data.flags?.deckMarker === true);
+    switch (marker_type) {
+      case "deckmarker":
+        tile = canvas.background.tiles.find(t => t.data.flags?.deckMarker == true);
         break;
-      case 'turnmarker':
+      case "turnmarker":
       default:
-        tile = canvas.background.tiles.find(t => t.data.flags?.turnMarker === true);
+        tile = canvas.background.tiles.find(t => t.data.flags?.turnMarker == true);
         break;
     }
     if (tile?.data.img) {
-      const delta = Settings.getInterval() / 10000;
+      let delta = Settings.getInterval() / 10000;
       try {
         tile.tile.rotation += (delta * dt);
       } catch (err) {
