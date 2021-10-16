@@ -7,7 +7,6 @@ const version = 'tm-version';
 const interval = 'interval';
 const announce = 'announce-turn';
 const announceActors = 'announce-Actors';
-const announceAsActor = 'announce-asActor';
 const announceImage = 'announce-image';
 const announceTokenName = 'announce-token';
 const announceTurnMarkerAlias = 'announce-turn-marker-alias';
@@ -392,14 +391,14 @@ export class Settings {
             label: 'tm.settings.button.label',
             icon: 'fas fa-sync-alt',
             type: SettingsForm,
-            restricted: true,
+            restricted: true
         });
 
         game.settings.register(modName, version, {
             name: `${modName} version`,
             default: '0.0.0',
             type: String,
-            scope: 'world',
+            scope: 'world'
         });
 
         game.settings.register(modName, ratio, {
@@ -420,10 +419,10 @@ export class Settings {
             type: Boolean,
             default: true,
             onChange: shouldAnimate => {
-                if (!game.paused && shouldAnimate && canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true)) {
-                    MarkerAnimation.startAnimation("turnmarker");
+                if (!game.paused && shouldAnimate && canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.data.flags.turnMarker === true)) {
+                    MarkerAnimation.startAnimationGM("turnmarker");
                 } else {
-                    MarkerAnimation.stopAnimation("turnmarker");
+                    MarkerAnimation.stopAnimationGM("turnmarker");
                 }
             }
         });
@@ -436,10 +435,10 @@ export class Settings {
             type: Boolean,
             default: true,
             onChange: shouldAnimate => {
-                if (!game.paused && shouldAnimate && canvas.tiles.placeables.find(t => t.data.flags.deckMarker == true)) {
-                    MarkerAnimation.startAnimation("deckmarker");
+                if (!game.paused && shouldAnimate && canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.data.flags.deckMarker === true)) {
+                    MarkerAnimation.startAnimationGM("deckmarker");
                 } else {
-                    MarkerAnimation.stopAnimation("deckmarker");
+                    MarkerAnimation.stopAnimationGM("deckmarker");
                 }
             }
         });
@@ -510,7 +509,7 @@ export class Settings {
                     Marker.deleteOnDeckMarker();
                 } else if (game.combat && game.combat.combatant && game.combat.started) {
                     let nextTurn = getNextTurn(game.combat);
-                    Marker.placeOnDeckMarker(game.combat.turns[nextTurn].token._id);
+                    Marker.placeOnDeckMarker(game.combat.turns[nextTurn].token.id);
                 }
             }
         });
@@ -522,7 +521,7 @@ export class Settings {
             config: false,
             type: Boolean,
             default: true,
-            restricted: true,
+            restricted: true
         });
 
         // Announcements
@@ -534,7 +533,7 @@ export class Settings {
             type: Number,
             default: 0,
             restricted: true,
-            choices: announcedActorOptions,
+            choices: announcedActorOptions
         });
 
         game.settings.register(modName, announceTokenName, {
@@ -544,7 +543,7 @@ export class Settings {
             config: false,
             type: Boolean,
             default: false,
-            restricted: true,
+            restricted: true
         });
 
         game.settings.register(modName, announceTurnMarkerAlias, {
@@ -554,7 +553,7 @@ export class Settings {
           config: false,
           type: Boolean,
           default: false,
-          restricted: true,
+          restricted: true
         });
 
         game.settings.register(modName, announcePlayerNames, {
@@ -564,7 +563,7 @@ export class Settings {
           config: false,
           type: Boolean,
           default: true,
-          restricted: true,
+          restricted: true
         });
 
         game.settings.register(modName, customimage, {
@@ -596,15 +595,6 @@ export class Settings {
             default: true
         });
 
-        game.settings.register(modName, announceAsActor, {
-            name: 'tm.settings.announceAs.name',
-            hint: 'tm.settings.announceAs.hint',
-            scope: 'world',
-            config: false,
-            type: Boolean,
-            default: true
-        });
-
         game.settings.register(modName, turnMarkerEnabled, {
             name: 'tm.settings.turnMarkerEnabled.name',
             hint: 'tm.settings.turnMarkerEnabled.hint',
@@ -617,7 +607,7 @@ export class Settings {
                 if (!enabled) {
                     Marker.deleteTurnMarker();
                 } else if (game.combat && game.combat.combatant && game.combat.started) {
-                    Marker.placeTurnMarker(game.combat.combatant.token._id);
+                    Marker.placeTurnMarker(game.combat.combatant.token.id);
                 }
             }
         });
@@ -634,7 +624,7 @@ export class Settings {
                 if (!enabled) {
                     Marker.deleteStartMarker();
                 } else if (game.combat && game.combat.combatant && game.combat.started) {
-                    Marker.placeStartMarker(game.combat.combatant.token._id);
+                    Marker.placeStartMarker(game.combat.combatant.token.id);
                 }
             }
         });

@@ -4,16 +4,12 @@
  */
 export const modName = 'turnmarker';
 
-/*** Flag Info */
-export const FlagScope = 'turnmarker';
-export const Flags = {
-    startMarkerPlaced: 'startMarkerPlaced'
-};
-
 /** Socket Info */
 export const socketName = 'module.turnmarker';
 export const socketAction = {
-    placeStartMarker: 0
+    deleteStartMarker: 1,
+    deleteTurnMarker: 2,
+    deleteOnDeckMarker: 3
 };
 
 /**
@@ -37,9 +33,9 @@ export function findTileById(tileId) {
  * Use for actions that need to be done by a GM but by only 1 GM
  */
 export function firstGM() {
-    for (let user of game.users.entities) {
-        if (user.data.role >= 4 && user.active) {
-            return user.data._id;
+    for (let user of game.users.contents) {
+        if (user.data.role === CONST.USER_ROLES.GAMEMASTER && user.active) {
+            return user.id;
         }
     }
     return undefined;
@@ -49,11 +45,34 @@ export function firstGM() {
  * Returns the index of the nextTurn
  * @param {Object} combat - combat object from foundry
  */
-export function getNextTurn(combat){
-    let currentTurn = combat.turn;
-    let nextTurn = currentTurn + 1;
-    if (nextTurn >= combat.turns.length) {
-        nextTurn = 0;
+export function getNextTurn(combat) {
+    return (combat.turn + 1) % combat.turns.length;
+}
+
+/**
+ * Delete time
+ * @param {Object} combat - combat object from foundry
+ */
+export async function deleteTile({ mode } = {}) {
+    let tiles = null
+    switch (mode) {
+        case socketAction.deleteStartMarker:
+            tiles = canvas.scene.getEmbeddedCollection('Tile')?.filter(t => t.data.flags?.startMarker === true)?.map(t => t.id)
+            if (tiles?.length > 0) {
+                await canvas.scene.deleteEmbeddedDocuments('Tile', tiles)
+            }
+            break
+        case socketAction.deleteTurnMarker:
+            tiles = canvas.scene.getEmbeddedCollection('Tile')?.filter(t => t.data.flags?.turnMarker === true)?.map(t => t.id)
+            if (tiles?.length > 0) {
+                await canvas.scene.deleteEmbeddedDocuments('Tile', tiles)
+            }
+            break
+        case socketAction.deleteOnDeckMarker:
+            tiles = canvas.scene.getEmbeddedCollection('Tile')?.filter(t => t.data.flags?.deckMarker === true)?.map(t => t.id)
+            if (tiles?.length > 0) {
+                await canvas.scene.deleteEmbeddedDocuments('Tile', tiles)
+            }
+            break
     }
-    return nextTurn;
 }

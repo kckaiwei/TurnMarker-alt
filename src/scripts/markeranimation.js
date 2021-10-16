@@ -1,9 +1,16 @@
 import {Settings} from './settings.js';
+import {socketName} from './utils.js';
 
 export class MarkerAnimation {
     /**
      * Starts the animation loop
      */
+    static startAnimationGM(marker_type = "turnmarker") {
+        MarkerAnimation.startAnimation(marker_type)
+        game.socket.emit(socketName, {
+            startAnimation: marker_type
+        });
+    }
 
     static startAnimation(marker_type = "turnmarker") {
         if (!this.animators) {
@@ -20,6 +27,13 @@ export class MarkerAnimation {
     /**
      * Stops the animation loop
      */
+    static stopAnimationGM(marker_type = "turnmarker") {
+        MarkerAnimation.startAnimation(marker_type)
+        game.socket.emit(socketName, {
+            stopAnimation: marker_type
+        });
+    }
+
     static stopAnimation(marker_type = "turnmarker") {
         if (this.animators) {
             canvas.app.ticker.remove(this.animators[marker_type]);
@@ -27,10 +41,17 @@ export class MarkerAnimation {
         }
     }
 
+    static stopAllAnimationGM() {
+        MarkerAnimation.stopAllAnimation()
+        game.socket.emit(socketName, {
+            stopAllAnimation: marker_type
+        });
+    }
+
     static stopAllAnimation() {
         if (this.animators) {
-            for (const [key, value] of Object.entries(this.animators)) {
-                canvas.app.ticker.remove(this.animators[key]);
+            for (const [, value] of Object.entries(this.animators)) {
+                canvas.app.ticker.remove(value);
             }
             this.animators = {};
         }
@@ -44,16 +65,15 @@ export class MarkerAnimation {
     static animateRotation(marker_type, dt) {
         let tile;
         switch (marker_type) {
-            case "turnmarker":
-                tile = canvas.background.tiles.find(t => t.data.flags.turnMarker == true);
-                break;
             case "deckmarker":
-                tile = canvas.background.tiles.find(t => t.data.flags.deckMarker == true);
+                tile = canvas.background.tiles.find(t => t.data.flags?.deckMarker == true);
                 break;
+            case "turnmarker":
             default:
-                tile = canvas.background.tiles.find(t => t.data.flags.turnMarker == true);
+                tile = canvas.background.tiles.find(t => t.data.flags?.turnMarker == true);
+                break;
         }
-        if (tile && tile.data.img) {
+        if (tile?.data.img) {
             let delta = Settings.getInterval() / 10000;
             try {
                 tile.tile.rotation += (delta * dt);
