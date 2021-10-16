@@ -5,6 +5,7 @@ import {Settings} from './settings.js';
 import {renderUpdateWindow} from './updateWindow.js';
 import {deleteTile, firstGM, socketName, getNextTurn} from './utils.js';
 
+
 let lastTurn = '';
 
 Hooks.once('init', () => {
@@ -30,7 +31,7 @@ Hooks.once('ready', async () => {
         } else if (data.stopAllAnimation) {
             MarkerAnimation.stopAllAnimation()
         }
-    })
+    });
 
     if (game.user.isGM) {
         // Clean up any leftover markers before start, and remake since sometimes tiles get desync'd it seems

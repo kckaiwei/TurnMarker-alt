@@ -1,5 +1,5 @@
-import { Settings } from './settings.js';
-import { deleteTile, findTokenById, socketAction, socketName } from './utils.js';
+import {Settings} from './settings.js';
+import {deleteTile, findTokenById, socketAction, socketName} from './utils.js';
 
 /**
  * Provides functionality for creating, moving, and animating the turn marker
