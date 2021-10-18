@@ -1,3 +1,8 @@
+# 2.8.2
+- Fix resizing issue
+- Fix console embeddedCollection error
+- Fix vision bug
+
 # 2.8.1
 - Fix tile leftover on start
 - Fixed console warning
