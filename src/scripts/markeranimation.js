@@ -44,7 +44,7 @@ export class MarkerAnimation {
     static stopAllAnimationGM() {
         MarkerAnimation.stopAllAnimation()
         game.socket.emit(socketName, {
-            stopAllAnimation: marker_type
+            stopAllAnimation: true
         });
     }
 
