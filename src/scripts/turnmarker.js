@@ -71,8 +71,10 @@ Hooks.on("renderCombatTracker", async (combatTracker, update) => {
 });
 
 Hooks.on('deleteCombat', async () => {
-    await Marker.clearAllMarkers();
-    MarkerAnimation.stopAllAnimationGM();
+    if (game.user.isGM && game.userId == firstGM()) {
+        await Marker.clearAllMarkers();
+        MarkerAnimation.stopAllAnimationGM();
+    }
 });
 
 Hooks.on('updateToken', async (tokenDoc, updateData, diff, id) => {
