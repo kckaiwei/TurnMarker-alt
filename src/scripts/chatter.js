@@ -51,8 +51,8 @@ export class Chatter {
     static placeImage(combatant) {
         if (Settings.getIncludeAnnounceImage()) {
             let img = combatant.img;
-            if (combatant._actor.data.img) {
-                img = combatant._actor.data.img;
+            if (combatant.actor.data.img) {
+                img = combatant.actor.data.img;
             }
             return `<div style="flex:3;padding-right:4px"><img src="${img}" style="border: none;" /></div>`;
             // return `<div style="flex:3;"><video><source="${combatant.img}"></video></div>`;

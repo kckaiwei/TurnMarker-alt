@@ -93,7 +93,7 @@ Hooks.on('updateToken', async (tokenDoc, updateData, diff, id) => {
 
     tile = tiles?.find(t => t.data.flags?.turnMarker == true);
     if (tile) {
-        if ((updateData.x || updateData.y || updateData.width || updateData.height || updateData.hidden) && game.combat?.combatant?._token.id === updateData._id && game.user.isGM && game.userId === firstGM()) {
+        if ((updateData.x || updateData.y || updateData.width || updateData.height || updateData.hidden) && game.combat?.combatant?.token.id === updateData._id && game.user.isGM && game.userId === firstGM()) {
             await Marker.moveMarkerToToken(updateData._id, tile.id, 'turnmarker');
         }
     }
@@ -118,9 +118,11 @@ function isVisible(tile) {
         return game.user.isGM;
     }
 
+/** Not certain what is being check here... if the token is selected, then it is visible?
     if (combatant._controlled) {
         return true;
     }
+*/
 
     let marker_type = "turnmarker";
     if (tile.data.flags.startMarker) {
