@@ -118,10 +118,6 @@ function isVisible(tile) {
         return game.user.isGM;
     }
 
-    if (combatant._controlled) {
-        return true;
-    }
-
     let marker_type = "turnmarker";
     if (tile.data.flags.startMarker) {
         marker_type = "startmarker";
