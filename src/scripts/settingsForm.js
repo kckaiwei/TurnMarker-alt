@@ -143,7 +143,6 @@ export class SettingsForm extends FormApplication {
         } else {
             markerSelect[0].disabled = true;
             const ext = this.getExtension(customImage[0].value);
-            console.warn(ext);
             if (videos.includes(ext.toLowerCase())) {
                 markerVideoPreview.attr('src', customImage[0].value);
                 markerImgPreview.addClass('hidden');
@@ -170,7 +169,6 @@ export class SettingsForm extends FormApplication {
         } else {
             onDeckMarkerSelect[0].disabled = true;
             const ext = this.getExtension(customDeckImage[0].value);
-            console.warn(ext);
             if (videos.includes(ext.toLowerCase())) {
                 deckMarkerVideoPreview.attr('src', customDeckImage[0].value);
                 deckMarkerImgPreview.addClass('hidden');

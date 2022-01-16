@@ -1,6 +1,5 @@
-import {MarkerAnimation} from './markeranimation.js';
 import {Settings} from './settings.js';
-import {findTokenById, findTileById, Flags, FlagScope, socketAction, socketName} from './utils.js';
+import {deleteTile, findTokenById, socketAction, socketName} from './utils.js';
 
 /**
  * Provides functionality for creating, moving, and animating the turn marker
@@ -11,17 +10,12 @@ export class Marker {
      * Deletes any tiles flagged as a 'Turn Marker' from the canvas
      */
     static async deleteTurnMarker() {
-        const to_delete = canvas.scene.getEmbeddedCollection('Tile')
-            .filter(tile => "flags" in tile.data)
-            .filter(tile => tile.data.flags.turnMarker)
-            .map(tile => tile._id);
         if (!game.user.isGM) {
             game.socket.emit(socketName, {
-                mode: socketAction.deleteTurnMarker,
-                tileId: to_delete
+                mode: socketAction.deleteTurnMarker
             });
         } else {
-            await canvas.scene.deleteEmbeddedDocuments('Tile', to_delete);
+            await deleteTile({ mode: socketAction.deleteTurnMarker });
         }
     }
 
@@ -29,36 +23,27 @@ export class Marker {
      * Deletes any tiles flagged as a 'Deck Marker' from the canvas
      */
     static async deleteOnDeckMarker() {
-        const to_delete = canvas.scene.getEmbeddedCollection('Tile')
-            .filter(tile => "flags" in tile.data)
-            .filter(tile => tile.data.flags.deckMarker)
-            .map(tile => tile._id);
         if (!game.user.isGM) {
             game.socket.emit(socketName, {
-                mode: socketAction.deleteOnDeckMarker,
-                tileId: to_delete
+                mode: socketAction.deleteOnDeckMarker
             });
         } else {
-            await canvas.scene.deleteEmbeddedDocuments('Tile', to_delete);
+            await deleteTile({ mode: socketAction.deleteOnDeckMarker });
         }
     }
 
     /**
      * Places a new turn marker under the token specified, and if required, starts the animation
      * @param {String} tokenId - The ID of the token where the marker should be placed
-     * @param {Object} animator - The animator object
-     * @param {String} markerId - The ID of the tile being used as the turn marker
      */
-    static async placeTurnMarker(tokenId, markerId) {
-        if (!markerId) {
-            await this.deleteTurnMarker();
-
-            if (Settings.getIsEnabled("turnmarker")) {
-                let token = findTokenById(tokenId);
+    static async placeTurnMarker(tokenId) {
+        if (game.user.isGM && Settings.getIsEnabled("turnmarker")) {
+            const token = findTokenById(tokenId);
+            if (typeof token !== 'undefined') {
                 let dims = this.getImageDimensions(token, false, "turnmarker");
                 let center = this.getImageLocation(token, false, "turnmarker");
-
-                let newTile = await canvas.scene.createEmbeddedDocuments("Tile", [{
+                const tile = canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.data.flags?.turnMarker === true);
+                const updateData = {
                     img: Settings.getImagePath(),
                     width: dims.w,
                     height: dims.h,
@@ -67,63 +52,70 @@ export class Marker {
                     z: 900,
                     rotation: 0,
                     hidden: token.data.hidden,
-                    locked: false,
-                    flags: {turnMarker: true}
-                }]);
-
-                return newTile._id;
-            } else {
-                return null;
+                    locked: false
+                };
+                if (typeof tile === 'undefined') {
+                    await canvas.scene.createEmbeddedDocuments('Tile', [{
+                        ...updateData,
+                        flags: { turnMarker: true }
+                    }]);
+                } else {
+                    await canvas.scene.updateEmbeddedDocuments('Tile', [{
+                        ...updateData,
+                        _id: tile.id
+                    }]);
+                }
+                return;
             }
-        } else {
-            await this.moveMarkerToToken(tokenId, markerId, "turnmarker");
-            return markerId;
         }
+        await this.deleteTurnMarker();
     }
 
     static async placeOnDeckMarker(tokenId) {
-        await this.deleteOnDeckMarker();
-
-        if (Settings.getIsEnabled("deckmarker")) {
-            let token = findTokenById(tokenId);
-            let dims = this.getImageDimensions(token, false, "deckmarker");
-            let center = this.getImageLocation(token, false, "deckmarker");
-            let newTile = canvas.scene.createEmbeddedDocuments("Tile", [{
-                img: Settings.getOnDeckImagePath(),
-                width: dims.w,
-                height: dims.h,
-                x: center.x,
-                y: center.y,
-                z: 900,
-                rotation: 0,
-                hidden: token.data.hidden,
-                locked: false,
-                flags: {deckMarker: true}
-            }]);
-
-            if (game.user.isGM) {
-                await canvas.scene.createEmbeddedDocuments('Tile', newTile.data);
+        if (game.user.isGM && Settings.getIsEnabled("deckmarker")) {
+            const token = findTokenById(tokenId);
+            if (typeof token !== 'undefined') {
+                let dims = this.getImageDimensions(token, false, "deckmarker");
+                let center = this.getImageLocation(token, false, "deckmarker");
+                let tile = canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.data.flags?.deckMarker === true);
+                const updateData = {
+                    img: Settings.getOnDeckImagePath(),
+                    width: dims.w,
+                    height: dims.h,
+                    x: center.x,
+                    y: center.y,
+                    z: 900,
+                    rotation: 0,
+                    hidden: token.data.hidden,
+                    locked: false
+                };
+                if (typeof tile === 'undefined') {
+                    await canvas.scene.createEmbeddedDocuments('Tile', [{
+                        ...updateData,
+                        flags: { deckMarker: true }
+                    }]);
+                } else {
+                    await canvas.scene.updateEmbeddedDocuments('Tile', [{
+                        ...updateData,
+                        _id: tile.id
+                    }]);
+                }
+                return;
             }
         }
+        await this.deleteOnDeckMarker();
     }
-
 
     /**
      * Deletes any tiles flagged as a 'Start Marker' from the canvas
      */
     static async deleteStartMarker() {
-        const to_delete = canvas.scene.getEmbeddedCollection('Tile')
-            .filter(tile => "flags" in tile.data)
-            .filter(tile => tile.data.flags.startMarker)
-            .map(tile => tile._id);
         if (!game.user.isGM) {
             game.socket.emit(socketName, {
-                mode: socketAction.deleteStartMarker,
-                tileId: to_delete
+                mode: socketAction.deleteStartMarker
             });
         } else {
-            await canvas.scene.unsetFlag(FlagScope, Flags.startMarkerPlaced);
-            await canvas.scene.deleteEmbeddedDocuments('Tile', to_delete);
+            await deleteTile({ mode: socketAction.deleteStartMarker });
         }
     }
 
@@ -132,15 +124,13 @@ export class Marker {
      * @param {String} tokenId - The ID of the token to place the start marker under
      */
     static async placeStartMarker(tokenId) {
-        await this.deleteStartMarker();
-
-        if (Settings.getIsEnabled("startmarker")) {
+        if (game.user.isGM && Settings.getIsEnabled("startmarker")) {
             let token = findTokenById(tokenId);
-            let dims = this.getImageDimensions(token);
-            let center = this.getImageLocation(token);
-
-            if (game.user.isGM) {
-                let newTile = await canvas.scene.createEmbeddedDocuments("Tile", [{
+            if (typeof token !== 'undefined') {
+                let dims = this.getImageDimensions(token);
+                let center = this.getImageLocation(token);
+                let tile = canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.data.flags?.startMarker === true);
+                const updateData = {
                     img: Settings.getStartMarker(),
                     width: dims.w,
                     height: dims.h,
@@ -149,32 +139,46 @@ export class Marker {
                     z: 900,
                     rotation: 0,
                     hidden: token.data.hidden,
-                    locked: false,
-                    flags: {startMarker: true}
-                }]);
-                await canvas.scene.setFlag(FlagScope, Flags.startMarkerPlaced, true);
+                    locked: false
+                };
+                if (typeof tile === 'undefined') {
+                    await canvas.scene.createEmbeddedDocuments('Tile', [{
+                        ...updateData,
+                        flags: { startMarker: true }
+                    }]);
+                } else {
+                    await canvas.scene.updateEmbeddedDocuments('Tile', [{
+                        ...updateData,
+                        _id: tile.id
+                    }]);
+                }
+                return;
             }
         }
+        await this.deleteStartMarker();
     }
 
     /**
      * Moves the turn marker tile under the specified token
      * @param {String} tokenId - The ID of the token that the marker should be placed under
      * @param {String} markerId - The ID of the tile currently serving as the turn marker
+     * @param {String} marker_type - The marker type
      */
     static async moveMarkerToToken(tokenId, markerId, marker_type="turnmarker") {
         let token = findTokenById(tokenId);
-        let dims = this.getImageDimensions(token, false, marker_type);
-        let center = this.getImageLocation(token, false, marker_type);
+        if (typeof token !== 'undefined') {
+            let dims = this.getImageDimensions(token, false, marker_type);
+            let center = this.getImageLocation(token, false, marker_type);
 
-        await canvas.scene.updateEmbeddedDocuments('Tile', [{
-            _id: markerId,
-            width: dims.w,
-            height: dims.h,
-            x: center.x,
-            y: center.y,
-            hidden: token.data.hidden
-        }]);
+            await canvas.scene.updateEmbeddedDocuments('Tile', [{
+                _id: markerId,
+                width: dims.w,
+                height: dims.h,
+                x: center.x,
+                y: center.y,
+                hidden: token.data.hidden
+            }]);
+        }
     }
 
     /**
@@ -191,7 +195,7 @@ export class Marker {
      */
     static async updateImagePath() {
         if (game.user.isGM) {
-            let tile = canvas.tiles.placeables.find(t => t.data.flags.turnMarker == true);
+            let tile = canvas.scene.tiles.find(t => t.data.flags?.turnMarker == true);
             if (tile) {
                 await canvas.scene.updateEmbeddedEntity('Tile', [{
                     _id: tile.id,
@@ -206,7 +210,7 @@ export class Marker {
      */
     static async updateOnDeckImagePath() {
         if (game.user.isGM) {
-            let tile = canvas.tiles.placeables.find(t => t.data.flags.deckMarker == true);
+            let tile = canvas.scene.tiles.find(t => t.data.flags?.deckMarker == true);
             if (tile) {
                 await canvas.scene.updateEmbeddedEntity('Tile', [{
                     _id: tile.id,
@@ -217,16 +221,10 @@ export class Marker {
     }
 
     /**
-     * Completely resets the turn marker - deletes all tiles and stops any animation
-     */
-    static async reset() {
-        MarkerAnimation.stopAllAnimation();
-        await this.clearAllMarkers();
-    }
-
-    /**
      * Gets the proper dimensions of the marker tile taking into account the current grid layout
      * @param {object} token - The token that the tile should be placed under
+     * @param {Boolean} ignoreRatio - Ignore ratio setting
+     * @param {String} marker_type - The marker type
      */
     static getImageDimensions(token, ignoreRatio = false, marker_type = "turnmarker") {
         let ratio = ignoreRatio ? 1 : Settings.getRatio(marker_type);

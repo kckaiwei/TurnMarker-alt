@@ -1,6 +1,6 @@
 {
 	"name": "turnmarker-alt",
-	"version": "2.8.1",
+	"version": "2.8.2",
 	"description": "",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"

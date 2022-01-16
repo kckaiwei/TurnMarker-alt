@@ -28,7 +28,7 @@ export function renderUpdateWindow() {
             super.activateListeners(html);
 
             html.find('.show-again').on('change', ev => {
-                Settings.setVersion(ev.currentTarget.checked ? module.data.version : oldVersion);
+                Settings.setVersion(ev.currentTarget.checked ? module.data.version : null);
             });
         }
     }
