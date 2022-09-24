@@ -197,10 +197,9 @@ export class Marker {
         if (game.user.isGM) {
             let tile = canvas.scene.tiles.find(t => t.flags?.turnMarker == true);
             if (tile) {
-                await canvas.scene.updateEmbeddedEntity('Tile', [{
-                    _id: tile.id,
+                await tile.update({
                     img: Settings.getImagePath()
-                }]);
+                });
             }
         }
     }
@@ -212,10 +211,10 @@ export class Marker {
         if (game.user.isGM) {
             let tile = canvas.scene.tiles.find(t => t.flags?.deckMarker == true);
             if (tile) {
-                await canvas.scene.updateEmbeddedEntity('Tile', [{
+                await tile.update({
                     _id: tile.id,
                     img: Settings.getOnDeckImagePath()
-                }]);
+                });
             }
         }
     }
