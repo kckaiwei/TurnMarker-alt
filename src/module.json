@@ -2,16 +2,25 @@
 	"name": "turnmarker",
 	"title": "Turn Marker",
 	"description": "Displays a (optionally animated) marker on the token who's active turn it is. Originally by Brunhine",
-	"author": "kckaiwei",
-	"version": "2.9.0",
-	"minimumCoreVersion": "9.238",
-	"compatibleCoreVersion": "9.238",
-	"manifestPlusVersion": "1.0.0",
+    "authors": [
+        {
+            "name": "kckaiwei",
+            "discord": "AdagioT#9507"
+        },
+        {
+            "name": "nabel",
+            "discord": "Miles Edgeworth#7948"
+        }
+    ],
+	"version": "2.10.0",
+    "compatibility": {
+        "minimum": "10"
+    },
 	"esmodules": [
 		"scripts/turnmarker.js"
 	],
 	"socket": true,
-	"styles": ["css/turnmarker.css"],
+	"styles": ["css/turnmarker.less"],
 	"languages": [
 		{
 			"lang": "en",
@@ -55,7 +64,7 @@
 			"loop": true
 		}
 	],
-	"url": "https://github.com/kckaiwei/TurnMarker-alt",
-	"manifest": "https://raw.githubusercontent.com/kckaiwei/TurnMarker-alt/v2.9.0/src/module.json",
-	"download": "https://github.com/kckaiwei/TurnMarker-alt/releases/download/v2.9.0/turnmarker.zip"
+    "url": "https://github.com/kckaiwei/TurnMarker-alt",
+    "manifest": "https://raw.githubusercontent.com/kckaiwei/TurnMarker-alt/v2.10.0/src/module.json",
+    "download": "https://github.com/kckaiwei/TurnMarker-alt/releases/download/v2.10.0/turnmarker.zip"
 }

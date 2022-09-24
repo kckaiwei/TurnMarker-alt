@@ -203,7 +203,7 @@ export class Settings {
 
     static getStartMarker() {
         if (game.settings.get(modName, startMarkerImage).trim() == '') {
-            return 'modules/turnmarker/assets/start.png';
+            return `modules/${modName}/assets/start.png`;
         } else {
             return game.settings.get(modName, startMarkerImage);
         }
@@ -276,27 +276,27 @@ export class Settings {
     static getImageByIndex(index) {
         switch (index) {
             case 0:
-                return 'modules/turnmarker/assets/incendium.png';
+                return `modules/${modName}/assets/incendium.png`;
             case 1:
-                return 'modules/turnmarker/assets/cultist.png';
+                return `modules/${modName}/assets/cultist.png`;
             case 2:
-                return 'modules/turnmarker/assets/regeneration.png';
+                return `modules/${modName}/assets/regeneration.png`;
             case 3:
-                return 'modules/turnmarker/assets/cosmos.png';
+                return `modules/${modName}/assets/cosmos.png`;
             case 4:
-                return 'modules/turnmarker/assets/earthlydust.png';
+                return `modules/${modName}/assets/earthlydust.png`;
             case 5:
-                return 'modules/turnmarker/assets/reality.png';
+                return `modules/${modName}/assets/reality.png`;
             case 6:
-                return 'modules/turnmarker/assets/believer.png';
+                return `modules/${modName}/assets/believer.png`;
             case 7:
-                return 'modules/turnmarker/assets/madmage.png';
+                return `modules/${modName}/assets/madmage.png`;
             case 8:
-                return 'modules/turnmarker/assets/bluesky.png';
+                return `modules/${modName}/assets/bluesky.png`;
             case 9:
-                return 'modules/turnmarker/assets/universe.png';
+                return `modules/${modName}/assets/universe.png`;
             case 10:
-                return 'modules/turnmarker/assets/prosperity.png';
+                return `modules/${modName}/assets/prosperity.png`;
         }
     }
 
@@ -306,27 +306,27 @@ export class Settings {
     static getDeckImageByIndex(index) {
         switch (index) {
             case 0:
-                return 'modules/turnmarker/assets/prosperity.png';
+                return `modules/${modName}/assets/prosperity.png`;
             case 1:
-                return 'modules/turnmarker/assets/incendium.png';
+                return `modules/${modName}/assets/incendium.png`;
             case 2:
-                return 'modules/turnmarker/assets/cultist.png';
+                return `modules/${modName}/assets/cultist.png`;
             case 3:
-                return 'modules/turnmarker/assets/regeneration.png';
+                return `modules/${modName}/assets/regeneration.png`;
             case 4:
-                return 'modules/turnmarker/assets/cosmos.png';
+                return `modules/${modName}/assets/cosmos.png`;
             case 5:
-                return 'modules/turnmarker/assets/earthlydust.png';
+                return `modules/${modName}/assets/earthlydust.png`;
             case 6:
-                return 'modules/turnmarker/assets/reality.png';
+                return `modules/${modName}/assets/reality.png`;
             case 7:
-                return 'modules/turnmarker/assets/believer.png';
+                return `modules/${modName}/assets/believer.png`;
             case 8:
-                return 'modules/turnmarker/assets/madmage.png';
+                return `modules/${modName}/assets/madmage.png`;
             case 9:
-                return 'modules/turnmarker/assets/bluesky.png';
+                return `modules/${modName}/assets/bluesky.png`;
             case 10:
-                return 'modules/turnmarker/assets/universe.png';
+                return `modules/${modName}/assets/universe.png`;
         }
     }
 
@@ -419,7 +419,7 @@ export class Settings {
             type: Boolean,
             default: true,
             onChange: shouldAnimate => {
-                if (!game.paused && shouldAnimate && canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.data.flags.turnMarker === true)) {
+                if (!game.paused && shouldAnimate && canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.flags.turnMarker === true)) {
                     MarkerAnimation.startAnimationGM("turnmarker");
                 } else {
                     MarkerAnimation.stopAnimationGM("turnmarker");

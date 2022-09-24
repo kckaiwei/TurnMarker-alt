@@ -66,17 +66,17 @@ export class MarkerAnimation {
         let tile;
         switch (marker_type) {
             case "deckmarker":
-                tile = canvas.background.tiles.find(t => t.data.flags?.deckMarker == true);
+                tile = canvas.scene.tiles.find(t => t.flags?.deckMarker == true);
                 break;
             case "turnmarker":
             default:
-                tile = canvas.background.tiles.find(t => t.data.flags?.turnMarker == true);
+                tile = canvas.scene.tiles.find(t => t.flags?.turnMarker == true);
                 break;
         }
-        if (tile?.data.img) {
+        if (tile?.texture) {
             let delta = Settings.getInterval() / 10000;
             try {
-                tile.tile.rotation += (delta * dt);
+                tile.rotation += (delta * dt);
             } catch (err) {
                 // skip lost frames if the tile is being updated by the server
             }
