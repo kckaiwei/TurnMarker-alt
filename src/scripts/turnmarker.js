@@ -24,12 +24,6 @@ Hooks.once('ready', async () => {
             if (data.mode) {
                 deleteTile({ mode: data.mode });
             }
-        } else if (data.startAnimation) {
-            MarkerAnimation.startAnimation(data.startAnimation)
-        } else if (data.stopAnimation) {
-            MarkerAnimation.stopAnimation(data.stopAnimation)
-        } else if (data.stopAllAnimation) {
-            MarkerAnimation.stopAllAnimation()
         }
     });
 
@@ -72,7 +66,7 @@ Hooks.on("renderCombatTracker", async (combatTracker, update) => {
 
 Hooks.on('deleteCombat', async () => {
     await Marker.clearAllMarkers();
-    MarkerAnimation.stopAllAnimationGM();
+    MarkerAnimation.stopAllAnimation();
 });
 
 Hooks.on('updateToken', async (tokenDoc, updateData, diff, id) => {
@@ -139,7 +133,7 @@ async function createCombatDeckMarker(combat) {
         if (combat.turns[nextTurn].actor.hasPlayerOwner) {
             await Marker.placeOnDeckMarker(combat.turns[nextTurn].token.id).then(function () {
                 if (!game.paused && Settings.getShouldAnimate("deckmarker")) {
-                    MarkerAnimation.startAnimationGM("deckmarker");
+                    MarkerAnimation.startAnimation("deckmarker");
                 }
             });
         } else {
@@ -147,9 +141,9 @@ async function createCombatDeckMarker(combat) {
         }
     } else {
         await Marker.placeOnDeckMarker(combat.turns[nextTurn].token.id).then(function () {
-                if (!game.paused && Settings.getShouldAnimate("deckmarker")) {
-                    MarkerAnimation.startAnimationGM("deckmarker");
-                }
+            if (!game.paused && Settings.getShouldAnimate("deckmarker")) {
+                MarkerAnimation.startAnimation("deckmarker");
+            }
         });
     }
 }
@@ -163,7 +157,7 @@ async function handleCombatUpdate(combat, update) {
                 await createCombatDeckMarker(combat);
                 await Marker.placeTurnMarker(combat.combatant.token.id).then(function () {
                     if (!game.paused && Settings.getShouldAnimate("turnmarker")) {
-                        MarkerAnimation.startAnimationGM("turnmarker");
+                        MarkerAnimation.startAnimation("turnmarker");
                     }
                 });
                 if (Settings.shouldAnnounceTurns() && !combat.combatant.hidden) {

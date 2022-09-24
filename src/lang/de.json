@@ -22,9 +22,9 @@
 				"name": "Animierte Markierung?",
 				"hint": "Verwende eine rotierende Animation für die Markierung. (Veränderungen sind eventuell erst beim Start eines neuen Kampfes sichtbar)"
 			},
-			"interval": {
+			"speed": {
 				"name": "Animationsgeschwindigkeit",
-				"hint": "Wie schnell soll die Animation rotieren, falls die Animation eingeschaltet ist (Empfohlen wird zwischen 10 und 200)"
+				"hint": "Wie schnell soll die Animation rotieren, falls die Animation eingeschaltet ist"
 			},
 			"image": {
 				"name": "Bild für die Markierung"

@@ -50,7 +50,7 @@ export class Marker {
                     x: center.x,
                     y: center.y,
                     z: 900,
-                    rotation: 0,
+                    rotation: tile ? tile.rotation : 0,
                     hidden: token.hidden,
                     locked: false
                 };
@@ -85,7 +85,7 @@ export class Marker {
                     x: center.x,
                     y: center.y,
                     z: 900,
-                    rotation: 0,
+                    rotation: tile ? tile.rotation : 0,
                     hidden: token.hidden,
                     locked: false
                 };

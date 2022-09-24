@@ -4,7 +4,7 @@ import {SettingsForm} from './settingsForm.js';
 import {modName, getNextTurn} from './utils.js';
 
 const version = 'tm-version';
-const interval = 'interval';
+const speed = 'speed';
 const announce = 'announce-turn';
 const announceActors = 'announce-Actors';
 const announceImage = 'announce-image';
@@ -119,10 +119,11 @@ export class Settings {
     }
 
     /**
-     * Gets the animation interval in ms.
+     * Gets the animation speed.
+     * @returns A speed multiplier, with 1 being the default.
      */
-    static getInterval() {
-        return game.settings.get(modName, interval);
+    static getSpeed() {
+        return game.settings.get(modName, speed);
     }
 
     /**
@@ -420,9 +421,9 @@ export class Settings {
             default: true,
             onChange: shouldAnimate => {
                 if (!game.paused && shouldAnimate && canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.flags.turnMarker === true)) {
-                    MarkerAnimation.startAnimationGM("turnmarker");
+                    MarkerAnimation.startAnimation("turnmarker");
                 } else {
-                    MarkerAnimation.stopAnimationGM("turnmarker");
+                    MarkerAnimation.stopAnimation("turnmarker");
                 }
             }
         });
@@ -436,20 +437,20 @@ export class Settings {
             default: true,
             onChange: shouldAnimate => {
                 if (!game.paused && shouldAnimate && canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.data.flags.deckMarker === true)) {
-                    MarkerAnimation.startAnimationGM("deckmarker");
+                    MarkerAnimation.startAnimation("deckmarker");
                 } else {
-                    MarkerAnimation.stopAnimationGM("deckmarker");
+                    MarkerAnimation.stopAnimation("deckmarker");
                 }
             }
         });
 
-        game.settings.register(modName, interval, {
-            name: 'tm.settings.interval.name',
-            hint: 'tm.settings.interval.hint',
+        game.settings.register(modName, speed, {
+            name: 'tm.settings.speed.name',
+            hint: 'tm.settings.speed.hint',
             scope: 'user',
             config: true,
             type: Number,
-            default: 100
+            default: 1
         });
 
         game.settings.register(modName, image, {
