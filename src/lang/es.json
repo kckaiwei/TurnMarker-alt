@@ -31,9 +31,9 @@
                 "name": "¿Marcador animado?",
                 "hint": "Aplicar animación de rotación al marcador. Los cambios no serán visibles hasta que se inicie un nuevo combate"
             },
-            "interval": {
+            "speed": {
                 "name": "Velocidad de la animación",
-                "hint": "Velocidad a la que se moverá la animación en caso de activarla (se recomienda entre 10 y 200)"
+                "hint": "Velocidad a la que se moverá la animación en caso de activarla"
             },
             "image": {
                 "name": "Imagen del marcador"

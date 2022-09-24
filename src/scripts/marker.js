@@ -42,7 +42,7 @@ export class Marker {
             if (typeof token !== 'undefined') {
                 let dims = this.getImageDimensions(token, false, "turnmarker");
                 let center = this.getImageLocation(token, false, "turnmarker");
-                const tile = canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.data.flags?.turnMarker === true);
+                const tile = canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.flags?.turnMarker === true);
                 const updateData = {
                     img: Settings.getImagePath(),
                     width: dims.w,
@@ -50,8 +50,8 @@ export class Marker {
                     x: center.x,
                     y: center.y,
                     z: 900,
-                    rotation: 0,
-                    hidden: token.data.hidden,
+                    rotation: tile ? tile.rotation : 0,
+                    hidden: token.hidden,
                     locked: false
                 };
                 if (typeof tile === 'undefined') {
@@ -77,7 +77,7 @@ export class Marker {
             if (typeof token !== 'undefined') {
                 let dims = this.getImageDimensions(token, false, "deckmarker");
                 let center = this.getImageLocation(token, false, "deckmarker");
-                let tile = canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.data.flags?.deckMarker === true);
+                let tile = canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.flags?.deckMarker === true);
                 const updateData = {
                     img: Settings.getOnDeckImagePath(),
                     width: dims.w,
@@ -85,8 +85,8 @@ export class Marker {
                     x: center.x,
                     y: center.y,
                     z: 900,
-                    rotation: 0,
-                    hidden: token.data.hidden,
+                    rotation: tile ? tile.rotation : 0,
+                    hidden: token.hidden,
                     locked: false
                 };
                 if (typeof tile === 'undefined') {
@@ -129,7 +129,7 @@ export class Marker {
             if (typeof token !== 'undefined') {
                 let dims = this.getImageDimensions(token);
                 let center = this.getImageLocation(token);
-                let tile = canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.data.flags?.startMarker === true);
+                let tile = canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.flags?.startMarker === true);
                 const updateData = {
                     img: Settings.getStartMarker(),
                     width: dims.w,
@@ -138,7 +138,7 @@ export class Marker {
                     y: center.y,
                     z: 900,
                     rotation: 0,
-                    hidden: token.data.hidden,
+                    hidden: token.hidden,
                     locked: false
                 };
                 if (typeof tile === 'undefined') {
@@ -176,7 +176,7 @@ export class Marker {
                 height: dims.h,
                 x: center.x,
                 y: center.y,
-                hidden: token.data.hidden
+                hidden: token.hidden
             }]);
         }
     }
@@ -195,12 +195,11 @@ export class Marker {
      */
     static async updateImagePath() {
         if (game.user.isGM) {
-            let tile = canvas.scene.tiles.find(t => t.data.flags?.turnMarker == true);
+            let tile = canvas.scene.tiles.find(t => t.flags?.turnMarker == true);
             if (tile) {
-                await canvas.scene.updateEmbeddedEntity('Tile', [{
-                    _id: tile.id,
+                await tile.update({
                     img: Settings.getImagePath()
-                }]);
+                });
             }
         }
     }
@@ -210,12 +209,12 @@ export class Marker {
      */
     static async updateOnDeckImagePath() {
         if (game.user.isGM) {
-            let tile = canvas.scene.tiles.find(t => t.data.flags?.deckMarker == true);
+            let tile = canvas.scene.tiles.find(t => t.flags?.deckMarker == true);
             if (tile) {
-                await canvas.scene.updateEmbeddedEntity('Tile', [{
+                await tile.update({
                     _id: tile.id,
                     img: Settings.getOnDeckImagePath()
-                }]);
+                });
             }
         }
     }

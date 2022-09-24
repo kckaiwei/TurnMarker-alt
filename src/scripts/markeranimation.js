@@ -1,85 +1,103 @@
-import {Settings} from './settings.js';
-import {socketName} from './utils.js';
+import { firstGM } from './utils.js';
+import { Settings } from './settings.js';
 
+const rotationDelta = 0.50; // How much to rotate by when the timer fires
+const totalRotationTime = 60; // How long it should take for a full rotation by default.
+
+/**
+ * Methods here can be called from all users, they will only be run once. This is ensured through checks against firstGM.
+ */
 export class MarkerAnimation {
     /**
-     * Starts the animation loop
+     * Starts the animation loop for a certain type of marker
+     * @param {string} marker_type - type of marker to start animating
      */
-    static startAnimationGM(marker_type = "turnmarker") {
-        MarkerAnimation.startAnimation(marker_type)
-        game.socket.emit(socketName, {
-            startAnimation: marker_type
-        });
-    }
+    static startAnimation(marker_type) {
+        if (firstGM() === game.userId) {
 
-    static startAnimation(marker_type = "turnmarker") {
-        if (!this.animators) {
-            this.animators = {};
-        }
-        if (marker_type in this.animators) {
-            return this.animators[marker_type];
-        }
-        this.animators[marker_type] = this.animateRotation.bind(this, marker_type);
-        canvas.app.ticker.add(this.animators[marker_type]);
-        return this.animators;
-    }
-
-    /**
-     * Stops the animation loop
-     */
-    static stopAnimationGM(marker_type = "turnmarker") {
-        MarkerAnimation.startAnimation(marker_type)
-        game.socket.emit(socketName, {
-            stopAnimation: marker_type
-        });
-    }
-
-    static stopAnimation(marker_type = "turnmarker") {
-        if (this.animators) {
-            canvas.app.ticker.remove(this.animators[marker_type]);
-            delete this.animators[marker_type];
-        }
-    }
-
-    static stopAllAnimationGM() {
-        MarkerAnimation.stopAllAnimation()
-        game.socket.emit(socketName, {
-            stopAllAnimation: 'all'
-        });
-    }
-
-    static stopAllAnimation() {
-        if (this.animators) {
-            for (const [, value] of Object.entries(this.animators)) {
-                canvas.app.ticker.remove(value);
+            if (!this.animators) {
+                this.animators = {};
             }
-            this.animators = {};
+            if (marker_type in this.animators) {
+                return this.animators[marker_type];
+            }
+            this.animators[marker_type] = new Animator(marker_type);
+            return this.animators;
         }
     }
 
     /**
-     * Called on every tick of the animation loop to rotate the image based on the current frame
-     * @param {string} marker_type - type of marker to animate
-     * @param {number} dt - The delta time
+     * Stops the animation loop for a certain type of marker
+     * @param {string} marker_type - type of marker to stop animating
      */
-    static animateRotation(marker_type, dt) {
+    static stopAnimation(marker_type) {
+        if (firstGM() === game.userId) {
+            MarkerAnimation.startAnimation(marker_type); // Make sure something's there before we delete it.
+            if (this.animators) {
+                this.animators[marker_type].stopAnimation();
+                delete this.animators[marker_type];
+            }
+        }
+    }
+
+    /**
+     * Tells all currently running animators to stop their rotations. Then drops the table of animators.
+     */
+    static stopAllAnimation() {
+        if (firstGM() === game.userId) {
+            if (this.animators) {
+                for (const [, value] of Object.entries(this.animators)) {
+                    value.stopAnimation();
+                }
+                this.animators = {};
+            }
+        }
+    }
+}
+
+class Animator {
+    /**
+     * Manages animating a specific set of markers. Construction begins animation.
+     * @param {string} marker_type - type of markers managed
+     */
+    constructor(marker_type) {
+        /**
+         * Speed forumla is such that a speed of 1 will rotate in the total rotation time.
+         * Lower speed values should slow the animation, and higher values should speed it up.
+         */
+        const base_update_freq = (360 / rotationDelta) / totalRotationTime; // In Hertz
+        const interval = (1 / (base_update_freq * Settings.getSpeed())) * 1000; // Hertz to seconds, account for speedup, and convert to milliseconds
+
+        this.marker_type = marker_type;
+        this.timeout = setInterval(this.rotateMarker.bind(this), interval);
+    }
+
+    /**
+     * Tell the interval timer to stop calling rotateMarker.
+     */
+    stopAnimation() {
+        clearInterval(this.timeout);
+    }
+
+    /**
+     * Rotate the marker. Called periodically by setInterval when the class is constructed.
+     */
+    async rotateMarker() {
         let tile;
-        switch (marker_type) {
+        switch (this.marker_type) {
             case "deckmarker":
-                tile = canvas.background.tiles.find(t => t.data.flags?.deckMarker == true);
+                tile = canvas.scene.tiles.find(t => t.flags?.deckMarker == true);
                 break;
             case "turnmarker":
             default:
-                tile = canvas.background.tiles.find(t => t.data.flags?.turnMarker == true);
+                tile = canvas.scene.tiles.find(t => t.flags?.turnMarker == true);
                 break;
         }
-        if (tile?.data.img) {
-            let delta = Settings.getInterval() / 10000;
-            try {
-                tile.tile.rotation += (delta * dt);
-            } catch (err) {
-                // skip lost frames if the tile is being updated by the server
-            }
+        try {
+            await tile.object.rotate(tile.rotation + rotationDelta, 0.001);
+        } catch (err) {
+            // If the tile has disappeared between finding it and trying to rotate it, it's probably been deleted.
+            // That's not a problem, so just fail silently.
         }
     }
 }

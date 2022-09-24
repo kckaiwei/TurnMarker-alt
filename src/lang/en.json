@@ -27,9 +27,9 @@
                 "name": "Animate Turn Marker?",
                 "hint": "Use rotation animation on turn marker. (changes may not be visible until a new combat is started)"
             },
-            "interval": {
+            "speed": {
                 "name": "Animation Speed",
-                "hint": "How fast to animate the rotation if enabled (recommended between 10 and 200)"
+                "hint": "How fast to animate the rotation if enabled"
             },
             "image": {
                 "name": "Marker Image"

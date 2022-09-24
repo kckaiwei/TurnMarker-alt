@@ -1,9 +1,10 @@
 import { Settings } from './settings.js';
+import { modName } from './utils.js';
 
 export function renderUpdateWindow() {
-    const module = game.modules.get("turnmarker");
+    const module = game.modules.get(modName);
 
-    if (!isNewerVersion(module.data.version, Settings.getVersion()))
+    if (!isNewerVersion(module.version, Settings.getVersion()))
         return;
 
     class UpdateWindow extends Application {
@@ -14,13 +15,13 @@ export function renderUpdateWindow() {
                 width: 500,
                 height: 600,
                 classes: ["updateWindow"],
-                title: `${module.data.title} - Updated`
+                title: `${module.title} - Updated`
             });
         }
 
         getData() {
             return {
-                version: module.data.version
+                version: module.version
             };
         }
 
@@ -28,7 +29,7 @@ export function renderUpdateWindow() {
             super.activateListeners(html);
 
             html.find('.show-again').on('change', ev => {
-                Settings.setVersion(ev.currentTarget.checked ? module.data.version : null);
+                Settings.setVersion(ev.currentTarget.checked ? module.version : null);
             });
         }
     }

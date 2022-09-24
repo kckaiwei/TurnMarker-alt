@@ -1,4 +1,5 @@
 import {imageTitles, deckImageTitles, announcedActorOptions, Settings} from './settings.js';
+import { modName } from './utils.js';
 
 const videos = ['mp4', 'webm', 'ogg'];
 
@@ -15,7 +16,7 @@ export class SettingsForm extends FormApplication {
         return mergeObject(super.defaultOptions, {
             id: 'turnmarker-settings-form',
             title: 'Turn Marker - Global Settings',
-            template: './modules/turnmarker/templates/settings.html',
+            template: `./modules/${modName}/templates/settings.html`,
             classes: ['sheet', 'tm-settings'],
             width: 500,
             closeOnSubmit: true
