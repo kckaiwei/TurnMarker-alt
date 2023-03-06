@@ -3,7 +3,7 @@
   "title": "Turn Marker",
   "description": "Displays a (optionally animated) marker on the token who's active turn it is. Originally by Brunhine",
   "authors": [{ "name": "kckaiwei" }],
-  "version": "2.9.0",
+  "version": "2.9.1",
   "compatibility": {
     "minimmum": "9.238",
     "verified": "9.238"
@@ -56,6 +56,6 @@
     }
   ],
   "url": "https://github.com/kckaiwei/TurnMarker-alt",
-  "manifest": "https://raw.githubusercontent.com/kckaiwei/TurnMarker-alt/v2.9.0/src/module.json",
-  "download": "https://github.com/kckaiwei/TurnMarker-alt/releases/download/v2.9.0/turnmarker.zip"
+  "manifest": "https://raw.githubusercontent.com/kckaiwei/TurnMarker-alt/v2.9.1/src/module.json",
+  "download": "https://github.com/kckaiwei/TurnMarker-alt/releases/download/v2.9.1/turnmarker.zip"
 }
