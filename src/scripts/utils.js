@@ -34,7 +34,7 @@ export function findTileById(tileId) {
  */
 export function firstGM() {
     for (let user of game.users.contents) {
-        if (user.data.role === CONST.USER_ROLES.GAMEMASTER && user.active) {
+        if (user.role === CONST.USER_ROLES.GAMEMASTER && user.active) {
             return user.id;
         }
     }
@@ -57,19 +57,19 @@ export async function deleteTile({ mode } = {}) {
     let tiles = null
     switch (mode) {
         case socketAction.deleteStartMarker:
-            tiles = canvas.scene.getEmbeddedCollection('Tile')?.filter(t => t.data.flags?.startMarker === true)?.map(t => t.id)
+            tiles = canvas.scene.getEmbeddedCollection('Tile')?.filter(t => t.flags?.startMarker === true)?.map(t => t.id)
             if (tiles?.length > 0) {
                 await canvas.scene.deleteEmbeddedDocuments('Tile', tiles)
             }
             break
         case socketAction.deleteTurnMarker:
-            tiles = canvas.scene.getEmbeddedCollection('Tile')?.filter(t => t.data.flags?.turnMarker === true)?.map(t => t.id)
+            tiles = canvas.scene.getEmbeddedCollection('Tile')?.filter(t => t.flags?.turnMarker === true)?.map(t => t.id)
             if (tiles?.length > 0) {
                 await canvas.scene.deleteEmbeddedDocuments('Tile', tiles)
             }
             break
         case socketAction.deleteOnDeckMarker:
-            tiles = canvas.scene.getEmbeddedCollection('Tile')?.filter(t => t.data.flags?.deckMarker === true)?.map(t => t.id)
+            tiles = canvas.scene.getEmbeddedCollection('Tile')?.filter(t => t.flags?.deckMarker === true)?.map(t => t.id)
             if (tiles?.length > 0) {
                 await canvas.scene.deleteEmbeddedDocuments('Tile', tiles)
             }

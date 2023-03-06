@@ -66,14 +66,14 @@ export class MarkerAnimation {
         let tile;
         switch (marker_type) {
             case "deckmarker":
-                tile = canvas.background.tiles.find(t => t.data.flags?.deckMarker == true);
+                tile = canvas.tiles.children.find(t => t.flags?.deckMarker == true);
                 break;
             case "turnmarker":
             default:
-                tile = canvas.background.tiles.find(t => t.data.flags?.turnMarker == true);
+                tile = canvas.tiles.children.find(t => t.flags?.turnMarker == true);
                 break;
         }
-        if (tile?.data.img) {
+        if (tile?.img) {
             let delta = Settings.getInterval() / 10000;
             try {
                 tile.tile.rotation += (delta * dt);

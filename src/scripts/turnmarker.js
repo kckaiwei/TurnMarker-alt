@@ -14,7 +14,7 @@ Hooks.once('init', () => {
 
 Hooks.once('ready', async () => {
     if (game.user.isGM) {
-        if (isNewerVersion(game.modules.get("turnmarker").data.version, Settings.getVersion())) {
+        if (isNewerVersion(game.modules.get("turnmarker").version, Settings.getVersion())) {
             renderUpdateWindow();
         }
     }
@@ -42,10 +42,10 @@ Hooks.once('ready', async () => {
     }
     if (!game.paused) {
         const tiles = canvas.scene.getEmbeddedCollection('Tile');
-        if (Settings.getShouldAnimate('turnmarker') && tiles?.find(t => t.data.flags?.turnMarker === true)) {
+        if (Settings.getShouldAnimate('turnmarker') && tiles?.find(t => t.flags?.turnMarker === true)) {
             MarkerAnimation.startAnimation('turnmarker');
         }
-        if (Settings.getShouldAnimate('deckmarker') && tiles?.find(t => t.data.flags?.deckMarker === true)) {
+        if (Settings.getShouldAnimate('deckmarker') && tiles?.find(t => t.flags?.deckMarker === true)) {
             MarkerAnimation.startAnimation('deckmarker');
         }
     }
@@ -82,7 +82,7 @@ Hooks.on('updateToken', async (tokenDoc, updateData, diff, id) => {
 
     // Do onDeck first, so current token will have higher Z-index
     const tiles = canvas.scene.getEmbeddedCollection('Tile');
-    let tile = tiles?.find(t => t.data.flags?.deckMarker == true);
+    let tile = tiles?.find(t => t.flags?.deckMarker == true);
     if (tile) {
         if ((updateData.x || updateData.y || updateData.width || updateData.height || updateData.hidden) && game.combat && game.user.isGM && game.userId === firstGM()) {
             const nextTurn = getNextTurn(game.combat);
@@ -91,7 +91,7 @@ Hooks.on('updateToken', async (tokenDoc, updateData, diff, id) => {
         }
     }
 
-    tile = tiles?.find(t => t.data.flags?.turnMarker == true);
+    tile = tiles?.find(t => t.flags?.turnMarker == true);
     if (tile) {
         if ((updateData.x || updateData.y || updateData.width || updateData.height || updateData.hidden) && game.combat?.combatant?.token.id === updateData._id && game.user.isGM && game.userId === firstGM()) {
             await Marker.moveMarkerToToken(updateData._id, tile.id, 'turnmarker');
@@ -100,11 +100,13 @@ Hooks.on('updateToken', async (tokenDoc, updateData, diff, id) => {
 });
 
 function isVisible(tile) {
-    if (tile.data.hidden) {
+    if (tile.hidden) {
         return game.user.isGM;
     }
 
-    if (!canvas.sight.tokenVision) {
+    const visibility = new CanvasVisibility(canvas)
+
+    if (!visibility.tokenVision) {
         return true;
     }
 
@@ -114,23 +116,23 @@ function isVisible(tile) {
 
     const combatant = canvas.scene.tokens.find(t => t.id === game.combat?.combatant.token.id);
 
-    if (!combatant || combatant.data.hidden) {
+    if (!combatant || combatant.hidden) {
         return game.user.isGM;
     }
 
     let marker_type = "turnmarker";
-    if (tile.data.flags.startMarker) {
+    if (tile.flags.startMarker) {
         marker_type = "startmarker";
-    } else if (tile.data.flags.deckMarker) {
+    } else if (tile.flags.deckMarker) {
         marker_type = "deckmarker";
     }
 
     const ratio = Settings.getRatio(marker_type);
-    const w = tile.data.width / ratio;
-    const h = tile.data.height / ratio;
+    const w = tile.width / ratio;
+    const h = tile.height / ratio;
     const tolerance = Math.min(w, h) / 4;
 
-    return canvas.sight.testVisibility(tile.center, {tolerance, object: tile});
+    return visibility.testVisibility(tile.center, {tolerance, object: tile});
 }
 
 async function createCombatDeckMarker(combat) {
@@ -191,8 +193,9 @@ async function handleCombatUpdate(combat, update) {
 }
 
 Hooks.on('updateTile', (tileDoc) => {
-    if (tileDoc.data.flags?.turnMarker || tileDoc.data.flags?.startMarker || tileDoc.data.flags?.deckMarker) {
-        const tile = canvas.background.tiles.find(t => t.id === tileDoc.data.id);
+    if (tileDoc.flags?.turnMarker || tileDoc.flags?.startMarker || tileDoc.flags?.deckMarker) {
+        const tilesCollection = canvas.scene.getEmbeddedCollection('Tile')
+        const tile = tilesCollection.find(t => t.id === tileDoc.id);
         if (tile) {
             tile.renderable = isVisible(tile);
         }
@@ -200,8 +203,9 @@ Hooks.on('updateTile', (tileDoc) => {
 });
 
 Hooks.on('sightRefresh', () => {
-    for (const tile of canvas.background.tiles) {
-        if (tile.data.flags?.turnMarker || tile.data.flags?.startMarker || tile.data.flags?.deckMarker) {
+    const tilesCollection = canvas.scene.getEmbeddedCollection('Tile')
+    for (const tile of tilesCollection) {
+        if (tile.flags?.turnMarker || tile.flags?.startMarker || tile.flags?.deckMarker) {
             tile.renderable = isVisible(tile);
         }
     }
@@ -209,10 +213,10 @@ Hooks.on('sightRefresh', () => {
 
 Hooks.on('pauseGame', (isPaused) => {
     if (!isPaused) {
-        if (Settings.getShouldAnimate("turnmarker") && canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.data.flags?.turnMarker === true)) {
+        if (Settings.getShouldAnimate("turnmarker") && canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.flags?.turnMarker === true)) {
             MarkerAnimation.startAnimation("turnmarker");
         }
-        if (Settings.getShouldAnimate("deckmarker") && canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.data.flags?.deckMarker === true)) {
+        if (Settings.getShouldAnimate("deckmarker") && canvas.scene.getEmbeddedCollection('Tile')?.find(t => t.flags?.deckMarker === true)) {
             MarkerAnimation.startAnimation("deckmarker");
         }
     } else {
