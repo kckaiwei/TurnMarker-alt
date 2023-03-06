@@ -1,3 +1,6 @@
+# 2.9.1
+- Support Foundry VTT v10 API
+
 # 2.9.0
 - Support Foundry VTT v9 API
 
