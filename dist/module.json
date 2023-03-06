@@ -1,61 +1,61 @@
 {
-	"name": "turnmarker",
-	"title": "Turn Marker",
-	"description": "Displays a (optionally animated) marker on the token who's active turn it is. Originally by Brunhine",
-	"author": "kckaiwei",
-	"version": "2.7.4",
-	"minimumCoreVersion": "0.7.5",
-	"compatibleCoreVersion": "0.7.9",
-	"manifestPlusVersion": "1.0.0",
-	"esmodules": [
-		"scripts/turnmarker.js"
-	],
-	"socket": true,
-	"styles": ["css/turnmarker.css"],
-	"languages": [
-		{
-			"lang": "en",
-			"name": "English",
-			"path": "lang/en.json"
-		},
-		{
-			"lang": "de",
-			"name": "German",
-			"path": "lang/de.json"
-		},
-		{
-			"lang": "ko",
-			"name": "Korean",
-			"path": "lang/ko.json"
-		},
-		{
-			"lang": "ja",
-			"name": " 日本語",
-			"path": "lang/ja.json"
-		},
-		{
-			"lang": "es",
-			"name": "Spanish",
-			"path": "lang/es.json"
-		},
-		{
-			"lang": "zh-tw",
-			"name": "正體中文",
-			"path": "lang/zh-tw.json"
-		}
-	],
-	"media": [
-		{
-			"type": "cover",
-			"url": "https://brunhine.com/assets/img/turnmarker/card.png"
-		},
-		{
-			"type": "video",
-			"url": "https://brunhine.com/assets/img/turnmarker/example.webm",
-			"loop": true
-		}
-	],
-	"url": "https://github.com/kckaiwei/TurnMarker-alt",
-	"manifest": "https://raw.githubusercontent.com/kckaiwei/TurnMarker-alt/v2.7.4/src/module.json",
-	"download": "https://github.com/kckaiwei/TurnMarker-alt/releases/download/v2.7.4/turnmarker.zip"
+  "name": "turnmarker",
+  "title": "Turn Marker",
+  "description": "Displays a (optionally animated) marker on the token who's active turn it is. Originally by Brunhine",
+  "authors": [{ "name": "kckaiwei" }],
+  "version": "2.9.1",
+  "compatibility": {
+    "minimmum": "9.238",
+    "verified": "9.238"
+  },
+  "manifestPlusVersion": "1.0.0",
+  "esmodules": ["scripts/turnmarker.js"],
+  "socket": true,
+  "styles": ["css/turnmarker.css"],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "de",
+      "name": "German",
+      "path": "lang/de.json"
+    },
+    {
+      "lang": "ko",
+      "name": "Korean",
+      "path": "lang/ko.json"
+    },
+    {
+      "lang": "ja",
+      "name": " 日本語",
+      "path": "lang/ja.json"
+    },
+    {
+      "lang": "es",
+      "name": "Español",
+      "path": "lang/es.json"
+    },
+    {
+      "lang": "zh-tw",
+      "name": "正體中文",
+      "path": "lang/zh-tw.json"
+    }
+  ],
+  "media": [
+    {
+      "type": "cover",
+      "url": "https://brunhine.com/assets/img/turnmarker/card.png"
+    },
+    {
+      "type": "video",
+      "url": "https://brunhine.com/assets/img/turnmarker/example.webm",
+      "loop": true
+    }
+  ],
+  "url": "https://github.com/kckaiwei/TurnMarker-alt",
+  "manifest": "https://raw.githubusercontent.com/kckaiwei/TurnMarker-alt/v2.9.1/src/module.json",
+  "download": "https://github.com/kckaiwei/TurnMarker-alt/releases/download/v2.9.1/turnmarker.zip"
 }
